@@ -43,6 +43,7 @@ def main(argv: list[str] | None = None) -> None:
     r = sub.add_parser("run", help="build the next N queued topics (uploads if review is off)")
     r.add_argument("--count", type=int, default=1)
     r.add_argument("--no-upload", action="store_true", help="only make the videos, even if review is off")
+    r.add_argument("--upload", action="store_true", help="upload the videos now, even if review is on (manual runs)")
 
     sub.add_parser("fill", help="make and schedule videos for the empty publish slots (see `schedule`)")
     b = sub.add_parser("buffer", help="show the coming publish slots and which are filled")
@@ -130,6 +131,8 @@ def main(argv: list[str] | None = None) -> None:
             print(f"\n{len(soon)} slot(s) in the next 24 hours have no video yet.")
             raise SystemExit(1)
     elif args.cmd == "run":
+        if args.upload:
+            cfg.require_review = False  # someone chose to upload this run by hand
         if args.no_upload:
             cfg.require_review = True
         done = pipeline.run_queue(cfg, args.count)

@@ -117,7 +117,7 @@ jobs:
           elif [ "$UPLOAD" = false ]; then
             python -m fyt --format "$TASK" run --count "$COUNT" --no-upload
           else
-            python -m fyt --format "$TASK" run --count "$COUNT"
+            python -m fyt --format "$TASK" run --count "$COUNT" --upload
           fi
 
       - name: Check the schedule

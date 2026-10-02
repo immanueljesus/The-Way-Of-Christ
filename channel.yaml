@@ -6,7 +6,9 @@
 
 channel:
   name: "The Way of Christ"
-  niche: "Biblical wisdom and Christian encouragement for the battles of everyday life"
+  niche: >-
+    Stories, wisdom, prayer and inspiration rooted in Jesus Christ and the Bible, created to give people
+    faith, courage, hope and perspective for everyday life
   # Creative principle: don't just tell them about faith, make them feel faith.
   promise: "Come here tired, lost, afraid or alone, and leave uplifted, strengthened and closer to God."
   tagline: "You are not alone."  # closing card line under the channel name
@@ -39,14 +41,20 @@ llm:
 source: catalog
 catalog:
   path: content/ideas.yaml
-  mix:                  # percent of videos per category
-    motivational: 40
-    bible_story: 25
-    prayer: 15
-    jesus: 10
-    facts: 10
+  mix:                  # percent of videos per pillar (the content universe)
+    bible_story: 15       # Bible stories, with lesser-known people as much as famous ones
+    jesus: 12             # life, teachings, miracles, parables
+    motivation: 12        # courage, discipline, perseverance
+    prayer: 10            # situational and devotional prayers
+    relationships: 9      # love, forgiveness, betrayal, family
+    purpose: 9            # calling, direction, work, identity
+    peace: 8              # rest, reflection, surrender
+    spiritual_battles: 7  # temptation, doubt, fear
+    wisdom: 7             # practical life lessons (Proverbs, Ecclesiastes, Jesus' teaching)
+    history: 6            # Bible & history curiosities
+    everyday_life: 5      # career, money, social media, aging, leadership...
   use_wikipedia: true   # Bible-story ideas pull background and classical paintings from Wikipedia
-  ideate_when_empty: true
+  ideate_when_empty: true # a pillar running low gets new ideas written in the same shape (free, Groq)
 
 # Exact Bible text for every reference, from bible-api.com (public-domain translations).
 scripture:
@@ -132,16 +140,18 @@ schedule:
   long_lead_days: 3
   max_uploads_per_day: 4        # YouTube API quota
   max_run_minutes: 200
-  plan:                         # a morning Short every day, plus two long videos a week
-    - {weekday: 0, time: "11:00", kind: short, category: motivational, label: "Mon: motivational Short"}
-    - {weekday: 1, time: "11:00", kind: short, category: jesus, label: "Tue: One Minute With Jesus"}
+  plan:                         # a different pillar every morning, two long videos a week
+    - {weekday: 0, time: "11:00", kind: short, category: jesus, label: "Mon: Jesus"}
+    - {weekday: 1, time: "11:00", kind: short, category: motivation, label: "Tue: motivation"}
     - {weekday: 1, time: "15:00", kind: long, category: bible_story, minutes: 6, label: "Tue: Bible story (6 min)"}
-    - {weekday: 2, time: "11:00", kind: short, category: prayer, label: "Wed: short prayer"}
-    - {weekday: 3, time: "11:00", kind: short, category: motivational, label: "Thu: motivational Short"}
-    - {weekday: 4, time: "11:00", kind: short, category: bible_story, label: "Fri: Bible story Short"}
-    - {weekday: 4, time: "15:00", kind: long, category: motivational, minutes: 10, label: "Fri: inspirational video (10 min)"}
-    - {weekday: 5, time: "11:00", kind: short, category: facts, label: "Sat: Did You Know? Short"}
-    - {weekday: 6, time: "11:00", kind: short, category: prayer, label: "Sun: prayer Short"}
+    - {weekday: 2, time: "11:00", kind: short, category: prayer, label: "Wed: prayer"}
+    - {weekday: 3, time: "11:00", kind: short, category: bible_story, label: "Thu: Bible story"}
+    - {weekday: 4, time: "11:00", kind: short, category: wisdom, label: "Fri: Biblical wisdom"}
+    - {weekday: 4, time: "15:00", kind: long, minutes: 10, label: "Fri: long video, any pillar (10 min)"}
+    - {weekday: 5, time: "11:00", kind: short, category: history, label: "Sat: Bible & history"}
+    - {weekday: 6, time: "11:00", kind: short, category: peace, label: "Sun: peace"}
+    # Evening Shorts (short_slots) and Friday's long video follow the content mix, so relationships,
+    # purpose, spiritual battles and everyday life come round too.
 
 growth:
   polish: true
@@ -156,6 +166,9 @@ growth:
     - Start Your Day With God
     - Did You Know?
     - Prayers
+    - Untold Stories
+    - Faith in Everyday Life
+    - Proverbs for Real Life
   bonus_shorts_per_day: 0       # evergreen channel: no videos chasing trending topics
   bonus_longs_per_week: 0
 

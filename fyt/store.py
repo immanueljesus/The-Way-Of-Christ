@@ -42,6 +42,13 @@ class Topics:
     def titles(self) -> list[str]:
         return [r[0] for r in self.db.execute("select topic from topics")]
 
+    def recent(self, n: int = 8) -> list[str]:
+        """The last n topics taken (made or being made), oldest first."""
+        rows = self.db.execute(
+            "select topic from topics where status in ('done', 'in_progress') order by id desc limit ?", (n,)
+        ).fetchall()
+        return [r[0] for r in reversed(rows)]
+
     def next_pending(self, prefix: str = "", exclude_prefix: str | None = None) -> tuple[int, str] | None:
         sql, args = "select id, topic from topics where status='pending' and topic like ?", [prefix + "%"]
         if exclude_prefix:

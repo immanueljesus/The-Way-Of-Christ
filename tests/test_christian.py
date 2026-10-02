@@ -158,7 +158,8 @@ def test_shipped_channel_config_loads_with_the_weekly_plan():
     assert cfg.source == "catalog"
     assert {p.weekday for p in cfg.schedule.plan if p.kind == "short"} == set(range(7))  # a Short every morning
     assert len([p for p in cfg.schedule.plan if p.kind == "long"]) == 2
-    assert {p.category for p in cfg.schedule.plan} <= set(cfg.catalog.mix)
+    assert {p.category for p in cfg.schedule.plan if p.category} <= set(cfg.catalog.mix)
+    assert len({p.category for p in cfg.schedule.plan if p.kind == "short"}) == 7  # a different pillar each morning
 
 
 # --- Packaging ---
@@ -211,3 +212,84 @@ def test_a_loose_quote_of_a_long_passage_becomes_its_closest_verse():
     fixed, problems = scripture.check_quotes(Config(), s, {"Isaiah 40:29-31": passage})
     assert fixed.scenes[0].author == "Isaiah 40:31" and fixed.scenes[0].text.startswith("They will mount up")
     assert problems == []
+
+
+# --- The content universe ---
+
+
+def test_the_catalog_spans_the_universe():
+    ideas = catalog.load(load_config())
+    assert {i.category for i in ideas} >= {
+        "jesus", "bible_story", "motivation", "prayer", "peace", "relationships", "purpose",
+        "spiritual_battles", "wisdom", "history", "everyday_life",
+    }
+    assert {i.shape for i in ideas} == set(catalog.ARCS)
+    assert len({i.emotion for i in ideas}) >= 12
+    people = {i.character for i in ideas}
+    assert {"Deborah", "Bartimaeus", "Stephen", "Barnabas", "Lydia", "Naomi"} <= people
+    assert all(i.arc in ("", *catalog.ARCS) for i in ideas)
+
+
+def test_pick_avoids_repeating_the_last_character_and_feeling(monkeypatch):
+    items = [
+        catalog.Idea(id="j1", title="J1", category="bible_story", character="Joseph", emotion="hope", formats=["short"]),
+        catalog.Idea(id="j2", title="J2", category="bible_story", character="Joseph", emotion="courage", formats=["short"]),
+        catalog.Idea(id="d1", title="D1", category="bible_story", character="Deborah", emotion="hope", formats=["short"]),
+        catalog.Idea(id="r1", title="R1", category="bible_story", character="Ruth", emotion="love", formats=["short"]),
+    ]
+    monkeypatch.setattr(catalog, "load", lambda cfg: items)
+    cfg = Config(format="short")
+    assert catalog.pick(cfg, set(), category="bible_story").id == "j1"  # nothing recent: list order
+    assert catalog.pick(cfg, {"idea:j1"}, category="bible_story", recent=["idea:j1"]).id == "r1"  # new person, new feeling
+
+
+def test_each_story_shape_gets_its_own_structure():
+    from fyt import llm
+
+    assert llm.structure_for("journey", False) == llm.LONG_STRUCTURE
+    assert llm.structure_for("journey", True) == llm.SHORT_STRUCTURE
+    assert llm.structure_for("story", False) == llm.STORY_STRUCTURE
+    assert "Shorts version" in llm.structure_for("curiosity", True)
+    assert llm.structure_for("anything", False, prayer=True) == llm.PRAYER_STRUCTURE
+    assert len({llm.structure_for(a, False) for a in catalog.ARCS}) == len(catalog.ARCS)
+
+
+def test_a_pillar_running_low_gets_new_ideas(monkeypatch, tmp_path):
+    from fyt import llm
+
+    items = [catalog.Idea(id="w1", title="W1", category="wisdom", formats=["short"])]
+    real_load = catalog.load
+    cfg = Config(jobs_dir=str(tmp_path))
+    cfg.catalog.path = str(tmp_path / "none.yaml")
+    asked = []
+
+    def ideate(cfg, category, n, avoid, people, examples=""):
+        asked.append((category, people))
+        return [
+            llm.NewIdea(id="proverbs-on-sleep", title="Why Rest Is Holy", category=category, emotion="peace",
+                        arc="wisdom", scriptures=["Psalm 127:2"], angle="a", formats=["short", "huge"]),
+            llm.NewIdea(id="bad-ref", title="No Verse", category=category, emotion="hope", arc="journey",
+                        scriptures=["somewhere in Psalms"], angle="a", formats=["short"]),
+        ]
+
+    monkeypatch.setattr(llm, "ideate_catalog", ideate)
+    monkeypatch.setattr(scripture, "fetch_all", lambda cfg, refs: {r: scripture.Passage(r, "text", "WEB") for r in refs})
+    assert catalog.top_up(cfg, set(), "wisdom", []) == 1
+    got = {i.id: i for i in real_load(cfg)}
+    assert got["proverbs-on-sleep"].formats == ["short"] and got["proverbs-on-sleep"].generated
+    assert "bad-ref" not in got  # ideas without a real reference are dropped
+    monkeypatch.setattr(catalog, "load", lambda cfg: items + list(got.values()) * 5)
+    assert catalog.top_up(cfg, set(), "wisdom", []) == 0  # enough ideas left: nothing asked
+    assert len(asked) == 1
+
+
+def test_empty_narration_is_repaired():
+    from fyt.pipeline import repair_script
+
+    s = script(
+        ScriptScene(narration="A line.", type="broll"),
+        ScriptScene(narration="", type="quote", text="A gentle answer turns away wrath.", author="Proverbs 15:1"),
+        ScriptScene(narration=" ", type="statement", text="t"),
+    )
+    fixed = repair_script(s)
+    assert [x.narration for x in fixed.scenes] == ["A line.", "A gentle answer turns away wrath."]

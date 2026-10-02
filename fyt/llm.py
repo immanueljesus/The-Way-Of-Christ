@@ -155,6 +155,68 @@ class TopicIdeas(BaseModel):
     topics: list[str]
 
 
+class NewIdea(BaseModel):
+    id: str = Field(description="lowercase-words-with-dashes, unique")
+    title: str = Field(description="Cinematic or curious working title, max 70 characters.")
+    category: str
+    emotion: str
+    character: str = Field(default="", description="The Bible person at the centre, if any.")
+    arc: str = Field(description="journey | story | curiosity | wisdom | prayer | peace | joy")
+    scriptures: list[str] = Field(description="1-3 exact references, 'Book chapter:verse' or 'Book chapter:verse-verse'.")
+    angle: str = Field(description="One or two sentences: the hook and what the viewer leaves with.")
+    formats: list[str] = Field(description="Any of short, medium, long.")
+
+
+class NewIdeas(BaseModel):
+    ideas: list[NewIdea]
+
+
+PILLAR_NOTES = {
+    "everyday_life": "a recognisable MODERN situation (career, money, social media, aging, leadership, loneliness, "
+    "success, family, responsibility) met by Scripture. Usually no Bible character, never an invented one.",
+    "history": "a real historical, cultural or archaeological detail of the Bible's world that changes how a "
+    "passage feels. Only well-established facts.",
+    "wisdom": "practical life wisdom, mostly from Proverbs, Ecclesiastes or Jesus' teaching, for a real situation.",
+    "bible_story": "one Bible story told from inside it, often about a lesser-known person named in Scripture.",
+    "jesus": "one moment, teaching, miracle or parable of Jesus from the Gospels.",
+    "prayer": "a prayer for one specific situation, prayed together with the viewer.",
+    "peace": "a slow, still moment of rest in God's presence.",
+}
+
+
+def ideate_catalog(
+    cfg: Config, category: str, n: int, avoid: list[str], recent_people: list[str], examples: str = ""
+) -> list[NewIdea]:
+    """New ideas for one pillar of the content universe, in the catalog's own shape."""
+    ch = cfg.channel
+    prompt = f"""You plan videos for "{ch.name}", a faceless Christian YouTube channel.
+Channel promise: {ch.niche}
+Creative principle: don't just tell people about faith, make them feel faith.
+
+Propose {n} new video ideas for the pillar "{category}". Pillars of the channel: jesus, bible_story, motivation,
+prayer, peace, relationships, purpose, spiritual_battles, wisdom, history (Bible & history curiosities),
+everyday_life (career, money, social media, aging, leadership, loneliness, success, family...).
+
+Each idea:
+- one specific story, question, situation or prayer; evergreen; faithful to Scripture; mainstream Christian
+- vary the emotion (courage, love, grief, peace, joy, curiosity, fear, strength, wisdom, hope, gratitude,
+  temptation, forgiveness, purpose) and the story shape (journey, story, curiosity, wisdom, prayer, peace, joy)
+- favour lesser-known Bible people as much as famous ones; avoid these recently used: {", ".join(recent_people) or "none"}
+- a title that would make anyone curious, not only church-goers; no news, politics or controversy
+- 1-3 Scripture references that really contain what the idea rests on (they are checked against the Bible text)
+- only people who are actually named in the Bible; never invent a character, a trade or an event
+- no prosperity promises ("God will make you rich"), no medical claims
+- this pillar is: {PILLAR_NOTES.get(category, category)}
+
+Ideas of this pillar the channel already has, as examples of the quality and shape wanted:
+{examples or "(none)"}
+
+Already covered (don't repeat or closely paraphrase):
+{chr(10).join(f"- {t}" for t in avoid[-150:]) or "- (none)"}"""
+    out = structured(cfg, "You plan YouTube videos.", prompt, NewIdeas, max_tokens=3000)
+    return out.ideas[:n]
+
+
 def ideate_topics(cfg: Config, n: int, avoid: list[str], performance_notes: str = "") -> list[str]:
     """Propose fresh video topics for the channel, skipping ones already covered."""
     ch = cfg.channel
@@ -166,9 +228,13 @@ Format: {"YouTube Shorts (under 60 seconds)" if cfg.format == "short" else f"~{c
 Series: {", ".join(cfg.growth.series) or "(none)"}
 
 Propose {n} specific video topics. Each must:
-- answer "what does this person need to hear right now?" for one recognisable, evergreen struggle
-  (fear, waiting, failure, loneliness, grief, temptation, purpose, forgiveness, anxiety, discipline...)
-  or tell one Bible story, teaching of Jesus, prayer or fascinating Biblical fact
+- come from the channel's whole universe, varied: Jesus (life, teachings, miracles), Bible stories (with
+  lesser-known people as much as famous ones: Deborah, Bartimaeus, Stephen, Barnabas, Lydia, Naomi...),
+  motivation, prayer, peace, relationships, purpose, spiritual battles, Biblical wisdom, Bible & history
+  curiosities, and faith in everyday life (career, money, social media, aging, leadership, loneliness)
+- span the emotions: courage, love, grief, peace, joy, curiosity, wisdom, gratitude, hope, forgiveness
+- often be phrased as a cinematic or curious title that doesn't sound like religious programming
+  ("He Was Forgotten for Years", "Why Did Jesus Write in the Sand?")
 - be grounded in specific Scripture and faithful to it; mainstream, non-denominational Christian teaching
 - be specific (one struggle, one story or one passage, not a broad subject) and phrased the way people search
 - avoid news, politics, controversies, date-setting prophecy, prosperity promises and medical advice
@@ -275,6 +341,68 @@ pray along. Then pray slowly in the first person ("Lord, ...") in short lines wi
 turning to trust as the key Scriptures are woven in word for word (realization, hope), and closing with a
 blessing spoken over the viewer and "Amen" (strength). Moods: struggle -> faith -> realization -> hope -> strength."""
 
+# The other story shapes (an idea's `arc`). Every video makes the viewer feel something, but by
+# different roads, so the channel never settles into "you are struggling -> here is a verse".
+# The `mood` tags still drive pace, music and colour: they describe the energy of each moment.
+STORY_STRUCTURE = """The shape: step inside a Bible story (set each scene's `mood` as noted).
+1. The scene (uncertainty): open in the middle of the moment, present tense, the place and the stakes,
+   as if the viewer is standing there. Don't name the lesson yet. A title that withholds the name works:
+   "He was forgotten for years" before you reveal Joseph.
+2. The tension (struggle): what the person faced, felt, feared. Let it breathe.
+3. The turn (faith -> realization): what they did or what God did, and the Scripture at the heart of it.
+4. The thread to today (hope): one bridge to the viewer's life, "maybe you know what that feels like".
+5. The invitation (strength): what this story asks of us, and one line to carry."""
+
+CURIOSITY_STRUCTURE = """The shape: a question that pulls the viewer in, answered in a way that moves them.
+1. The question (uncertainty): open on the intriguing detail or question ("Nobody knows what Jesus wrote in
+   the sand."). Make them want the answer.
+2. The world behind it (faith): the place, custom, history that makes sense of it, told through what people
+   saw and felt, never as a lecture. Label scholarly views and traditions as such.
+3. The surprising answer (realization): what it reveals, with the Scripture.
+4. Why it matters now (hope -> strength): what it means for how we live or see God. End in wonder, not a quiz."""
+
+WISDOM_STRUCTURE = """The shape: a real-life situation, met by ancient wisdom.
+1. The situation (struggle or uncertainty): a recognisable moment from work, money, friendship, family,
+   ambition, phones, aging... specific and modern, no Bible yet.
+2. The wisdom (faith -> realization): what Scripture (often Proverbs, Ecclesiastes, Jesus' teaching) says,
+   and a short story or example that shows it.
+3. The practice (hope): two or three concrete things to do this week.
+4. The blessing (strength): a closing line or short blessing."""
+
+PEACE_STRUCTURE = """The shape: stillness. A slow, unhurried experience of God's presence.
+Short lines, long pauses (pause_after 2-3 seconds), gentle images. Moods: uncertainty (naming the noise)
+-> faith (settling, breathing) -> realization (the promise, spoken slowly) -> hope -> strength (rest).
+No urgency, no calls to action until a soft last line."""
+
+JOY_STRUCTURE = """The shape: gratitude and joy. Not every video is about pain.
+1. Remember (faith): a specific gift or faithfulness of God, in the Bible and in ordinary life.
+2. Notice (realization): the Scripture that names it.
+3. Celebrate (hope -> strength): invite the viewer to thank God for one specific thing today.
+The energy is warm and bright, building to the end."""
+
+SHORT_SHAPES = {
+    "story": "Shorts version: drop into the moment in the first line (uncertainty), the tension (struggle), "
+    "the turn with the verse (realization), one line connecting it to the viewer (hope/strength).",
+    "curiosity": "Shorts version: the question in the first line (uncertainty), one vivid detail (faith), the "
+    "surprising answer with the verse (realization), why it matters (strength).",
+    "wisdom": "Shorts version: the modern moment (struggle), the ancient line (realization), one thing to do "
+    "today (strength).",
+    "peace": "Shorts version: one slow breath of a video: a few quiet lines and the promise, with long pauses.",
+    "joy": "Shorts version: one thing to remember, the verse, one thing to thank God for today.",
+}
+
+
+def structure_for(shape: str, short: bool, prayer: bool = False) -> str:
+    """The script shape for an idea's arc (see catalog.ARCS)."""
+    if prayer or shape == "prayer":
+        return PRAYER_STRUCTURE
+    if shape == "journey" or shape not in SHORT_SHAPES:
+        return SHORT_STRUCTURE if short else LONG_STRUCTURE
+    full = {"story": STORY_STRUCTURE, "curiosity": CURIOSITY_STRUCTURE, "wisdom": WISDOM_STRUCTURE,
+            "peace": PEACE_STRUCTURE, "joy": JOY_STRUCTURE}[shape]
+    return full + ("\n" + SHORT_SHAPES[shape] if short else "")
+
+
 SCRIPT_GUIDE = """Write the complete script for a faceless Christian YouTube video on {name}.
 
 Channel: {name} -- {niche}
@@ -287,8 +415,9 @@ Target narration length: about {words} words in total across all scenes.
 The creative principle: don't just tell them about faith, make them feel faith. This is an experience of
 faith, not a lesson about it. Someone tired, lost, afraid, discouraged or lonely should finish the video
 thinking "I needed to hear this", "God has not forgotten me", "I am not alone", "I can keep going",
-"there is still hope". Follow the emotional journey struggle -> uncertainty -> faith -> realization -> hope
--> strength, never fact -> explanation -> conclusion.
+"there is still hope", or simply moved, curious, grateful or at peace. The channel has emotional range:
+courage, love, grief, peace, joy, curiosity, wisdom, gratitude, hope. Follow the story shape below, never
+fact -> explanation -> conclusion.
 
 {structure}
 
@@ -312,7 +441,8 @@ Scene templates (field names in brackets). Most scenes should be pictures with t
 - timeline, list, comparison, stat, bars: avoid. They feel like a lesson.
 
 Every scene:
-- mood: its stage in the journey (struggle, uncertainty, faith, realization, hope or strength), in order.
+- mood: the energy of the moment (struggle, uncertainty, faith, realization, hope or strength), as the
+  shape above sets out; it drives the voice's pace, the music and the colour of the picture.
 - pause_after: seconds of silence after it (0.5-1 normally, 1.5-3 after a line that should land).
 - broll_query: a concrete, filmable stock-footage search that carries the feeling, 2-4 words. Think
   cinematic and immersive: storm clouds, rain on a window at night, a lone figure walking in the rain, a
@@ -334,9 +464,11 @@ Rules:
   events. Mainstream Christian teaching; no politics, prosperity promises, guilt, fear tactics or medical advice.
 - End on strength: the line they carry, then (only in long videos) one gentle invitation to subscribe
   or pray along.
-- Title max 70 characters: speak to the feeling ("God Has Not Forgotten You", "When You're Tired of Being
-  Strong"). The description is 2 short, warm paragraphs, then the key Scriptures (references), then a
-  one-line prayer. No hashtag spam.
+- Title max 70 characters, like a cinematic story or a question people would click even if they never
+  watch Christian videos: "Don't Quit in the Middle of the Story", "He Was Forgotten for Years",
+  "The Man Who Couldn't Forgive Himself", "Why Did Jesus Write in the Sand?". The Bible connection is
+  revealed inside the video. Never "Biblical Motivation for..." or "Bible Verse About...". The description
+  is 2 short, warm paragraphs, then the key Scriptures (references), then a one-line prayer. No hashtag spam.
 - List the sources you relied on (the Bible references count as sources).
 """
 
@@ -364,6 +496,7 @@ def write_script(
     images: str = "",
     feedback: str = "",
     prayer: bool = False,
+    shape: str = "journey",
 ) -> Script:
     ch = cfg.channel
     if cfg.format == "short":
@@ -372,10 +505,7 @@ def write_script(
     else:
         format_line = f"horizontal 16:9 video, about {cfg.target_minutes:g} minutes"
         words = cfg.target_words
-    if prayer:
-        structure = PRAYER_STRUCTURE
-    else:
-        structure = SHORT_STRUCTURE if cfg.format == "short" else LONG_STRUCTURE
+    structure = structure_for(shape, cfg.format == "short", prayer)
     guide = (SCRIPT_GUIDE + (WIKI_GUIDE if from_wikipedia else "")).format(
         name=ch.name,
         niche=ch.niche,

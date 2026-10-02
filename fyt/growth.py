@@ -39,9 +39,11 @@ Audience: {audience}
 Format: {format}
 
 Titles:
-- max 70 characters, honest and specific; speak to the feeling, like a message for the one person who needs
-  it ("God Has Not Forgotten You", "If You're Tired of Being Strong, Watch This", "When God Feels Silent")
-- the viewer should recognise themselves; the video must really deliver it. Never sound like a lesson or a
+- max 70 characters, honest and specific: a cinematic story line, a feeling, or a question anyone would
+  click, even someone who never watches Christian videos ("Don't Quit in the Middle of the Story",
+  "He Was Forgotten for Years", "Why Did Jesus Write in the Sand?", "God Has Not Forgotten You")
+- let the video reveal the Bible connection; don't open the title with "Biblical", "Bible Verse" or
+  "Christian". The video must really deliver what the title promises. Never sound like a lesson or a
   documentary ("Explained", "The History of", "Facts About")
 - no fear-mongering, no "God is warning you", no "skip this and...", no ALL CAPS words except one short one
   at most, no emoji

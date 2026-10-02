@@ -93,3 +93,23 @@ Following the creative direction "don't just tell them about faith, make them fe
 - Shorts no longer end on a "loop" line that repeats the hook; they end on strength and the closing card.
 - Off-brand stock results (brand logos, caps, parties, neon...) are skipped (`stock_skip_words`).
 - The closing card fully covers the last scene's text.
+
+## The content universe
+
+- 11 pillars instead of 5 categories: Jesus, Bible stories, motivation, prayer, peace, relationships,
+  purpose, spiritual battles, wisdom, Bible & history, faith in everyday life (`catalog.mix`).
+- The idea bank grew from 144 to 219, re-filed into the pillars and tagged with an emotion, a Bible
+  character and a story shape. The new ideas lean on lesser-known people (Deborah, Bartimaeus, Stephen,
+  Barnabas, Lydia, Naomi, Abigail, Caleb...), curiosity topics (*Why Did Jesus Write in the Sand?*),
+  practical wisdom (*What Proverbs Says About Money*) and everyday life (*When Scrolling Makes You Feel
+  Behind*). Every reference was checked against the Bible text.
+- Seven story shapes (journey, story, curiosity, wisdom, prayer, peace, joy), each with its own script
+  structure, so videos stop following "struggle -> verse" every time. Story and curiosity videos get the
+  whole Bible chapter as background so details stay true to the text.
+- Titles are cinematic or curious, revealing the Bible connection inside the video.
+- The picker avoids repeating the same person, feeling or shape back to back.
+- The weekly plan gives each morning a different pillar; Friday's long video follows the mix.
+- When a pillar runs low, the model writes new ideas in the same shape (free), keeping only ones whose
+  Scripture exists; they are stored in `jobs/state.db` so GitHub keeps them.
+- Empty narration from the model no longer fails a video: a Scripture scene reads its verse, other
+  empty scenes are dropped.

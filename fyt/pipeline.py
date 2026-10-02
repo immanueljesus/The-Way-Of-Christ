@@ -32,6 +32,21 @@ def make_video(
     return job
 
 
+def repair_script(script: Script) -> Script:
+    """Free models sometimes leave a scene's narration empty. A Scripture scene then reads its verse
+    aloud; any other empty scene is dropped (QA would reject the whole video for it)."""
+    scenes = []
+    for s in script.scenes:
+        if s.narration.strip():
+            scenes.append(s)
+        elif s.type == "quote" and s.text:
+            scenes.append(s.model_copy(update={"narration": s.text}))
+    if len(scenes) == len(script.scenes) or not scenes:
+        return script
+    print(f"repaired the script: {len(script.scenes) - len(scenes)} empty scene(s) dropped")
+    return script.model_copy(update={"scenes": scenes})
+
+
 def research_notes(cfg: Config, job: Job, topic: str) -> tuple[str, str, "wiki.Article | None", list, "catalog.Idea | None", dict]:
     """Scripture research for a topic: (subject, notes, Wikipedia article, article images, catalog idea, passages).
     Notes start with the exact text of every Bible passage involved (see fyt/scripture.py)."""
@@ -70,7 +85,20 @@ def research_notes(cfg: Config, job: Job, topic: str) -> tuple[str, str, "wiki.A
     )
     if passages:
         log(job, f"fetched {len(passages)} Scripture passages ({cfg.scripture.translation})")
-    notes = (scripture.notes(passages) + "\n\n" + notes).strip()
+    # Stories and curiosities need the whole Bible scene, so the details stay true to the text:
+    # the chapter around the idea's first passage, as background (only the verses above are quoted).
+    context = ""
+    if idea and idea.shape in ("story", "curiosity") and refs and article is None:
+        m = scripture.REFERENCE.match(refs[0])
+        chapter = f"{m[1]} {m[2]}" if m else ""
+        try:
+            whole = scripture.fetch(cfg, chapter) if chapter else None
+        except Exception as e:
+            log(job, f"warning: no chapter context: {e}")
+            whole = None
+        if whole:
+            context = f"\n\n## The story as the Bible tells it ({chapter}; background, do not invent beyond it)\n{whole.text[:5000]}"
+    notes = (scripture.notes(passages) + "\n\n" + notes + context).strip()
     return subject, notes, article, images, idea, passages
 
 
@@ -84,7 +112,10 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
         log(job, "writing script")
         menu = wiki.image_menu(images)
         prayer = bool(idea and idea.category == "prayer")
-        script = llm.write_script(cfg, subject, notes, from_wikipedia=article is not None, images=menu, prayer=prayer)
+        shape = idea.shape if idea else "journey"
+        script = llm.write_script(
+            cfg, subject, notes, from_wikipedia=article is not None, images=menu, prayer=prayer, shape=shape
+        )
         limit = llm.short_words(cfg) * 1.25 if cfg.format == "short" else None
         if limit and narration_words(script) > limit:
             log(job, f"script is {narration_words(script)} words; asking for a shorter one")
@@ -93,8 +124,10 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
                 f"This is a Short: keep the total narration under {llm.short_words(cfg)} words."
             )
             script = llm.write_script(
-                cfg, subject, notes, from_wikipedia=article is not None, images=menu, feedback=feedback, prayer=prayer
+                cfg, subject, notes, from_wikipedia=article is not None, images=menu, feedback=feedback, prayer=prayer,
+                shape=shape,
             )
+        script = repair_script(script)
         if article:
             script = wiki_attribute(script, article)
     if polish and cfg.growth.polish:
@@ -375,8 +408,14 @@ def queue_cuts(cfg: Config, script: Script, video_id: str) -> None:
 
 
 def catalog_topic(cfg: Config, topics: Topics, category: str | None = None) -> tuple[int, str] | None:
-    """The next idea from the curated list, queued and returned."""
-    idea = catalog.pick(cfg, set(topics.titles()), category=category)
+    """The next idea from the curated list, queued and returned. Tops the list up first when it runs low."""
+    used = set(topics.titles())
+    if cfg.catalog.ideate_when_empty:
+        try:
+            catalog.top_up(cfg, used, category, topics.recent(12))
+        except Exception as e:  # the curated list still works without new ideas
+            print(f"warning: could not add new ideas: {e}")
+    idea = catalog.pick(cfg, used, category=category, recent=topics.recent(8))
     if idea is None:
         return None
     topics.add([idea.topic])

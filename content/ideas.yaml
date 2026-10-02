@@ -9,9 +9,16 @@
 #   id          unique, lowercase-with-dashes. Used as the topic "idea:<id>". Never reuse or rename
 #               an id after its video is made (the queue remembers ids).
 #   title       working title (the script step writes the final one)
-#   category    motivational | bible_story | prayer | jesus | facts   (the content mix)
-#   pillar      Jesus, Bible, Prayer, Motivation, Hope, Faith, Wisdom, Spiritual struggle,
-#               Transformation, Peace, Bible stories, Did you know
+#   category    the pillar that sets the content mix (catalog.mix in channel.yaml):
+#               jesus | bible_story | motivation | prayer | peace | relationships | purpose |
+#               spiritual_battles | wisdom | history | everyday_life
+#   emotion     what the viewer should feel: courage, love, grief, peace, joy, curiosity, fear,
+#               strength, wisdom, hope, gratitude, temptation, forgiveness, purpose
+#   character   the Bible person at the centre, if any (the picker avoids repeating them back to back)
+#   arc         the story shape: journey (struggle -> strength), story (step inside a Bible story),
+#               curiosity (a question -> a surprising answer), wisdom (life situation -> ancient
+#               wisdom -> practice), prayer, peace (stillness), joy (gratitude and celebration)
+#   pillar      a finer label (free text)
 #   series      playlist the video is filed under (see growth.series)
 #   formats     short (20-60 s), medium (2-6 min), long (8-15 min), sleep (20-40 min)
 #   scriptures  the passages the video rests on. Their exact text is fetched before the script is
@@ -22,10 +29,13 @@
 # Add ideas any time; `python -m fyt ideas` shows the counts, `python -m fyt topics next` queues some.
 
 ideas:
-  # ---------------------------------------------------------------- motivational (40%)
+  # ---------------------------------------------------------------- hurting seasons (motivation, peace, purpose, relationships...)
   - id: when-you-feel-forgotten
     title: "When You Feel Forgotten"
-    category: motivational
+    category: motivation
+    emotion: hope
+    character: "Joseph"
+    arc: journey
     pillar: Hope
     series: When You Feel...
     formats: [short, medium, long]
@@ -35,7 +45,10 @@ ideas:
 
   - id: when-you-feel-like-giving-up
     title: "When You Feel Like Giving Up"
-    category: motivational
+    category: motivation
+    emotion: strength
+    character: "Elijah"
+    arc: journey
     pillar: Motivation
     series: When You Feel...
     formats: [short, medium, long]
@@ -45,7 +58,9 @@ ideas:
 
   - id: when-you-feel-alone
     title: "When You Feel Alone"
-    category: motivational
+    category: peace
+    emotion: hope
+    arc: journey
     pillar: Hope
     series: When You Feel...
     formats: [short, medium, long]
@@ -54,7 +69,9 @@ ideas:
 
   - id: when-youre-afraid
     title: "When You're Afraid"
-    category: motivational
+    category: spiritual_battles
+    emotion: fear
+    arc: journey
     pillar: Faith
     series: When You Feel...
     formats: [short, medium, long]
@@ -63,7 +80,10 @@ ideas:
 
   - id: when-you-dont-know-what-to-do
     title: "When You Don't Know What To Do"
-    category: motivational
+    category: wisdom
+    emotion: wisdom
+    character: "Jehoshaphat"
+    arc: wisdom
     pillar: Wisdom
     series: When You Feel...
     formats: [short, medium]
@@ -72,7 +92,10 @@ ideas:
 
   - id: when-youve-failed
     title: "When You've Failed"
-    category: motivational
+    category: motivation
+    emotion: forgiveness
+    character: "Peter"
+    arc: journey
     pillar: Transformation
     series: When You Feel...
     formats: [short, medium, long]
@@ -82,7 +105,10 @@ ideas:
 
   - id: when-someone-betrays-you
     title: "When Someone Betrays You"
-    category: motivational
+    category: relationships
+    emotion: forgiveness
+    character: "Joseph"
+    arc: journey
     pillar: Spiritual struggle
     series: When You Feel...
     formats: [short, medium, long]
@@ -91,7 +117,9 @@ ideas:
 
   - id: when-youre-waiting-for-an-answer
     title: "When You're Waiting for an Answer"
-    category: motivational
+    category: purpose
+    emotion: hope
+    arc: journey
     pillar: Faith
     series: When You Feel...
     formats: [short, medium, long]
@@ -100,7 +128,10 @@ ideas:
 
   - id: when-you-feel-unworthy
     title: "When You Feel Unworthy"
-    category: motivational
+    category: motivation
+    emotion: love
+    character: "The prodigal son"
+    arc: journey
     pillar: Transformation
     series: When You Feel...
     formats: [short, medium, long]
@@ -109,7 +140,9 @@ ideas:
 
   - id: when-life-doesnt-make-sense
     title: "When Life Doesn't Make Sense"
-    category: motivational
+    category: purpose
+    emotion: hope
+    arc: journey
     pillar: Faith
     series: When You Feel...
     formats: [short, medium, long]
@@ -118,7 +151,10 @@ ideas:
 
   - id: when-god-seems-silent
     title: "When God Seems Silent"
-    category: motivational
+    category: spiritual_battles
+    emotion: hope
+    character: "David"
+    arc: journey
     pillar: Faith
     series: When You Feel...
     formats: [short, medium, long, sleep]
@@ -127,7 +163,10 @@ ideas:
 
   - id: why-god-makes-you-wait
     title: "Why God Sometimes Makes You Wait"
-    category: motivational
+    category: purpose
+    emotion: purpose
+    character: "Abraham"
+    arc: story
     pillar: Faith
     series: Lessons From...
     formats: [medium, long]
@@ -137,7 +176,9 @@ ideas:
 
   - id: when-you-didnt-get-the-job
     title: "When You Didn't Get the Job"
-    category: motivational
+    category: everyday_life
+    emotion: hope
+    arc: journey
     pillar: Wisdom
     series: When You Feel...
     formats: [short, medium]
@@ -146,7 +187,9 @@ ideas:
 
   - id: gods-timing-vs-your-timeline
     title: "God's Timing vs Your Timeline"
-    category: motivational
+    category: purpose
+    emotion: peace
+    arc: wisdom
     pillar: Faith
     formats: [short, medium, long]
     scriptures: [Ecclesiastes 3:1, 2 Peter 3:8-9, Galatians 4:4]
@@ -154,7 +197,10 @@ ideas:
 
   - id: dont-compare-your-life
     title: "Don't Compare Your Life to Others"
-    category: motivational
+    category: everyday_life
+    emotion: wisdom
+    character: "Peter"
+    arc: wisdom
     pillar: Wisdom
     formats: [short, medium]
     scriptures: [John 21:21-22, Galatians 6:4-5, Psalm 139:14]
@@ -162,7 +208,10 @@ ideas:
 
   - id: working-hard-when-nobody-notices
     title: "Working Hard When Nobody Notices"
-    category: motivational
+    category: everyday_life
+    emotion: purpose
+    character: "David"
+    arc: journey
     pillar: Motivation
     formats: [short, medium, long]
     scriptures: [1 Samuel 16:11, Colossians 3:23-24, Matthew 6:4]
@@ -171,7 +220,9 @@ ideas:
 
   - id: when-someone-walks-away
     title: "When Someone Walks Away"
-    category: motivational
+    category: relationships
+    emotion: grief
+    arc: journey
     pillar: Hope
     series: When You Feel...
     formats: [short, medium]
@@ -180,7 +231,10 @@ ideas:
 
   - id: learning-to-forgive
     title: "Why Forgiveness Is So Difficult"
-    category: motivational
+    category: relationships
+    emotion: forgiveness
+    character: "Peter"
+    arc: wisdom
     pillar: Spiritual struggle
     formats: [short, medium, long]
     scriptures: [Matthew 18:21-22, Ephesians 4:32, Colossians 3:13]
@@ -188,7 +242,9 @@ ideas:
 
   - id: when-your-heart-is-broken
     title: "When Your Heart Is Broken"
-    category: motivational
+    category: relationships
+    emotion: grief
+    arc: journey
     pillar: Hope
     series: When You Feel...
     formats: [short, medium, long]
@@ -197,7 +253,9 @@ ideas:
 
   - id: loving-people-who-hurt-you
     title: "Loving People Who Hurt You"
-    category: motivational
+    category: relationships
+    emotion: love
+    arc: wisdom
     pillar: Spiritual struggle
     formats: [short, medium]
     scriptures: [Luke 6:27-28, Romans 12:17-21, Matthew 5:44]
@@ -205,7 +263,10 @@ ideas:
 
   - id: ashamed-of-your-past
     title: "When You're Ashamed of Your Past"
-    category: motivational
+    category: spiritual_battles
+    emotion: forgiveness
+    character: "Paul"
+    arc: journey
     pillar: Transformation
     series: When You Feel...
     formats: [short, medium, long]
@@ -215,7 +276,9 @@ ideas:
 
   - id: afraid-of-the-future
     title: "When You're Afraid of the Future"
-    category: motivational
+    category: peace
+    emotion: fear
+    arc: journey
     pillar: Peace
     series: When You Feel...
     formats: [short, medium]
@@ -224,7 +287,10 @@ ideas:
 
   - id: when-you-cant-stop-overthinking
     title: "When You Can't Stop Overthinking"
-    category: motivational
+    category: peace
+    emotion: peace
+    character: "Paul"
+    arc: peace
     pillar: Peace
     series: When You Feel...
     formats: [short, medium]
@@ -233,7 +299,9 @@ ideas:
 
   - id: when-you-feel-lost
     title: "When You Feel Lost"
-    category: motivational
+    category: purpose
+    emotion: hope
+    arc: journey
     pillar: Hope
     series: When You Feel...
     formats: [short, medium]
@@ -242,7 +310,9 @@ ideas:
 
   - id: when-anxiety-wont-leave
     title: "When Anxiety Won't Leave You Alone"
-    category: motivational
+    category: peace
+    emotion: peace
+    arc: peace
     pillar: Peace
     series: When You Feel...
     formats: [short, medium, long]
@@ -251,7 +321,10 @@ ideas:
 
   - id: when-grief-is-heavy
     title: "When Grief Is Heavy"
-    category: motivational
+    category: relationships
+    emotion: grief
+    character: "Lazarus"
+    arc: journey
     pillar: Hope
     series: When You Feel...
     formats: [short, medium, long]
@@ -260,7 +333,9 @@ ideas:
 
   - id: when-youre-exhausted
     title: "When You're Exhausted"
-    category: motivational
+    category: peace
+    emotion: peace
+    arc: peace
     pillar: Peace
     series: When You Feel...
     formats: [short, medium, long]
@@ -269,7 +344,10 @@ ideas:
 
   - id: when-youre-tempted
     title: "When You're Tempted"
-    category: motivational
+    category: spiritual_battles
+    emotion: temptation
+    character: "Jesus"
+    arc: journey
     pillar: Spiritual struggle
     formats: [short, medium, long]
     scriptures: [1 Corinthians 10:13, James 1:12-14, Matthew 4:1-4]
@@ -277,7 +355,9 @@ ideas:
 
   - id: when-anger-rises
     title: "What the Bible Says When Anger Rises"
-    category: motivational
+    category: spiritual_battles
+    emotion: wisdom
+    arc: wisdom
     pillar: Spiritual struggle
     formats: [short, medium]
     scriptures: [Ephesians 4:26-27, James 1:19-20, Proverbs 15:1]
@@ -285,7 +365,10 @@ ideas:
 
   - id: when-you-doubt
     title: "When You Doubt"
-    category: motivational
+    category: spiritual_battles
+    emotion: hope
+    character: "Thomas"
+    arc: journey
     pillar: Faith
     series: When You Feel...
     formats: [short, medium, long]
@@ -294,7 +377,10 @@ ideas:
 
   - id: discipline-when-motivation-fades
     title: "Discipline When Motivation Fades"
-    category: motivational
+    category: motivation
+    emotion: strength
+    character: "Paul"
+    arc: wisdom
     pillar: Motivation
     formats: [short, medium, long]
     scriptures: [1 Corinthians 9:24-27, Hebrews 12:11, Proverbs 6:6-8]
@@ -302,7 +388,9 @@ ideas:
 
   - id: courage-to-start-again
     title: "The Courage to Start Again"
-    category: motivational
+    category: motivation
+    emotion: courage
+    arc: journey
     pillar: Transformation
     formats: [short, medium, long]
     scriptures: [Lamentations 3:22-23, Philippians 3:13-14, Isaiah 43:19]
@@ -310,7 +398,10 @@ ideas:
 
   - id: when-you-feel-small
     title: "When You Feel Too Small for the Battle"
-    category: motivational
+    category: motivation
+    emotion: courage
+    character: "David"
+    arc: story
     pillar: Motivation
     formats: [short, medium, long]
     scriptures: [1 Samuel 17:45-47, 1 Samuel 16:7, Zechariah 4:10]
@@ -319,7 +410,10 @@ ideas:
 
   - id: your-difficult-chapter
     title: "Your Difficult Chapter Isn't Your Final Chapter"
-    category: motivational
+    category: motivation
+    emotion: hope
+    character: "Joseph"
+    arc: journey
     pillar: Hope
     formats: [short, medium, long]
     scriptures: [Genesis 50:20, Job 42:10, Romans 8:18]
@@ -327,7 +421,9 @@ ideas:
 
   - id: when-money-is-tight
     title: "When Money Is Tight"
-    category: motivational
+    category: everyday_life
+    emotion: peace
+    arc: wisdom
     pillar: Wisdom
     formats: [short, medium]
     scriptures: [Matthew 6:31-33, Philippians 4:19, Hebrews 13:5]
@@ -335,7 +431,10 @@ ideas:
 
   - id: when-you-feel-rejected
     title: "When You Feel Rejected"
-    category: motivational
+    category: relationships
+    emotion: love
+    character: "Jesus"
+    arc: journey
     pillar: Hope
     series: When You Feel...
     formats: [short, medium]
@@ -344,7 +443,10 @@ ideas:
 
   - id: when-your-family-is-hurting
     title: "When Your Family Is Falling Apart"
-    category: motivational
+    category: relationships
+    emotion: forgiveness
+    character: "Joseph"
+    arc: story
     pillar: Hope
     formats: [medium, long]
     scriptures: [Genesis 45:4-5, Psalm 68:6, Colossians 3:13]
@@ -353,7 +455,10 @@ ideas:
 
   - id: when-youre-waiting-for-healing
     title: "When You're Waiting for Healing"
-    category: motivational
+    category: peace
+    emotion: hope
+    character: "Paul"
+    arc: journey
     pillar: Faith
     formats: [short, medium]
     scriptures: [2 Corinthians 12:9, Psalm 41:3, Mark 5:34]
@@ -361,7 +466,10 @@ ideas:
 
   - id: does-your-life-matter
     title: "When You Wonder If Your Life Matters"
-    category: motivational
+    category: purpose
+    emotion: purpose
+    character: "Esther"
+    arc: journey
     pillar: Transformation
     formats: [short, medium, long]
     scriptures: [Ephesians 2:10, Jeremiah 1:5, Esther 4:14]
@@ -369,7 +477,9 @@ ideas:
 
   - id: why-god-uses-ordinary-people
     title: "Why God Uses Ordinary People"
-    category: motivational
+    category: purpose
+    emotion: purpose
+    arc: story
     pillar: Transformation
     formats: [short, medium, long]
     scriptures: [1 Corinthians 1:27, Amos 7:14-15, Acts 4:13]
@@ -377,7 +487,10 @@ ideas:
 
   - id: when-you-feel-behind
     title: "When You Feel Behind in Life"
-    category: motivational
+    category: purpose
+    emotion: hope
+    character: "Moses"
+    arc: journey
     pillar: Hope
     series: When You Feel...
     formats: [short, medium]
@@ -386,7 +499,10 @@ ideas:
 
   - id: start-your-day-with-courage
     title: "Start Your Day With Courage"
-    category: motivational
+    category: motivation
+    emotion: courage
+    character: "Joshua"
+    arc: journey
     pillar: Motivation
     series: Start Your Day With God
     formats: [short, medium]
@@ -395,7 +511,9 @@ ideas:
 
   - id: give-god-your-plans-today
     title: "Give God Your Plans Today"
-    category: motivational
+    category: wisdom
+    emotion: wisdom
+    arc: wisdom
     pillar: Wisdom
     series: Start Your Day With God
     formats: [short, medium]
@@ -404,7 +522,9 @@ ideas:
 
   - id: when-you-cant-forgive-yourself
     title: "When You Can't Forgive Yourself"
-    category: motivational
+    category: spiritual_battles
+    emotion: forgiveness
+    arc: journey
     pillar: Transformation
     series: When You Feel...
     formats: [short, medium, long]
@@ -413,7 +533,10 @@ ideas:
 
   - id: strength-for-today
     title: "Strength for Today"
-    category: motivational
+    category: motivation
+    emotion: strength
+    character: "Paul"
+    arc: journey
     pillar: Motivation
     series: Start Your Day With God
     formats: [short, medium]
@@ -422,7 +545,9 @@ ideas:
 
   - id: when-you-feel-stuck
     title: "When You Feel Stuck in the Wilderness"
-    category: motivational
+    category: purpose
+    emotion: hope
+    arc: journey
     pillar: Faith
     series: When You Feel...
     formats: [short, medium, long]
@@ -431,7 +556,10 @@ ideas:
 
   - id: when-others-succeed
     title: "When Everyone Else Seems to Succeed"
-    category: motivational
+    category: wisdom
+    emotion: wisdom
+    character: "Asaph"
+    arc: wisdom
     pillar: Wisdom
     formats: [short, medium]
     scriptures: [Psalm 73:2-3, Psalm 73:16-17, Psalm 73:26]
@@ -439,7 +567,10 @@ ideas:
 
   - id: when-you-are-overwhelmed
     title: "When You Are Overwhelmed"
-    category: motivational
+    category: peace
+    emotion: peace
+    character: "David"
+    arc: peace
     pillar: Peace
     series: When You Feel...
     formats: [short, medium, long]
@@ -450,6 +581,9 @@ ideas:
   - id: joseph-pit-to-palace
     title: "Joseph: From the Pit to the Palace"
     category: bible_story
+    emotion: hope
+    character: "Joseph"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [medium, long, sleep]
@@ -460,6 +594,9 @@ ideas:
   - id: david-anointed-among-sheep
     title: "David Was Anointed While Still Tending Sheep"
     category: bible_story
+    emotion: purpose
+    character: "David"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [short, medium]
@@ -470,6 +607,9 @@ ideas:
   - id: david-when-everyone-turned
     title: "What David Did When Everyone Turned Against Him"
     category: bible_story
+    emotion: strength
+    character: "David"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [medium, long]
@@ -480,6 +620,9 @@ ideas:
   - id: david-and-goliath
     title: "David and Goliath, the Whole Story"
     category: bible_story
+    emotion: courage
+    character: "David"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [medium, long]
@@ -490,6 +633,9 @@ ideas:
   - id: moses-burning-bush
     title: "Moses Had Every Excuse"
     category: bible_story
+    emotion: courage
+    character: "Moses"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [short, medium]
@@ -500,6 +646,9 @@ ideas:
   - id: moses-red-sea
     title: "When There's No Way Forward (The Red Sea)"
     category: bible_story
+    emotion: fear
+    character: "Moses"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [short, medium, long]
@@ -510,6 +659,9 @@ ideas:
   - id: moses-whole-story
     title: "The Life of Moses"
     category: bible_story
+    emotion: purpose
+    character: "Moses"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [long, sleep]
@@ -520,6 +672,9 @@ ideas:
   - id: peter-failure-restoration
     title: "The Life of Peter: Failure, Restoration and Faith"
     category: bible_story
+    emotion: forgiveness
+    character: "Peter"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [medium, long, sleep]
@@ -530,6 +685,9 @@ ideas:
   - id: peter-walks-on-water
     title: "Peter Walked on Water, Then Sank"
     category: bible_story
+    emotion: fear
+    character: "Peter"
+    arc: story
     pillar: Faith
     series: Lessons From...
     formats: [short, medium]
@@ -540,6 +698,9 @@ ideas:
   - id: paul-joy-in-prison
     title: "Paul Wrote About Joy From Prison"
     category: bible_story
+    emotion: joy
+    character: "Paul"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [short, medium, long]
@@ -550,6 +711,9 @@ ideas:
   - id: paul-damascus-road
     title: "The Man Who Hunted Christians"
     category: bible_story
+    emotion: forgiveness
+    character: "Paul"
+    arc: story
     pillar: Transformation
     series: Lessons From...
     formats: [short, medium, long]
@@ -560,6 +724,9 @@ ideas:
   - id: esther-for-such-a-time
     title: "For Such a Time as This"
     category: bible_story
+    emotion: courage
+    character: "Esther"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [short, medium, long]
@@ -570,6 +737,9 @@ ideas:
   - id: ruth-loyalty
     title: "Ruth: Loyalty in the Hardest Season"
     category: bible_story
+    emotion: love
+    character: "Ruth"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [medium, long]
@@ -580,6 +750,9 @@ ideas:
   - id: job-why-good-people-suffer
     title: "When Good People Suffer: The Story of Job"
     category: bible_story
+    emotion: grief
+    character: "Job"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [long, sleep]
@@ -590,6 +763,9 @@ ideas:
   - id: daniel-lions-den
     title: "Daniel Kept Praying"
     category: bible_story
+    emotion: courage
+    character: "Daniel"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [short, medium]
@@ -600,6 +776,9 @@ ideas:
   - id: fiery-furnace
     title: "Even If He Does Not"
     category: bible_story
+    emotion: courage
+    character: "Shadrach, Meshach and Abednego"
+    arc: story
     pillar: Faith
     series: Lessons From...
     formats: [short, medium]
@@ -610,6 +789,9 @@ ideas:
   - id: elijah-broom-tree
     title: "The Prophet Who Wanted to Quit"
     category: bible_story
+    emotion: strength
+    character: "Elijah"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [short, medium, long]
@@ -620,6 +802,9 @@ ideas:
   - id: jonah-running
     title: "Jonah Ran the Other Way"
     category: bible_story
+    emotion: forgiveness
+    character: "Jonah"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [short, medium]
@@ -630,6 +815,9 @@ ideas:
   - id: nehemiah-rebuilding
     title: "Rebuilding the Broken Walls"
     category: bible_story
+    emotion: strength
+    character: "Nehemiah"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [medium, long]
@@ -640,6 +828,9 @@ ideas:
   - id: noah-faith-before-rain
     title: "Noah Built Before It Rained"
     category: bible_story
+    emotion: courage
+    character: "Noah"
+    arc: story
     pillar: Faith
     series: Lessons From...
     formats: [short, medium]
@@ -650,6 +841,9 @@ ideas:
   - id: abraham-mount-moriah
     title: "God Will Provide"
     category: bible_story
+    emotion: hope
+    character: "Abraham"
+    arc: story
     pillar: Faith
     series: Lessons From...
     formats: [medium, long]
@@ -660,6 +854,9 @@ ideas:
   - id: jacob-wrestling
     title: "The Night Jacob Wrestled With God"
     category: bible_story
+    emotion: strength
+    character: "Jacob"
+    arc: story
     pillar: Transformation
     series: Lessons From...
     formats: [short, medium]
@@ -670,6 +867,9 @@ ideas:
   - id: gideon-least-of-the-least
     title: "God Called the Weakest Man in the Weakest Clan"
     category: bible_story
+    emotion: courage
+    character: "Gideon"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [short, medium]
@@ -680,6 +880,9 @@ ideas:
   - id: samson-second-chance
     title: "Samson's Last Prayer"
     category: bible_story
+    emotion: forgiveness
+    character: "Samson"
+    arc: story
     pillar: Transformation
     series: Lessons From...
     formats: [short, medium]
@@ -690,6 +893,9 @@ ideas:
   - id: hannah-prayer
     title: "Hannah Poured Out Her Soul"
     category: bible_story
+    emotion: hope
+    character: "Hannah"
+    arc: story
     pillar: Prayer
     series: Lessons From...
     formats: [short, medium]
@@ -700,6 +906,9 @@ ideas:
   - id: joshua-jericho
     title: "The Walls of Jericho"
     category: bible_story
+    emotion: courage
+    character: "Joshua"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [short, medium]
@@ -709,7 +918,10 @@ ideas:
 
   - id: solomon-asked-for-wisdom
     title: "What Solomon Asked For"
-    category: bible_story
+    category: wisdom
+    emotion: wisdom
+    character: "Solomon"
+    arc: story
     pillar: Wisdom
     series: Lessons From...
     formats: [short, medium]
@@ -720,6 +932,9 @@ ideas:
   - id: elisha-eyes-opened
     title: "Those Who Are With Us Are More"
     category: bible_story
+    emotion: courage
+    character: "Elisha"
+    arc: story
     pillar: Faith
     series: Lessons From...
     formats: [short, medium]
@@ -730,6 +945,9 @@ ideas:
   - id: zacchaeus
     title: "The Man Who Climbed a Tree to See Jesus"
     category: bible_story
+    emotion: joy
+    character: "Zacchaeus"
+    arc: story
     pillar: Transformation
     series: Lessons From...
     formats: [short, medium]
@@ -739,7 +957,10 @@ ideas:
 
   - id: lazarus
     title: "Jesus Waited Two More Days"
-    category: bible_story
+    category: jesus
+    emotion: grief
+    character: "Lazarus"
+    arc: story
     pillar: Jesus
     series: Lessons From...
     formats: [short, medium, long]
@@ -749,7 +970,10 @@ ideas:
 
   - id: woman-at-the-well
     title: "The Woman at the Well"
-    category: bible_story
+    category: jesus
+    emotion: love
+    character: "The Samaritan woman"
+    arc: story
     pillar: Jesus
     series: Lessons From...
     formats: [short, medium]
@@ -759,7 +983,10 @@ ideas:
 
   - id: last-24-hours-of-jesus
     title: "The Last 24 Hours of Jesus' Life"
-    category: bible_story
+    category: jesus
+    emotion: love
+    character: "Jesus"
+    arc: story
     pillar: Jesus
     series: Lessons From...
     formats: [long, sleep]
@@ -769,7 +996,10 @@ ideas:
 
   - id: resurrection-morning
     title: "The Morning Everything Changed"
-    category: bible_story
+    category: jesus
+    emotion: joy
+    character: "Mary Magdalene"
+    arc: story
     pillar: Jesus
     series: Lessons From...
     formats: [short, medium, long]
@@ -780,6 +1010,9 @@ ideas:
   - id: doubting-thomas
     title: "Jesus Came Back for Thomas"
     category: bible_story
+    emotion: hope
+    character: "Thomas"
+    arc: story
     pillar: Faith
     series: Lessons From...
     formats: [short, medium]
@@ -789,7 +1022,10 @@ ideas:
 
   - id: joseph-forgives
     title: "Joseph Forgave the Brothers Who Sold Him"
-    category: bible_story
+    category: relationships
+    emotion: forgiveness
+    character: "Joseph"
+    arc: story
     pillar: Spiritual struggle
     series: Lessons From...
     formats: [short, medium]
@@ -799,7 +1035,9 @@ ideas:
 
   - id: creation-story-sleep
     title: "In the Beginning: The Creation Story Before Sleep"
-    category: bible_story
+    category: peace
+    emotion: peace
+    arc: peace
     pillar: Bible stories
     series: Before You Sleep
     formats: [long, sleep]
@@ -810,6 +1048,9 @@ ideas:
   - id: pentecost
     title: "The Day the Church Was Born"
     category: bible_story
+    emotion: joy
+    character: "Peter"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [short, medium]
@@ -820,6 +1061,9 @@ ideas:
   - id: story-of-david-sleep
     title: "The Story of David, Shepherd to King"
     category: bible_story
+    emotion: peace
+    character: "David"
+    arc: story
     pillar: Bible stories
     series: Lessons From...
     formats: [long, sleep]
@@ -831,6 +1075,8 @@ ideas:
   - id: morning-prayer-for-strength
     title: "A Morning Prayer for Strength"
     category: prayer
+    emotion: strength
+    arc: prayer
     pillar: Prayer
     series: Start Your Day With God
     formats: [short, medium]
@@ -840,6 +1086,8 @@ ideas:
   - id: prayer-before-sleep
     title: "A Prayer Before Sleep"
     category: prayer
+    emotion: peace
+    arc: prayer
     pillar: Peace
     series: Before You Sleep
     formats: [short, medium, long, sleep]
@@ -849,6 +1097,8 @@ ideas:
   - id: prayer-for-anxiety
     title: "A Prayer for Anxiety"
     category: prayer
+    emotion: peace
+    arc: prayer
     pillar: Peace
     formats: [short, medium, long]
     scriptures: [Philippians 4:6-7, 1 Peter 5:7]
@@ -857,6 +1107,8 @@ ideas:
   - id: prayer-when-life-feels-unfair
     title: "A Prayer When Life Feels Unfair"
     category: prayer
+    emotion: hope
+    arc: prayer
     pillar: Hope
     formats: [short, medium]
     scriptures: [Psalm 73:26, Genesis 50:20]
@@ -865,6 +1117,8 @@ ideas:
   - id: prayer-for-healing
     title: "A Prayer for Healing"
     category: prayer
+    emotion: hope
+    arc: prayer
     pillar: Prayer
     formats: [short, medium, long]
     scriptures: [Jeremiah 17:14, Psalm 103:2-3]
@@ -873,6 +1127,8 @@ ideas:
   - id: prayer-for-protection
     title: "A Prayer for Protection"
     category: prayer
+    emotion: courage
+    arc: prayer
     pillar: Prayer
     formats: [short, medium, long]
     scriptures: [Psalm 91:1-2, Psalm 121:7-8]
@@ -881,6 +1137,8 @@ ideas:
   - id: prayer-for-family
     title: "A Prayer for Your Family"
     category: prayer
+    emotion: love
+    arc: prayer
     pillar: Prayer
     formats: [short, medium]
     scriptures: [Joshua 24:15, Numbers 6:24-26]
@@ -889,6 +1147,8 @@ ideas:
   - id: prayer-for-work
     title: "A Prayer Before Work"
     category: prayer
+    emotion: purpose
+    arc: prayer
     pillar: Prayer
     series: Start Your Day With God
     formats: [short, medium]
@@ -898,6 +1158,8 @@ ideas:
   - id: prayer-for-guidance
     title: "A Prayer for Guidance"
     category: prayer
+    emotion: wisdom
+    arc: prayer
     pillar: Wisdom
     formats: [short, medium]
     scriptures: [Psalm 32:8, Proverbs 3:5-6]
@@ -906,6 +1168,8 @@ ideas:
   - id: prayer-of-gratitude
     title: "A Prayer of Gratitude"
     category: prayer
+    emotion: gratitude
+    arc: prayer
     pillar: Prayer
     formats: [short, medium]
     scriptures: [Psalm 100:4-5, 1 Thessalonians 5:16-18]
@@ -914,6 +1178,8 @@ ideas:
   - id: prayer-for-a-broken-heart
     title: "A Prayer for a Broken Heart"
     category: prayer
+    emotion: grief
+    arc: prayer
     pillar: Hope
     formats: [short, medium, long]
     scriptures: [Psalm 34:18, Psalm 147:3]
@@ -922,6 +1188,8 @@ ideas:
   - id: prayer-when-you-cant-sleep
     title: "A Prayer When You Can't Sleep"
     category: prayer
+    emotion: peace
+    arc: prayer
     pillar: Peace
     series: Before You Sleep
     formats: [short, medium, long, sleep]
@@ -931,6 +1199,8 @@ ideas:
   - id: prayer-for-strength-today
     title: "A Prayer for Strength Today"
     category: prayer
+    emotion: strength
+    arc: prayer
     pillar: Motivation
     series: Start Your Day With God
     formats: [short, medium]
@@ -940,6 +1210,8 @@ ideas:
   - id: prayer-for-peace
     title: "A Prayer for Peace"
     category: prayer
+    emotion: peace
+    arc: prayer
     pillar: Peace
     formats: [short, medium, long]
     scriptures: [John 14:27, Isaiah 26:3]
@@ -948,6 +1220,8 @@ ideas:
   - id: prayer-of-surrender
     title: "A Prayer of Surrender"
     category: prayer
+    emotion: peace
+    arc: prayer
     pillar: Faith
     formats: [short, medium]
     scriptures: [Luke 22:42, Proverbs 16:3]
@@ -956,6 +1230,9 @@ ideas:
   - id: prayer-for-forgiveness
     title: "A Prayer for Forgiveness"
     category: prayer
+    emotion: forgiveness
+    character: "David"
+    arc: prayer
     pillar: Transformation
     formats: [short, medium]
     scriptures: [Psalm 51:10-12, 1 John 1:9]
@@ -963,7 +1240,9 @@ ideas:
 
   - id: bible-verses-and-prayer-before-sleep
     title: "30 Minutes of Bible Verses and Prayer Before Sleep"
-    category: prayer
+    category: peace
+    emotion: peace
+    arc: peace
     pillar: Peace
     series: Before You Sleep
     formats: [long, sleep]
@@ -973,6 +1252,9 @@ ideas:
   - id: the-lords-prayer-slowly
     title: "The Lord's Prayer, Line by Line"
     category: prayer
+    emotion: peace
+    character: "Jesus"
+    arc: prayer
     pillar: Jesus
     formats: [short, medium, long]
     scriptures: [Matthew 6:9-13]
@@ -981,6 +1263,8 @@ ideas:
   - id: prayer-for-someone-you-love
     title: "A Prayer for Someone You Love"
     category: prayer
+    emotion: love
+    arc: prayer
     pillar: Prayer
     formats: [short, medium]
     scriptures: [Ephesians 3:16-19, Numbers 6:24-26]
@@ -989,6 +1273,8 @@ ideas:
   - id: prayer-when-god-feels-far
     title: "A Prayer When God Feels Far Away"
     category: prayer
+    emotion: hope
+    arc: prayer
     pillar: Faith
     formats: [short, medium, long]
     scriptures: [Psalm 139:7-10, James 4:8]
@@ -997,6 +1283,8 @@ ideas:
   - id: give-your-worries-to-god-tonight
     title: "Give Your Worries to God Tonight"
     category: prayer
+    emotion: peace
+    arc: prayer
     pillar: Peace
     series: Before You Sleep
     formats: [short, medium, long, sleep]
@@ -1005,7 +1293,9 @@ ideas:
 
   - id: god-is-with-you-in-the-darkness
     title: "God Is With You in the Darkness"
-    category: prayer
+    category: peace
+    emotion: peace
+    arc: peace
     pillar: Peace
     series: Before You Sleep
     formats: [short, medium, long, sleep]
@@ -1016,6 +1306,9 @@ ideas:
   - id: come-to-me-matthew-11-28
     title: "One Minute With Jesus: Matthew 11:28"
     category: jesus
+    emotion: peace
+    character: "Jesus"
+    arc: peace
     pillar: Jesus
     series: One Minute With Jesus
     formats: [short, medium]
@@ -1025,6 +1318,9 @@ ideas:
   - id: what-jesus-said-about-fear
     title: "What Jesus Actually Said About Fear"
     category: jesus
+    emotion: fear
+    character: "Jesus"
+    arc: journey
     pillar: Jesus
     series: One Minute With Jesus
     formats: [short, medium, long]
@@ -1033,7 +1329,10 @@ ideas:
 
   - id: jesus-in-the-wilderness
     title: "Why Jesus Went Into the Wilderness"
-    category: jesus
+    category: spiritual_battles
+    emotion: temptation
+    character: "Jesus"
+    arc: curiosity
     pillar: Jesus
     formats: [short, medium, long]
     scriptures: [Matthew 4:1-4, Luke 4:1-2]
@@ -1043,6 +1342,9 @@ ideas:
   - id: jesus-wept
     title: "One Minute With Jesus: Jesus Wept"
     category: jesus
+    emotion: grief
+    character: "Jesus"
+    arc: curiosity
     pillar: Jesus
     series: One Minute With Jesus
     formats: [short]
@@ -1052,6 +1354,9 @@ ideas:
   - id: do-not-worry-about-tomorrow
     title: "One Minute With Jesus: Don't Worry About Tomorrow"
     category: jesus
+    emotion: peace
+    character: "Jesus"
+    arc: peace
     pillar: Jesus
     series: One Minute With Jesus
     formats: [short, medium]
@@ -1061,6 +1366,9 @@ ideas:
   - id: the-good-shepherd
     title: "One Minute With Jesus: I Am the Good Shepherd"
     category: jesus
+    emotion: love
+    character: "Jesus"
+    arc: story
     pillar: Jesus
     series: One Minute With Jesus
     formats: [short, medium]
@@ -1070,6 +1378,9 @@ ideas:
   - id: in-this-world-trouble
     title: "One Minute With Jesus: In This World You Will Have Trouble"
     category: jesus
+    emotion: courage
+    character: "Jesus"
+    arc: journey
     pillar: Jesus
     series: One Minute With Jesus
     formats: [short, medium]
@@ -1079,6 +1390,9 @@ ideas:
   - id: prodigal-son
     title: "The Father Ran"
     category: jesus
+    emotion: love
+    character: "The prodigal son"
+    arc: story
     pillar: Jesus
     series: Lessons From...
     formats: [short, medium, long]
@@ -1088,7 +1402,10 @@ ideas:
 
   - id: good-samaritan
     title: "Who Is My Neighbour?"
-    category: jesus
+    category: relationships
+    emotion: love
+    character: "The Good Samaritan"
+    arc: story
     pillar: Jesus
     formats: [short, medium]
     scriptures: [Luke 10:29, Luke 10:33-37]
@@ -1098,6 +1415,9 @@ ideas:
   - id: jesus-calms-the-storm
     title: "Jesus Was Asleep in the Storm"
     category: jesus
+    emotion: peace
+    character: "Jesus"
+    arc: story
     pillar: Peace
     formats: [short, medium]
     scriptures: [Mark 4:37-40]
@@ -1107,6 +1427,9 @@ ideas:
   - id: the-beatitudes
     title: "The Beatitudes: Blessed Are the Broken"
     category: jesus
+    emotion: hope
+    character: "Jesus"
+    arc: wisdom
     pillar: Jesus
     formats: [medium, long]
     scriptures: [Matthew 5:3-10]
@@ -1116,6 +1439,9 @@ ideas:
   - id: jesus-and-nicodemus
     title: "The Man Who Came to Jesus at Night"
     category: jesus
+    emotion: curiosity
+    character: "Nicodemus"
+    arc: story
     pillar: Jesus
     formats: [short, medium]
     scriptures: [John 3:1-3, John 3:16-17]
@@ -1125,6 +1451,9 @@ ideas:
   - id: why-jesus-left-the-99
     title: "One Minute With Jesus: Why He Left the 99"
     category: jesus
+    emotion: love
+    character: "Jesus"
+    arc: story
     pillar: Jesus
     series: One Minute With Jesus
     formats: [short]
@@ -1135,6 +1464,9 @@ ideas:
   - id: jesus-in-gethsemane
     title: "Jesus in Gethsemane"
     category: jesus
+    emotion: strength
+    character: "Jesus"
+    arc: story
     pillar: Jesus
     formats: [short, medium, long]
     scriptures: [Matthew 26:38-39, Luke 22:44]
@@ -1144,6 +1476,9 @@ ideas:
   - id: father-forgive-them
     title: "One Minute With Jesus: Father, Forgive Them"
     category: jesus
+    emotion: forgiveness
+    character: "Jesus"
+    arc: story
     pillar: Jesus
     series: One Minute With Jesus
     formats: [short]
@@ -1153,6 +1488,9 @@ ideas:
   - id: i-am-the-way
     title: "One Minute With Jesus: Let Not Your Heart Be Troubled"
     category: jesus
+    emotion: peace
+    character: "Jesus"
+    arc: peace
     pillar: Jesus
     series: One Minute With Jesus
     formats: [short, medium]
@@ -1162,6 +1500,9 @@ ideas:
   - id: vine-and-branches
     title: "One Minute With Jesus: Abide in Me"
     category: jesus
+    emotion: purpose
+    character: "Jesus"
+    arc: wisdom
     pillar: Jesus
     series: One Minute With Jesus
     formats: [short, medium]
@@ -1171,16 +1512,21 @@ ideas:
   - id: jesus-touches-the-leper
     title: "Jesus Touched the Untouchable"
     category: jesus
+    emotion: love
+    character: "Jesus"
+    arc: story
     pillar: Jesus
     formats: [short, medium]
     scriptures: [Mark 1:40-42]
     wiki: Cleansing the leper
     angle: "He could have healed with a word. He reached out and touched him first."
 
-  # ---------------------------------------------------------------- Did you know? (10%)
+  # ---------------------------------------------------------------- Bible & History (curiosity)
   - id: why-the-wilderness-matters
     title: "Why the Wilderness Was So Important in the Bible"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
@@ -1189,7 +1535,9 @@ ideas:
 
   - id: psalm-23-in-context
     title: "Psalm 23 Was Written by a Shepherd"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
@@ -1198,7 +1546,9 @@ ideas:
 
   - id: the-mustard-seed
     title: "How Small Is a Mustard Seed?"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short]
@@ -1207,7 +1557,9 @@ ideas:
 
   - id: jesus-the-builder
     title: "Jesus Worked With His Hands"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
@@ -1217,7 +1569,9 @@ ideas:
 
   - id: sea-of-galilee-storms
     title: "Why Storms Hit the Sea of Galilee So Fast"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
@@ -1227,7 +1581,9 @@ ideas:
 
   - id: pool-of-bethesda
     title: "The Pool the Skeptics Said Never Existed"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
@@ -1237,7 +1593,9 @@ ideas:
 
   - id: dead-sea-scrolls
     title: "The Shepherd Who Found the Dead Sea Scrolls"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium, long]
@@ -1247,7 +1605,9 @@ ideas:
 
   - id: temple-veil-torn
     title: "Why the Temple Curtain Tore"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
@@ -1257,7 +1617,9 @@ ideas:
 
   - id: gethsemane-oil-press
     title: "What \"Gethsemane\" Means"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short]
@@ -1267,7 +1629,9 @@ ideas:
 
   - id: tax-collectors
     title: "Why Everyone Hated Tax Collectors"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
@@ -1277,7 +1641,9 @@ ideas:
 
   - id: abraham-waited-25-years
     title: "Abraham Waited 25 Years for a Promise"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short]
@@ -1286,7 +1652,9 @@ ideas:
 
   - id: ruth-in-jesus-family-tree
     title: "A Foreign Widow in Jesus' Family Tree"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
@@ -1295,7 +1663,9 @@ ideas:
 
   - id: water-into-wine
     title: "Jesus' First Miracle Was at a Wedding"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
@@ -1305,7 +1675,9 @@ ideas:
 
   - id: samaritans-and-jews
     title: "Why Jews and Samaritans Didn't Speak"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
@@ -1315,7 +1687,9 @@ ideas:
 
   - id: the-number-forty
     title: "Why the Number 40 Keeps Appearing in the Bible"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
@@ -1324,7 +1698,9 @@ ideas:
 
   - id: why-jesus-spoke-in-parables
     title: "Why Jesus Spoke in Parables"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
@@ -1333,7 +1709,9 @@ ideas:
 
   - id: psalms-were-songs
     title: "The Psalms Were a Songbook"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
@@ -1343,10 +1721,879 @@ ideas:
 
   - id: nazareth-small-village
     title: "Can Anything Good Come From Nazareth?"
-    category: facts
+    category: history
+    emotion: curiosity
+    arc: curiosity
     pillar: Did you know
     series: Did You Know?
     formats: [short, medium]
     scriptures: [John 1:46]
     wiki: Nazareth
     angle: "Jesus grew up in a small, unimportant village. God is not limited by where you come from."
+
+  # ---------------------------------------------------------------- Untold stories: lesser-known characters
+  - id: deborah-under-the-palm
+    title: "The Judge Who Sat Under a Palm Tree"
+    category: bible_story
+    emotion: courage
+    character: "Deborah"
+    arc: story
+    pillar: Bible stories
+    series: Untold Stories
+    formats: [short, medium, long]
+    scriptures: [Judges 4:4-5, Judges 4:14]
+    wiki: Deborah
+    angle: "A woman leading a nation from under a palm tree, and the general who wouldn't go without her. Courage that calls others forward."
+
+  - id: bartimaeus-wouldnt-be-quiet
+    title: "The Blind Man Who Wouldn't Stay Quiet"
+    category: jesus
+    emotion: courage
+    character: "Bartimaeus"
+    arc: story
+    pillar: Jesus
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [Mark 10:47-48, Mark 10:51-52]
+    wiki: Blind Bartimaeus
+    angle: "Everyone told him to be quiet. He shouted louder. Jesus stopped. When the crowd says your need is too much, call anyway."
+
+  - id: stephen-forgave-as-stones-fell
+    title: "He Forgave Them as the Stones Fell"
+    category: bible_story
+    emotion: forgiveness
+    character: "Stephen"
+    arc: story
+    pillar: Bible stories
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [Acts 7:59-60, Acts 6:15]
+    wiki: Saint Stephen
+    angle: "The first Christian martyr died praying for the people killing him, and a young man named Saul was watching."
+
+  - id: barnabas-believed-in-paul
+    title: "The Man Who Believed in Paul When No One Else Did"
+    category: relationships
+    emotion: love
+    character: "Barnabas"
+    arc: story
+    pillar: Relationships
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [Acts 9:26-27, Acts 4:36]
+    wiki: Barnabas
+    angle: "The disciples were afraid of Paul. Barnabas took him by the hand. Be the person who opens the door for someone else."
+
+  - id: timothy-dont-let-them-look-down
+    title: "Too Young to Matter?"
+    category: purpose
+    emotion: courage
+    character: "Timothy"
+    arc: wisdom
+    pillar: Purpose
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [1 Timothy 4:12, 2 Timothy 1:5-7]
+    angle: "Paul's letter to a young, timid pastor: God has not given you a spirit of fear."
+
+  - id: lydia-heart-opened
+    title: "The Businesswoman Whose Heart God Opened"
+    category: bible_story
+    emotion: joy
+    character: "Lydia"
+    arc: story
+    pillar: Bible stories
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [Acts 16:14-15]
+    wiki: Lydia of Thyatira
+    angle: "A seller of purple cloth by a river, the first believer in Europe, and a home that became a church."
+
+  - id: centurion-amazed-jesus
+    title: "The Soldier Who Amazed Jesus"
+    category: jesus
+    emotion: hope
+    character: "The Roman centurion"
+    arc: story
+    pillar: Jesus
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [Matthew 8:8-10]
+    angle: "An outsider, a Roman officer, and the only person the Gospels say made Jesus marvel at his faith."
+
+  - id: jeremiah-fire-in-my-bones
+    title: "When You Feel Like Your Words Change Nothing"
+    category: purpose
+    emotion: purpose
+    character: "Jeremiah"
+    arc: story
+    pillar: Purpose
+    series: Untold Stories
+    formats: [short, medium, long]
+    scriptures: [Jeremiah 20:9, Jeremiah 1:5]
+    wiki: Jeremiah
+    angle: "Mocked for forty years, he tried to stop speaking, and couldn't: a fire shut up in his bones."
+
+  - id: mary-magdalene-stayed
+    title: "She Stayed When Everyone Else Left"
+    category: bible_story
+    emotion: love
+    character: "Mary Magdalene"
+    arc: story
+    pillar: Bible stories
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [John 19:25, John 20:1, John 20:16]
+    wiki: Mary Magdalene
+    angle: "At the cross and at the tomb before dawn. Faithful love that waits in the dark is the love that sees the morning."
+
+  - id: caleb-strong-at-85
+    title: "Still Strong at Eighty-Five"
+    category: motivation
+    emotion: strength
+    character: "Caleb"
+    arc: story
+    pillar: Motivation
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [Joshua 14:10-12]
+    wiki: Caleb
+    angle: "Forty-five years of waiting, and Caleb still asked for the mountain. It's never too late to take your hill."
+
+  - id: naomi-call-me-bitter
+    title: "When Grief Changes Your Name"
+    category: relationships
+    emotion: grief
+    character: "Naomi"
+    arc: story
+    pillar: Relationships
+    series: Untold Stories
+    formats: [short, medium, long]
+    scriptures: [Ruth 1:20-21, Ruth 4:14-15]
+    angle: "Naomi came home empty and asked to be called Bitter. The story ended with a grandson in her arms."
+
+  - id: abigail-stopped-a-war
+    title: "The Woman Who Stopped a War With Her Words"
+    category: wisdom
+    emotion: wisdom
+    character: "Abigail"
+    arc: story
+    pillar: Wisdom
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [1 Samuel 25:32-33, Proverbs 15:1]
+    angle: "David was riding out for revenge. One wise, humble woman met him on the road."
+
+  - id: rahab-scarlet-cord
+    title: "The Unlikely Name in Jesus' Family Tree"
+    category: bible_story
+    emotion: hope
+    character: "Rahab"
+    arc: story
+    pillar: Bible stories
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [Joshua 2:11, Hebrews 11:31, Matthew 1:5]
+    wiki: Rahab
+    angle: "An outsider with a past, a scarlet cord in a window, and a place in the line of the Messiah."
+
+  - id: joseph-of-arimathea-stepped-forward
+    title: "The Secret Disciple Who Finally Stepped Forward"
+    category: bible_story
+    emotion: courage
+    character: "Joseph of Arimathea"
+    arc: story
+    pillar: Bible stories
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [John 19:38, Mark 15:43]
+    angle: "He followed in secret for fear of others, until the darkest day, when he walked into Pilate's office."
+
+  - id: simon-of-cyrene
+    title: "The Man Forced to Carry the Cross"
+    category: jesus
+    emotion: strength
+    character: "Simon of Cyrene"
+    arc: story
+    pillar: Jesus
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [Mark 15:21, Luke 23:26]
+    wiki: Simon of Cyrene
+    angle: "A traveller pulled out of the crowd to carry a stranger's cross. Sometimes the burden you didn't choose brings you closest to Jesus."
+
+  - id: onesimus-runaway-brother
+    title: "The Runaway Who Came Back a Brother"
+    category: relationships
+    emotion: forgiveness
+    character: "Onesimus"
+    arc: story
+    pillar: Relationships
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [Philemon 1:15-16]
+    angle: "A runaway slave, a letter from prison, and a request to welcome him home as a brother."
+
+  - id: widows-two-coins
+    title: "The Smallest Gift Jesus Noticed"
+    category: jesus
+    emotion: gratitude
+    character: "The poor widow"
+    arc: story
+    pillar: Jesus
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [Mark 12:42-44]
+    angle: "Two small coins among the rich men's offerings. Jesus called his disciples over to watch her."
+
+  - id: mephibosheth-kings-table
+    title: "A Seat at the King's Table"
+    category: bible_story
+    emotion: love
+    character: "Mephibosheth"
+    arc: story
+    pillar: Bible stories
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [2 Samuel 9:7, 2 Samuel 9:13]
+    wiki: Mephibosheth
+    angle: "A lame man hiding from the king expected punishment and was given a place at his table for life."
+
+  - id: widow-of-zarephath
+    title: "When You Have Nothing Left"
+    category: motivation
+    emotion: strength
+    character: "The widow of Zarephath"
+    arc: story
+    pillar: Motivation
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [1 Kings 17:12-16, 2 Corinthians 12:9]
+    angle: "A handful of flour and a little oil, enough for one last meal. The jar did not run out."
+
+  - id: elijah-and-the-ravens
+    title: "The Strange Story of Elijah and the Ravens"
+    category: bible_story
+    emotion: gratitude
+    character: "Elijah"
+    arc: story
+    pillar: Bible stories
+    series: Untold Stories
+    formats: [short, medium]
+    scriptures: [1 Kings 17:2-6]
+    angle: "Hiding by a brook in a drought, fed bread and meat by ravens, morning and evening. Provision from the most unlikely places."
+
+  - id: habakkuk-fig-tree
+    title: "Even If the Fig Tree Doesn't Blossom"
+    category: motivation
+    emotion: joy
+    character: "Habakkuk"
+    arc: journey
+    pillar: Motivation
+    formats: [short, medium]
+    scriptures: [Habakkuk 3:17-18, Habakkuk 1:2]
+    angle: "The prophet began with 'how long?' and ended choosing joy with empty fields. Joy that doesn't wait for circumstances."
+
+  - id: ten-lepers-one-returned
+    title: "Ten Were Healed. One Came Back."
+    category: jesus
+    emotion: gratitude
+    character: "The Samaritan leper"
+    arc: story
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Luke 17:15-17]
+    angle: "Ten men walked away healed. One turned around, shouting, and fell at Jesus' feet. Gratitude completes the miracle."
+
+  - id: thief-on-the-cross
+    title: "Today You Will Be With Me"
+    category: jesus
+    emotion: hope
+    character: "The thief on the cross"
+    arc: story
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Luke 23:42-43]
+    angle: "A dying criminal with nothing to offer asked to be remembered. The answer came the same day."
+
+  - id: jesus-and-the-children
+    title: "Let the Little Children Come"
+    category: jesus
+    emotion: joy
+    character: "Jesus"
+    arc: story
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Mark 10:14-16]
+    angle: "The disciples turned the children away. Jesus was indignant, took them in his arms and blessed them."
+
+  # ---------------------------------------------------------------- curiosity about Jesus
+  - id: why-jesus-washed-feet
+    title: "Why Jesus Washed His Disciples' Feet"
+    category: jesus
+    emotion: love
+    character: "Jesus"
+    arc: curiosity
+    pillar: Jesus
+    formats: [short, medium, long]
+    scriptures: [John 13:4-5, John 13:14-15]
+    angle: "Washing feet was a servant's job. The night before the cross, Jesus knelt with a towel. Humility that changes everything."
+
+  - id: why-jesus-wrote-in-the-sand
+    title: "Why Did Jesus Write in the Sand?"
+    category: jesus
+    emotion: curiosity
+    character: "Jesus"
+    arc: curiosity
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [John 8:6-8, John 8:10-11]
+    angle: "A crowd with stones, a woman caught, and Jesus bending down to write. Nobody knows what he wrote; everyone knows what happened next."
+
+  - id: why-jesus-chose-the-twelve
+    title: "Why Jesus Chose the Twelve"
+    category: jesus
+    emotion: purpose
+    character: "Jesus"
+    arc: curiosity
+    pillar: Jesus
+    formats: [short, medium, long]
+    scriptures: [Luke 6:12-13, Mark 3:13-15]
+    angle: "A night of prayer, then fishermen, a tax collector and a zealot. He chose them first to be with him."
+
+  - id: what-language-did-jesus-speak
+    title: "The Words Jesus Actually Said"
+    category: history
+    emotion: curiosity
+    character: "Jesus"
+    arc: curiosity
+    pillar: Bible & History
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Mark 5:41, Mark 15:34]
+    angle: "Talitha koum. Eloi, Eloi. The Gospels kept a few of his Aramaic words, and every one of them carries a moment."
+
+  # ---------------------------------------------------------------- Bible & History
+  - id: disciples-after-resurrection
+    title: "What Happened to the Disciples After the Resurrection?"
+    category: history
+    emotion: courage
+    character: "The apostles"
+    arc: curiosity
+    pillar: Bible & History
+    series: Did You Know?
+    formats: [short, medium, long]
+    scriptures: [Acts 1:8, Acts 4:13, Acts 12:2]
+    angle: "Frightened men behind locked doors became the boldest people in the Roman world. What changed them?"
+
+  - id: why-the-temple-mattered
+    title: "Why Was the Temple So Important?"
+    category: history
+    emotion: curiosity
+    arc: curiosity
+    pillar: Bible & History
+    series: Did You Know?
+    formats: [short, medium, long]
+    scriptures: [1 Kings 8:27-30, John 2:19-21]
+    wiki: Second Temple
+    angle: "The place where heaven met earth, and why Jesus said he was the temple."
+
+  - id: crucifixion-in-the-roman-world
+    title: "What Did the Cross Mean in the Roman World?"
+    category: history
+    emotion: love
+    character: "Jesus"
+    arc: curiosity
+    pillar: Bible & History
+    series: Did You Know?
+    formats: [medium, long]
+    scriptures: [Philippians 2:8, 1 Corinthians 1:18, Hebrews 12:2]
+    angle: "The most shameful death Rome knew became the symbol of love for billions. Told reverently, not graphically."
+
+  - id: galilean-fisherman-day
+    title: "A Day in the Life of a Fisherman in Galilee"
+    category: history
+    emotion: curiosity
+    character: "Peter"
+    arc: curiosity
+    pillar: Bible & History
+    series: Did You Know?
+    formats: [short, medium, long]
+    scriptures: [Luke 5:4-6, Mark 1:16-18]
+    wiki: Sea of Galilee
+    angle: "Night nets, cold water, empty boats. What Peter left behind when he dropped them."
+
+  - id: jerusalem-in-jesus-time
+    title: "What Was Jerusalem Like in Jesus' Time?"
+    category: history
+    emotion: curiosity
+    arc: curiosity
+    pillar: Bible & History
+    series: Did You Know?
+    formats: [medium, long]
+    scriptures: [Luke 19:41-42, Psalm 122:6]
+    wiki: Jerusalem in Christianity
+    angle: "Crowded streets at Passover, the temple gleaming, and Jesus weeping as he saw the city."
+
+  - id: why-shepherds-heard-first
+    title: "Why Shepherds Heard the News First"
+    category: history
+    emotion: joy
+    character: "The shepherds"
+    arc: curiosity
+    pillar: Bible & History
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Luke 2:8-11]
+    angle: "Outsiders working the night shift were the first to hear 'good news of great joy for all people'."
+
+  - id: what-was-passover
+    title: "The Night Behind the Last Supper"
+    category: history
+    emotion: curiosity
+    arc: curiosity
+    pillar: Bible & History
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Exodus 12:13, Luke 22:15]
+    wiki: Passover
+    angle: "Blood on the doorposts in Egypt, and why Jesus longed to eat this meal with his friends."
+
+  - id: who-were-the-pharisees
+    title: "Who Were the Pharisees, Really?"
+    category: history
+    emotion: wisdom
+    arc: curiosity
+    pillar: Bible & History
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Matthew 23:23, John 3:1-2]
+    wiki: Pharisees
+    angle: "Devout, respected, careful, and still able to miss what mattered most. A mirror more than a villain."
+
+  - id: why-jesus-grew-up-in-galilee
+    title: "Why Did Jesus Grow Up in Galilee?"
+    category: history
+    emotion: curiosity
+    arc: curiosity
+    pillar: Bible & History
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Matthew 4:13-16]
+    wiki: Galilee
+    angle: "Galilee of the nations, far from the center: 'the people who sat in darkness saw a great light.'"
+
+  - id: armor-of-god
+    title: "The Armor of God, Piece by Piece"
+    category: spiritual_battles
+    emotion: courage
+    arc: curiosity
+    pillar: Spiritual Battles
+    formats: [short, medium, long]
+    scriptures: [Ephesians 6:13-17]
+    angle: "Paul, chained to Roman soldiers, looked at their armor and saw a picture of how to stand."
+
+  # ---------------------------------------------------------------- Biblical wisdom
+  - id: proverbs-on-money
+    title: "What Proverbs Says About Money"
+    category: wisdom
+    emotion: wisdom
+    arc: wisdom
+    pillar: Wisdom
+    series: Proverbs for Real Life
+    formats: [short, medium, long]
+    scriptures: [Proverbs 21:5, Proverbs 22:7, Proverbs 13:11]
+    angle: "Patience, diligence and freedom from debt: ancient wisdom that still works. (No get-rich promises.)"
+
+  - id: proverbs-on-words
+    title: "One Sentence Can Change a Day"
+    category: wisdom
+    emotion: wisdom
+    arc: wisdom
+    pillar: Wisdom
+    series: Proverbs for Real Life
+    formats: [short, medium]
+    scriptures: [Proverbs 15:1, Proverbs 18:21, Proverbs 25:11]
+    angle: "A gentle answer turns away wrath. The power of what you say next."
+
+  - id: proverbs-on-friends
+    title: "Who You Walk With"
+    category: wisdom
+    emotion: love
+    arc: wisdom
+    pillar: Wisdom
+    series: Proverbs for Real Life
+    formats: [short, medium]
+    scriptures: [Proverbs 13:20, Proverbs 27:17, Proverbs 17:17]
+    angle: "As iron sharpens iron. How to choose friends and how to be one."
+
+  - id: what-solomon-learned-too-late
+    title: "What Solomon Learned Too Late"
+    category: wisdom
+    emotion: wisdom
+    character: "Solomon"
+    arc: story
+    pillar: Wisdom
+    formats: [short, medium, long]
+    scriptures: [Ecclesiastes 2:10-11, Ecclesiastes 12:13, 1 Kings 11:4]
+    wiki: Ecclesiastes
+    angle: "The wisest, richest man alive had everything and called it chasing the wind."
+
+  - id: pride-before-the-fall
+    title: "The King Who Ate Grass"
+    category: wisdom
+    emotion: wisdom
+    character: "Nebuchadnezzar"
+    arc: story
+    pillar: Wisdom
+    formats: [short, medium]
+    scriptures: [Daniel 4:30-31, Daniel 4:37, Proverbs 16:18]
+    angle: "The proudest king in the world, a sudden fall, and the humbled man who looked up to heaven."
+
+  - id: jethro-advice-to-moses
+    title: "When You Carry Everyone's Problems"
+    category: wisdom
+    emotion: wisdom
+    character: "Jethro"
+    arc: story
+    pillar: Wisdom
+    formats: [short, medium]
+    scriptures: [Exodus 18:17-18, Galatians 6:2]
+    angle: "Moses judged every dispute from morning to evening, until his father-in-law said: you will wear yourself out."
+
+  # ---------------------------------------------------------------- Faith in everyday life
+  - id: phone-makes-you-feel-behind
+    title: "When Scrolling Makes You Feel Behind"
+    category: everyday_life
+    emotion: peace
+    arc: wisdom
+    pillar: Faith in Everyday Life
+    series: Faith in Everyday Life
+    formats: [short, medium]
+    scriptures: [Galatians 1:10, Philippians 4:11-12, Psalm 139:14]
+    angle: "Everyone's highlight reel against your ordinary Tuesday. The secret of contentment Paul learned."
+
+  - id: dont-quit-in-the-middle
+    title: "Don't Quit in the Middle of the Story"
+    category: motivation
+    emotion: strength
+    character: "Joseph"
+    arc: journey
+    pillar: Motivation
+    formats: [short, medium, long]
+    scriptures: [Galatians 6:9, Genesis 50:20]
+    angle: "The middle is where every story looks hopeless. It's also where most people stop reading."
+
+  - id: when-nobody-believes-in-you
+    title: "When Nobody Believes in You"
+    category: motivation
+    emotion: courage
+    character: "David"
+    arc: story
+    pillar: Motivation
+    formats: [short, medium]
+    scriptures: [1 Samuel 17:33, 1 Samuel 17:37]
+    angle: "The king said he was only a boy. His brothers mocked him. David remembered what God had already done."
+
+  - id: when-the-door-doesnt-open
+    title: "When the Door Doesn't Open"
+    category: purpose
+    emotion: hope
+    character: "Paul"
+    arc: story
+    pillar: Purpose
+    formats: [short, medium]
+    scriptures: [Acts 16:6-10, Revelation 3:8]
+    angle: "Paul tried to go one way and was stopped twice. The closed doors led him to Europe."
+
+  - id: success-without-losing-your-soul
+    title: "Success Without Losing Yourself"
+    category: everyday_life
+    emotion: wisdom
+    arc: wisdom
+    pillar: Faith in Everyday Life
+    series: Faith in Everyday Life
+    formats: [short, medium]
+    scriptures: [Mark 8:36, Proverbs 16:18, Micah 6:8]
+    angle: "What good is it to gain the whole world? Ambition that keeps its soul."
+
+  - id: leadership-like-jesus
+    title: "The Leader Who Served"
+    category: everyday_life
+    emotion: purpose
+    character: "Jesus"
+    arc: wisdom
+    pillar: Faith in Everyday Life
+    series: Faith in Everyday Life
+    formats: [short, medium, long]
+    scriptures: [Mark 10:42-45]
+    angle: "The world's leaders lord it over people. 'Not so with you.' Leadership turned upside down."
+
+  - id: getting-older-with-hope
+    title: "Getting Older With Hope"
+    category: everyday_life
+    emotion: hope
+    arc: journey
+    pillar: Faith in Everyday Life
+    series: Faith in Everyday Life
+    formats: [short, medium]
+    scriptures: [Isaiah 46:4, Psalm 92:14, 2 Corinthians 4:16]
+    angle: "Even to your old age and grey hairs, I will carry you. Aging without fear."
+
+  - id: when-work-feels-meaningless
+    title: "When Your Work Feels Meaningless"
+    category: everyday_life
+    emotion: purpose
+    arc: wisdom
+    pillar: Faith in Everyday Life
+    series: Faith in Everyday Life
+    formats: [short, medium]
+    scriptures: [Colossians 3:23-24, Ecclesiastes 2:24]
+    angle: "Spreadsheets, shifts and dishes. Ordinary work done for the Lord is never wasted."
+
+  - id: lonely-in-a-crowd
+    title: "Lonely in a Crowded World"
+    category: everyday_life
+    emotion: hope
+    arc: journey
+    pillar: Faith in Everyday Life
+    series: Faith in Everyday Life
+    formats: [short, medium]
+    scriptures: [Psalm 25:16, Psalm 68:6, Ecclesiastes 4:9-10]
+    angle: "Hundreds of contacts and no one to call. God sets the lonely in families."
+
+  - id: finding-meaning-in-ordinary-days
+    title: "Finding Meaning When Life Feels Ordinary"
+    category: everyday_life
+    emotion: purpose
+    arc: wisdom
+    pillar: Faith in Everyday Life
+    series: Faith in Everyday Life
+    formats: [short, medium]
+    scriptures: [Ecclesiastes 3:11, Micah 6:8]
+    angle: "Do justly, love mercy, walk humbly. Meaning lives in the small, faithful days."
+
+  - id: when-you-carry-responsibility
+    title: "When Everyone Depends on You"
+    category: everyday_life
+    emotion: strength
+    arc: journey
+    pillar: Faith in Everyday Life
+    series: Faith in Everyday Life
+    formats: [short, medium]
+    scriptures: [Matthew 11:28-30, Isaiah 40:29]
+    angle: "Parents, providers, caregivers: the strong ones need rest too."
+
+  # ---------------------------------------------------------------- range of emotions
+  - id: be-still
+    title: "Be Still. God Is With You."
+    category: peace
+    emotion: peace
+    arc: peace
+    pillar: Peace
+    series: Before You Sleep
+    formats: [short, medium, long]
+    scriptures: [Psalm 46:10, Exodus 14:14]
+    angle: "Stop striving. A slow, quiet minute with the God who fights for you."
+
+  - id: thirty-minutes-of-peace
+    title: "30 Minutes of Peace With God"
+    category: peace
+    emotion: peace
+    arc: peace
+    pillar: Peace
+    series: Before You Sleep
+    formats: [long, sleep]
+    scriptures: [Psalm 23:1-6, Psalm 46:10, Isaiah 26:3, Matthew 11:28-30, John 14:27]
+    angle: "Unhurried narration, long silences, quiet music: Scripture spoken over a tired soul."
+
+  - id: joy-of-the-lord
+    title: "The Joy of the Lord Is Your Strength"
+    category: motivation
+    emotion: joy
+    character: "Nehemiah"
+    arc: joy
+    pillar: Motivation
+    formats: [short, medium]
+    scriptures: [Nehemiah 8:10]
+    angle: "The people wept when they heard the law. Nehemiah said: go, celebrate, this day is holy."
+
+  - id: remember-what-god-has-done
+    title: "Remember What God Has Already Done"
+    category: motivation
+    emotion: gratitude
+    character: "Samuel"
+    arc: joy
+    pillar: Motivation
+    formats: [short, medium]
+    scriptures: [1 Samuel 7:12, Psalm 103:2]
+    angle: "Samuel set up a stone and called it Ebenezer: thus far the Lord has helped us."
+
+  - id: stand-firm
+    title: "Stand Firm"
+    category: spiritual_battles
+    emotion: courage
+    arc: journey
+    pillar: Spiritual Battles
+    formats: [short, medium]
+    scriptures: [Ephesians 6:13-14, 1 Corinthians 16:13]
+    angle: "Having done everything, stand. Courage for the day you can't advance but must not retreat."
+
+  - id: love-your-enemies
+    title: "Love Your Enemies"
+    category: relationships
+    emotion: love
+    arc: wisdom
+    pillar: Relationships
+    formats: [short, medium]
+    scriptures: [Matthew 5:43-45]
+    angle: "The hardest sentence Jesus ever spoke, and why it sets you free."
+
+  - id: when-someone-you-love-is-gone
+    title: "When Someone You Love Is Gone"
+    category: relationships
+    emotion: grief
+    arc: journey
+    pillar: Relationships
+    formats: [short, medium, long]
+    scriptures: [John 11:25-26, Revelation 21:4, Psalm 34:18]
+    angle: "Grief is love with nowhere to go. A gentle word for the empty chair."
+
+  - id: do-not-be-afraid-command
+    title: "The Command God Repeats More Than Any Other"
+    category: spiritual_battles
+    emotion: fear
+    arc: curiosity
+    pillar: Spiritual Battles
+    formats: [short, medium]
+    scriptures: [Isaiah 43:1, Luke 2:10, Matthew 28:10]
+    angle: "'Do not be afraid' runs from Genesis to Revelation, to shepherds, prophets and fishermen. And to you."
+
+  - id: there-is-still-a-road-ahead
+    title: "There Is Still a Road Ahead"
+    category: motivation
+    emotion: hope
+    arc: journey
+    pillar: Motivation
+    formats: [short, medium]
+    scriptures: [Isaiah 43:19, Psalm 32:8]
+    angle: "I am doing a new thing: a way in the wilderness. Your road hasn't ended."
+
+  - id: created-with-purpose
+    title: "You Were Not Created Without Purpose"
+    category: purpose
+    emotion: purpose
+    arc: journey
+    pillar: Purpose
+    formats: [short, medium]
+    scriptures: [Ephesians 2:10, Psalm 139:13-16]
+    angle: "Knit together, known before your first day, made for good works prepared in advance."
+
+  - id: how-jesus-taught-forgiveness
+    title: "How Jesus Taught Us to Forgive"
+    category: relationships
+    emotion: forgiveness
+    character: "Jesus"
+    arc: wisdom
+    pillar: Relationships
+    formats: [short, medium, long]
+    scriptures: [Matthew 18:21-22, Luke 23:34]
+    angle: "Seventy times seven, and then he did it from the cross."
+
+  - id: keep-walking-cant-see-the-road
+    title: "Keep Walking When You Can't See the Road"
+    category: motivation
+    emotion: courage
+    character: "Abraham"
+    arc: story
+    pillar: Motivation
+    formats: [short, medium]
+    scriptures: [Hebrews 11:8, 2 Corinthians 5:7]
+    angle: "Abraham went out not knowing where he was going. Faith is the next step, not the whole map."
+
+  - id: waiting-season-has-purpose
+    title: "What If Your Waiting Season Has a Purpose?"
+    category: purpose
+    emotion: purpose
+    arc: journey
+    pillar: Purpose
+    formats: [short, medium, long]
+    scriptures: [Psalm 27:14, Romans 5:3-4]
+    angle: "Suffering produces perseverance, perseverance character, character hope. Waiting is shaping you."
+
+  - id: moses-forty-years-shepherd
+    title: "Forty Years in the Wilderness Before His Calling"
+    category: purpose
+    emotion: purpose
+    character: "Moses"
+    arc: story
+    pillar: Purpose
+    formats: [short, medium]
+    scriptures: [Acts 7:29-30]
+    angle: "A prince became a shepherd for forty years. The hidden years weren't wasted."
+
+  - id: why-we-do-what-we-dont-want
+    title: "Why Do I Keep Doing What I Don't Want to Do?"
+    category: spiritual_battles
+    emotion: temptation
+    character: "Paul"
+    arc: curiosity
+    pillar: Spiritual Battles
+    formats: [short, medium]
+    scriptures: [Romans 7:15, Romans 7:24-25]
+    angle: "Even Paul wrote about it. The honest struggle, and who rescues us."
+
+  - id: thoughts-you-dont-have-to-believe
+    title: "Thoughts You Don't Have to Believe"
+    category: spiritual_battles
+    emotion: peace
+    arc: wisdom
+    pillar: Spiritual Battles
+    formats: [short, medium]
+    scriptures: [2 Corinthians 10:5, Philippians 4:8]
+    angle: "Take every thought captive. Not every voice in your head is telling the truth."
+
+  # ---------------------------------------------------------------- more prayers
+  - id: prayer-when-afraid
+    title: "A Prayer for When You're Afraid"
+    category: prayer
+    emotion: fear
+    arc: prayer
+    pillar: Prayer
+    series: Prayers
+    formats: [short, medium]
+    scriptures: [Psalm 56:3-4, Isaiah 41:10]
+    angle: "When I am afraid, I will trust in you."
+
+  - id: prayer-starting-over
+    title: "A Prayer for Someone Starting Over"
+    category: prayer
+    emotion: hope
+    arc: prayer
+    pillar: Prayer
+    series: Prayers
+    formats: [short, medium, long]
+    scriptures: [Lamentations 3:22-23, Isaiah 43:18-19]
+    angle: "For the new job, the new city, the new beginning after loss."
+
+  - id: prayer-for-your-children
+    title: "A Prayer for Your Children"
+    category: prayer
+    emotion: love
+    arc: prayer
+    pillar: Prayer
+    series: Prayers
+    formats: [short, medium]
+    scriptures: [Isaiah 54:13, 3 John 1:4]
+    angle: "Spoken over the ones you love most and can't always protect."
+
+  - id: prayer-before-hard-conversation
+    title: "A Prayer Before a Hard Conversation"
+    category: prayer
+    emotion: courage
+    arc: prayer
+    pillar: Prayer
+    series: Prayers
+    formats: [short, medium]
+    scriptures: [Ephesians 4:15, James 1:19]
+    angle: "Truth spoken in love, quick to listen, slow to anger."

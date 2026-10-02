@@ -6,7 +6,8 @@ is structured and how it looks and sounds. The pipeline reads the parts that can
 
 ## 1. Promise and creative principle
 
-> **Biblical wisdom and Christian encouragement for the battles of everyday life.**
+> **Stories, wisdom, prayer and inspiration rooted in Jesus Christ and the Bible, created to give
+> people faith, courage, hope and perspective for everyday life.**
 
 People come to *The Way of Christ* when they're tired, lost, afraid, discouraged, lonely, or simply
 looking for strength, and leave **uplifted, strengthened and closer to God**.
@@ -33,24 +34,38 @@ lettering, over the last picture.
 Brand voice: someone who has been where the viewer is, speaking to one person. Warm, deep, deliberate,
 honest about pain, never preachy, never hype, never fear-driven.
 
-## 3. Content pillars
+## 3. The content universe (pillars)
 
-| Pillar | Content |
-|---|---|
-| Jesus | Teachings, life of Jesus, sayings, parables |
-| Bible | Verses, stories, overlooked passages, lessons |
-| Prayer | Morning and night prayers, prayers for specific situations |
-| Motivation | Discipline, courage, perseverance, overcoming failure |
-| Hope | Loneliness, grief, rejection, uncertainty, waiting |
-| Faith | Trusting God, doubt, spiritual growth |
-| Wisdom | Biblical principles for relationships, work, money, character |
-| Spiritual struggle | Temptation, fear, anger, forgiveness |
-| Transformation | Redemption stories, second chances |
-| Peace | Anxiety, rest, surrender, God's presence |
-| Bible stories | Joseph, David, Moses, Peter, Paul, Esther, Ruth, Job, Daniel... |
-| Did you know? | Historical and Biblical facts and context |
+The channel is not "you are struggling → here is a verse" on repeat. It is a large Christian
+inspirational universe: diverse subjects, a Biblical foundation, cinematic storytelling, inspiring music
+and powerful narration. The viewer doesn't know exactly what the next video will be, but they know the
+emotional experience they'll get.
 
-Each idea in `content/ideas.yaml` names its pillar.
+| Pillar (`category`) | What it covers | Example |
+|---|---|---|
+| Jesus (`jesus`) | Life, teachings, miracles, parables | *Why Jesus Washed His Disciples' Feet* |
+| Bible Stories (`bible_story`) | Characters and narratives, famous and lesser-known | *The Judge Who Sat Under a Palm Tree* (Deborah) |
+| Motivation (`motivation`) | Courage, discipline, perseverance | *Don't Quit in the Middle of the Story* |
+| Prayer (`prayer`) | Situational and devotional prayers | *A Prayer for Someone Starting Over* |
+| Peace (`peace`) | Rest, reflection, surrender | *Be Still. God Is With You.* |
+| Relationships (`relationships`) | Love, forgiveness, betrayal, family | *How Jesus Taught Us to Forgive* |
+| Purpose (`purpose`) | Calling, direction, work, identity | *What If Your Waiting Season Has a Purpose?* |
+| Spiritual Battles (`spiritual_battles`) | Temptation, doubt, fear | *Why Do I Keep Doing What I Don't Want to Do?* |
+| Biblical Wisdom (`wisdom`) | Practical life lessons | *What Proverbs Says About Money* |
+| Bible & History (`history`) | Context, places, customs, fascinating facts | *A Day in the Life of a Fisherman in Galilee* |
+| Faith in Everyday Life (`everyday_life`) | Career, money, social media, aging, leadership... | *When Scrolling Makes You Feel Behind* |
+
+**Emotional range.** Every idea names the feeling it carries (`emotion`): courage, love, grief, peace,
+joy, curiosity, fear, strength, wisdom, hope, gratitude, temptation, forgiveness, purpose.
+
+**Characters beyond the obvious.** Deborah, Bartimaeus, Stephen, Barnabas, Timothy, Lydia, the Roman
+centurion, Jeremiah, Mary Magdalene, Caleb, Naomi, Abigail, Rahab, Joseph of Arimathea, Simon of
+Cyrene, Onesimus, Mephibosheth, the widow of Zarephath, Habakkuk... alongside Joseph, David and Moses.
+The picker never puts the same person or feeling back to back.
+
+**Titles that don't sound like religious programming.** *Don't Quit in the Middle of the Story*, *He Was
+Forgotten for Years* (then: Joseph), *Why Did Jesus Write in the Sand?* The video reveals the Bible
+connection. Curiosity titles bring in people who would never search for a Bible video.
 
 ## 4. Formats and lengths
 
@@ -77,80 +92,68 @@ Every video is filed under its series playlist automatically (needs the full You
 
 ## 6. Content mix
 
-| Category | Share | In the catalog |
-|---|---|---|
-| Inspirational / motivational | 40% | `motivational` |
-| Bible storytelling | 25% | `bible_story` |
-| Prayer | 15% | `prayer` |
-| Jesus-focused teaching | 10% | `jesus` |
-| Bible facts, history, context | 10% | `facts` |
+`catalog.mix` in `channel.yaml` (percent of videos per pillar):
 
-`catalog.mix` in `channel.yaml`. Slots without a fixed category take the category furthest below
-its share.
+| Bible stories | Jesus | Motivation | Prayer | Relationships | Purpose | Peace | Spiritual battles | Wisdom | History | Everyday life |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 15 | 12 | 12 | 10 | 9 | 9 | 8 | 7 | 7 | 6 | 5 |
 
-## 7. Monthly schedule (free)
+Slots without a fixed pillar take the one furthest below its share. Within a pillar, the next idea is the
+one that doesn't repeat the last videos' person, feeling or story shape.
 
-Everything runs on GitHub Actions' free allowance (2,000 minutes a month for a private repo), the free
-Groq and Pexels tiers, the free Kokoro voice and the free YouTube API quota.
+## 7. Weekly schedule (free)
+
+Everything runs on GitHub Actions' free allowance, the free Groq and Pexels tiers, the free Kokoro voice,
+free Creative Commons music and the free YouTube API quota.
 
 | | Morning Short (11:00 UTC) | Long video (15:00 UTC) | Evening Short (23:00 UTC) |
 |---|---|---|---|
-| Monday | motivational | | cut from a long video, else the mix |
-| Tuesday | One Minute With Jesus | Bible story, 6 min | " |
-| Wednesday | short prayer | | " |
-| Thursday | motivational | | " |
-| Friday | Bible story | inspirational, 10 min | " |
-| Saturday | Did You Know? | | " |
-| Sunday | prayer | | " |
+| Monday | Jesus | | cut from a long video, else the content mix |
+| Tuesday | Motivation | Bible story, 6 min | same |
+| Wednesday | Prayer | | same |
+| Thursday | Bible story | | same |
+| Friday | Biblical wisdom | any pillar (content mix), 10 min | same |
+| Saturday | Bible & history | | same |
+| Sunday | Peace | | same |
 
-A month: about 60 Shorts and 9 long videos, roughly 1,300 runner minutes. Every video goes live at a
-random minute up to 3 hours after its slot (`youtube.publish_jitter_minutes: 180`), so the channel never
-posts at the same time twice. Each long video is cut into Shorts that fill the evening slots. The workflow
-runs twice a day and keeps two days of videos scheduled ahead, so one failed run never misses a publish.
-Occasional 20-40 minute sleep or prayer videos are made by hand (`--minutes 30`) to stay inside the budget.
-Change the slots in `schedule.plan`.
+A month: about 60 Shorts and 9 long videos, roughly 1,300 runner minutes, each going live at a random
+minute up to 3 hours after its slot. Relationships, purpose, spiritual battles and everyday life arrive
+through the evening Shorts and Friday's long video. Occasional 20-40 minute videos (*30 Minutes of
+Peace With God*) are made by hand with `--minutes 30` to stay inside the free minutes.
 
-## 8. The emotional journey (script structure)
+## 8. Story shapes
 
-Every video moves **struggle → uncertainty → faith → realization → hope → strength**, never
-fact → explanation → conclusion. Each scene is tagged with its stage (`mood`), and the stage drives the
-pace of the voice, the silence after the line, the music level and the colour of the picture.
+Every video makes the viewer feel something, but not by the same road. Each idea has an `arc`:
 
-| Stage | What the viewer feels | Words | Picture | Music |
-|---|---|---|---|---|
-| **Struggle** | "That's me." | Open inside the feeling, present tense, concrete: "It's late. The house is quiet..." | Darkness, rain, storms, a lone figure; cold, desaturated | Low, sparse |
-| **Uncertainty** | The question they're afraid to ask | "Where are you, God?" Stay honest; don't rush to fix it | Fog, empty roads, crossroads | Low, waiting |
-| **Faith** | "Someone else walked this" | Step *into* the Bible story: the dust, the dark, what they felt | Candlelight, prayer, ancient paths, the story's world | Beginning to build |
-| **Realization** | The turn | The truth that changes everything, carried by Scripture, said slowly, then silence | Light breaking through darkness | Rises; swells in the pause |
-| **Hope** | "I'm not forgotten" | Personal and tender: "Not tonight. Not ever." | Sunrise, open landscapes, golden light | Warm, fuller |
-| **Strength** | "I can keep going" | Rise: a prayer or a declaration, and one line to carry | Summits, walking forward, the cross against the sky | Strongest, carries the ending |
+| Shape | How it moves | Used for |
+|---|---|---|
+| **journey** | struggle → uncertainty → faith → realization → hope → strength | hurting seasons: fear, grief, waiting, failure |
+| **story** | drop into the scene → the tension → the turn (with the verse) → the thread to today → the invitation | Bible stories, Jesus' moments, lesser-known characters |
+| **curiosity** | the question → the world behind it → the surprising answer → why it matters | *Why Did Jesus Write in the Sand?*, history |
+| **wisdom** | a modern situation → ancient wisdom → practice this week → blessing | Proverbs, everyday life, relationships |
+| **prayer** | a quiet opening → praying together → the promise → blessing, Amen | prayers |
+| **peace** | stillness: short lines, long silences, the promise spoken slowly | rest, sleep, *Be Still* |
+| **joy** | remember → notice (the verse) → celebrate and give thanks | gratitude, *The Joy of the Lord* |
 
-Example, Joseph: not "Joseph was sold into slavery around..." but "You did everything right... and still,
-nobody remembered you." Then into the pit, the caravan, the prison and the two silent years, until
-Isaiah 49:15 lands: "Yes, these may forget, yet I will not forget you."
-
-**Shorts** compress it: struggle (one line that names the feeling) → faith (the Bible moment, felt) →
-realization (the verse, slowly) → hope/strength (one line to carry). No title card, no greeting.
-
-**Prayer videos** are praying *together*: a quiet opening, a slow first-person prayer with room to
-breathe, Scripture woven in word for word, a blessing spoken over the viewer, "Amen".
-
-**Sleep / long reflection (20-40 min)** keep the same journey across chapters, gentler and slower.
+Each scene still carries a `mood` (struggle, uncertainty, faith, realization, hope, strength) that sets
+the energy: the narrator's pace, the music level and the colour of the picture. Story videos also get the
+whole Bible chapter as background, so the details stay true to the text.
 
 How it's written: short spoken sentences, varied rhythm, "..." where the voice should breathe, repetition
-that builds ("Not forgotten. Not abandoned. Not alone."). Banned: "in this video", "let's explore",
-"scholars say", "historically", "fun fact", "did you know". Even a Bible fact is a doorway to a feeling.
+written fresh for each video. Banned: "in this video", "let's explore", "scholars say", "fun fact", "did
+you know". Even a Bible fact is a doorway to a feeling.
 
-These rules live in `fyt/llm.py` (`LONG_STRUCTURE`, `SHORT_STRUCTURE`, `PRAYER_STRUCTURE`, `SCRIPT_GUIDE`).
+These rules live in `fyt/llm.py` (`LONG_STRUCTURE`, `STORY_STRUCTURE`, `CURIOSITY_STRUCTURE`,
+`WISDOM_STRUCTURE`, `PEACE_STRUCTURE`, `JOY_STRUCTURE`, `PRAYER_STRUCTURE`, `SCRIPT_GUIDE`).
 
 ### Scripture rules (enforced)
 
 - The exact text of every passage an idea names is fetched before writing (World English Bible,
   public domain) and given to the scriptwriter; only those words may be quoted.
 - After writing, every on-screen Scripture quote is checked against the real verse. A loose quote is
-  replaced by the exact verse; one that can't be fixed fails QA and the video is not uploaded.
-- Paraphrases are said as paraphrases, with the reference. No invented verses, no words put in
-  Jesus' mouth. Mainstream, non-denominational teaching; no politics, prosperity promises, guilt,
+  replaced by its closest exact verse; one that can't be fixed fails QA and the video is not uploaded.
+- Paraphrases are said as paraphrases, with the reference. No invented verses or events, no words put
+  in Jesus' mouth. Mainstream, non-denominational teaching; no politics, prosperity promises, guilt,
   fear tactics or medical advice.
 
 ## 9. Visuals, editing and pacing
@@ -264,9 +267,12 @@ playlist by series → 6 Shorts cut from each long video → next slots (fyt/sch
 
 ## 15. Idea bank
 
-`content/ideas.yaml` holds 144 ideas: 48 motivational, 38 Bible stories, 22 prayers, 18 Jesus
-teachings and 18 Did-you-know facts, covering every series. `python -m fyt ideas` shows the counts;
-add your own at any time. When the list runs out, the model proposes new topics in the same niche.
+`content/ideas.yaml` holds 219 curated ideas across all 11 pillars, every emotion and every story
+shape, including dozens of lesser-known Bible people and the curiosity topics. `python -m fyt ideas` shows the
+counts. When a pillar runs low (fewer than 4 unused ideas), the model writes 8 new ideas for it in the
+same shape, using the pillar's best ideas as examples; only ideas whose Scripture references exist in the
+Bible are kept. They are stored in `jobs/state.db` with the queue, so GitHub keeps them between runs.
+Curated ideas always go first, so add your own to `content/ideas.yaml` at any time.
 
 ## 16. Monetisation and trust
 

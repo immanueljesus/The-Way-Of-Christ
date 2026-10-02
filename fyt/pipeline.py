@@ -151,8 +151,13 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
     if chapters:
         script = script.model_copy(update={"description": script.description.rstrip() + "\n\n" + chapters})
         job.file("script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
+    seconds = (spans[-1][1] if spans else 0) + max(cfg.tail_seconds, 4.0)
+    music = media.pick_music(cfg, job.public, category=idea.category if idea else None, seconds=seconds)
+    credit = media.music_credit(job.public) if music else ""
+    if credit and credit not in script.description:
+        script = script.model_copy(update={"description": script.description.rstrip() + "\n\nMusic: " + credit})
+        job.file("script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
     job.file("youtube.txt").write_text(youtube.upload_sheet(cfg, script), encoding="utf-8")
-    music = media.pick_music(cfg, job.public, category=idea.category if idea else None)
 
     props = build_props(cfg, script, spans, [c.words for c in clips], scene_media, voice_src, music)
     job.file("props.json").write_text(props.model_dump_json(indent=2), encoding="utf-8")

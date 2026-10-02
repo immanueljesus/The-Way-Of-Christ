@@ -124,6 +124,13 @@ def fetch_broll(cfg: Config, query: str | list[str], public: Path, name: str, us
     return None
 
 
+def _off_brand(cfg: Config, text: str) -> bool:
+    """Whether a stock result's description (Pexels page slug or photo alt text) names something
+    that doesn't fit the channel, e.g. a brand logo, a party or a neon sign."""
+    t = text.lower().replace("-", " ").replace("/", " ")
+    return any(re.search(rf"\b{re.escape(w.lower())}s?\b", t) for w in cfg.stock_skip_words)
+
+
 def _stock(cfg: Config, query: str, public: Path, name: str, used: set[str]) -> Media | None:
     if not query:
         return None
@@ -133,7 +140,7 @@ def _stock(cfg: Config, query: str, public: Path, name: str, used: set[str]) -> 
 
     data = _get("/videos/search", {"query": query, "orientation": orientation, "per_page": 10, "size": "medium"})
     for video in (data or {}).get("videos", []):
-        if str(video["id"]) in used or video.get("duration", 0) < 4:
+        if str(video["id"]) in used or video.get("duration", 0) < 4 or _off_brand(cfg, video.get("url", "")):
             continue
         f = _best_file(video.get("video_files", []), vertical)
         if not f:
@@ -149,7 +156,7 @@ def fetch_photo(cfg: Config, query: str, public: Path, name: str, used: set[str]
     orientation = "portrait" if cfg.format == "short" else "landscape"
     data = _get("/v1/search", {"query": query, "orientation": orientation, "per_page": 10})
     for photo in (data or {}).get("photos", []):
-        if f"p{photo['id']}" in used:
+        if f"p{photo['id']}" in used or _off_brand(cfg, f"{photo.get('alt', '')} {photo.get('url', '')}"):
             continue
         rel = f"media/{name}.jpg"
         (public / "media").mkdir(parents=True, exist_ok=True)
@@ -202,16 +209,92 @@ def still_from_clip(src: Path, dst: Path) -> None:
     )
 
 
-def pick_music(cfg: Config, public: Path, category: str | None = None) -> str | None:
-    """Copy a track from music_dir (subfolders included) into the job, preferring tracks whose
-    file or folder name suits the video (music_moods). Use only music you are licensed to use."""
-    folder = (ROOT / cfg.music_dir).resolve()
-    tracks = [p for p in folder.rglob("*") if p.suffix.lower() in {".mp3", ".wav", ".m4a", ".ogg"}]
+MUSIC_EXT = {".mp3", ".wav", ".m4a", ".ogg"}
+MUSIC_CREDIT = "music-credit.txt"  # written next to the job's music when the track needs a credit
+MUSIC_LUFS = -20  # every track is brought to the same loudness, so music_volume means the same for all
+
+
+def _music_manifest(cfg: Config) -> dict:
+    import yaml
+
+    path = ROOT / cfg.music_manifest
+    if not path.exists():
+        return {}
+    return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+
+
+def _library_track(cfg: Config, category: str | None, seconds: float | None) -> tuple[Path, str] | None:
+    """A track from the free library (content/music.yaml), downloaded into music_dir on first use.
+    Prayers get calm tracks, everything else cinematic ones; long videos prefer a track that lasts."""
+    manifest = _music_manifest(cfg)
+    tracks = manifest.get("tracks") or []
     if not tracks:
         return None
-    words = cfg.music_moods.get(category or "", cfg.music_moods.get("default", []))
-    fitting = [p for p in tracks if any(w in str(p.relative_to(folder)).lower() for w in words)]
-    track = random.choice(fitting or tracks)
-    dst = public / f"music{track.suffix.lower()}"
-    shutil.copy(track, dst)
+    mood = "prayer" if category == "prayer" else "cinematic"
+    pool = [t for t in tracks if t.get("mood") == mood] or tracks
+    if seconds:
+        lasting = [t for t in pool if t.get("seconds", 0) >= seconds]
+        pool = lasting or [max(pool, key=lambda t: t.get("seconds", 0))]
+    t = random.choice(pool)
+    folder = (ROOT / cfg.music_dir).resolve() / "library" / t.get("mood", "cinematic")
+    folder.mkdir(parents=True, exist_ok=True)
+    path = folder / (t["title"].replace(" ", "_") + ".mp3")
+    if not path.exists():
+        url = manifest.get("base_url", "") + requests.utils.quote(t["title"]) + ".mp3"
+        tmp = path.with_suffix(".part")
+        _download(url, tmp)
+        tmp.replace(path)
+    return path, manifest.get("credit", "").format(title=t["title"])
+
+
+def pick_music(cfg: Config, public: Path, category: str | None = None, seconds: float | None = None) -> str | None:
+    """Put a music track for the video into the job (as music.m4a) and return its file name.
+
+    Your own tracks in music_dir win (subfolders by feel, picked by music_moods); otherwise a track
+    from the free library in content/music.yaml is used, and its required credit is written to
+    music-credit.txt for the description. Each track is levelled to the same loudness and cut to
+    the video's length. Use only music you are licensed to use."""
+    folder = (ROOT / cfg.music_dir).resolve()
+    library = folder / "library"
+    own = [p for p in folder.rglob("*") if p.suffix.lower() in MUSIC_EXT and library not in p.parents]
+    credit = ""
+    if own:
+        words = cfg.music_moods.get(category or "", cfg.music_moods.get("default", []))
+        fitting = [p for p in own if any(w in str(p.relative_to(folder)).lower() for w in words)]
+        track = random.choice(fitting or own)
+    else:
+        try:
+            found = _library_track(cfg, category, seconds)
+        except Exception as e:  # no music is better than no video
+            print(f"warning: could not get a music track: {e}")
+            return None
+        if found is None:
+            return None
+        track, credit = found
+    dst = public / "music.m4a"
+    cut, start = [], []
+    if seconds:
+        cut = ["-t", f"{seconds + 5:.1f}"]
+        # Cinematic tracks build to a peak late in the track (about 80% in) before their fade-out:
+        # start far enough in that the video's last moments (strength) meet that peak, not the fade.
+        # Calm prayer tracks start from the top.
+        length = _probe_seconds(track) or 0
+        if category != "prayer" and length * 0.8 > seconds:
+            start = ["-ss", f"{length * 0.8 - seconds:.1f}"]
+    try:
+        subprocess.run(
+            [imageio_ffmpeg.get_ffmpeg_exe(), "-loglevel", "error", "-y", *start, "-i", str(track), "-vn", *cut,
+             "-af", f"loudnorm=I={MUSIC_LUFS}:TP=-2:LRA=11", "-ar", "44100", "-c:a", "aac", "-b:a", "192k", str(dst)],
+            check=True,
+        )
+    except Exception as e:
+        print(f"warning: could not level {track.name} ({e}); using it as is")
+        dst = public / f"music{track.suffix.lower()}"
+        shutil.copy(track, dst)
+    (public / MUSIC_CREDIT).write_text(credit, encoding="utf-8")
     return dst.name
+
+
+def music_credit(public: Path) -> str:
+    p = public / MUSIC_CREDIT
+    return p.read_text(encoding="utf-8").strip() if p.exists() else ""

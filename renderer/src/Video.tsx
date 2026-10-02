@@ -69,7 +69,7 @@ const ClosingCard: React.FC<{ name: string; tagline: string; seconds: number; th
   const out = interpolate(frame, [total - fps * 0.6, total], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (
     <AbsoluteFill style={{ opacity: out }}>
-      <AbsoluteFill style={{ background: `radial-gradient(ellipse at center, ${theme.background}99 0%, ${theme.background}f2 75%)`, opacity: o }} />
+      <AbsoluteFill style={{ background: `radial-gradient(ellipse at center, ${theme.background}ee 0%, ${theme.background} 75%)`, opacity: o }} />
       <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", gap: short ? 36 : 28, textAlign: "center" }}>
         <div
           style={{

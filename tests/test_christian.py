@@ -199,3 +199,15 @@ def test_job_files_are_utf8_whatever_the_system_encoding(tmp_path):
     job.file("script.json").write_text(s.model_dump_json(indent=2), encoding="utf-8")
     assert load_script(job.file("script.json")).scenes[0].narration == s.scenes[0].narration
     assert Job(job.path).meta["title"] == "Not forgotten"
+
+
+def test_a_loose_quote_of_a_long_passage_becomes_its_closest_verse():
+    passage = scripture.Passage(
+        "Isaiah 40:29-31", "He gives power to the weak. ... They will run, and not be weary.", "WEB",
+        verses=[("Isaiah 40:29", "He gives power to the weak."), ("Isaiah 40:30", "Even the youths faint."),
+                ("Isaiah 40:31", "They will mount up with wings like eagles. They will run, and not be weary.")],
+    )
+    s = script(ScriptScene(narration="n", type="quote", text="soar on wings like eagles", author="Isaiah 40:29-31"))
+    fixed, problems = scripture.check_quotes(Config(), s, {"Isaiah 40:29-31": passage})
+    assert fixed.scenes[0].author == "Isaiah 40:31" and fixed.scenes[0].text.startswith("They will mount up")
+    assert problems == []

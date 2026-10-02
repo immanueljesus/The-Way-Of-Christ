@@ -102,6 +102,14 @@ jobs:
           path: assets/kokoro
           key: kokoro-v1.0
 
+      # Free CC BY music from content/music.yaml, downloaded once and kept between runs.
+      - name: Cache music library
+        if: steps.need.outputs.needed == 'yes'
+        uses: actions/cache@v5
+        with:
+          path: assets/music/library
+          key: music-${{ hashFiles('content/music.yaml') }}
+
       - name: Make videos
         if: steps.need.outputs.needed == 'yes'
         env:

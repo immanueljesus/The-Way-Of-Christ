@@ -108,21 +108,29 @@ def test_long_script_is_written_chapter_by_chapter(monkeypatch):
     n = llm.chapter_count(cfg)
     outline = {k: v for k, v in SCRIPT.items() if k != "scenes"}
     outline["chapters"] = [{"heading": f"Part {i}", "angle": "why"} for i in range(1, n + 1)]
-    answers = [reply(json.dumps(outline))] + [
-        reply(json.dumps({"scenes": [{"narration": f"Chapter {i} line.", "type": "statement", "image": i}]}))
-        for i in range(1, n + 1)
-    ]
-    prompts = []
+    import re
+
+    prompts, retries = [], []
 
     def post(url, headers, json, timeout):
-        prompts.append(json["messages"][1]["content"])
         assert json["max_tokens"] <= 3000  # each request fits Groq's free per-minute limit
-        return answers.pop(0)
+        content = json["messages"][1]["content"]
+        m = re.search(r"Write chapter (\d+)", content)
+        if not m:
+            prompts.append(content)
+            return reply(globals()["json"].dumps(outline))
+        if "Your previous draft of this chapter had only" in content:  # too short: asked for more
+            retries.append(int(m[1]))
+        else:
+            prompts.append(content)
+        i = int(m[1])
+        return reply(globals()["json"].dumps({"scenes": [{"narration": f"Chapter {i} line.", "type": "statement", "image": i}]}))
 
     monkeypatch.setattr(llm.requests, "post", post)
     notes = "\n".join(f"fact {i} " + "y" * 200 for i in range(200))
     script = llm.write_script(cfg, "Mary", notes, from_wikipedia=True, images="1. a\n2. b")
     assert len(prompts) == n + 1
+    assert retries == list(range(1, n + 1))  # every 3-word chapter was asked to be longer
     assert all(len(p) < 9000 for p in prompts)
     assert [s.narration for s in script.scenes] == [f"Chapter {i} line." for i in range(1, n + 1)]
     assert [(c.title, c.scene) for c in script.chapters] == [(f"Part {i}", i - 1) for i in range(1, n + 1)]

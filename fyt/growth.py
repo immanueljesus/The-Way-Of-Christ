@@ -65,7 +65,7 @@ def polish(cfg: Config, script: Script) -> Script:
         loop_rule=(
             "Loop line: Shorts replay automatically. Write a last sentence that leads straight back into the hook, "
             "so the replay feels seamless.\n"
-            if short
+            if short and cfg.growth.loop_shorts
             else "Leave loop_line empty.\n"
         ),
         series_rule=f"Series: pick the one that fits best: {', '.join(series)}.\n" if series else "Leave series empty.\n",
@@ -81,7 +81,7 @@ def polish(cfg: Config, script: Script) -> Script:
     if scenes and hook and len(hook.split()) <= 45:
         scenes[0] = scenes[0].model_copy(update={"narration": hook})
     loop = p.loop_line.strip()
-    if short and scenes and loop and len(loop.split()) <= 16:
+    if short and cfg.growth.loop_shorts and scenes and loop and len(loop.split()) <= 16:
         scenes[-1] = scenes[-1].model_copy(update={"narration": scenes[-1].narration.rstrip() + " " + loop})
     title = p.best_title.strip()
     update = {"scenes": scenes}

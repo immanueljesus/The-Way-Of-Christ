@@ -1,0 +1,29 @@
+# Free music the pipeline downloads when assets/music has no tracks of your own (for example on
+# GitHub Actions, where assets/music isn't committed). Tracks are by Kevin MacLeod (incompetech.com),
+# licensed Creative Commons Attribution 4.0: free for YouTube, monetised videos included, as long
+# as the credit is in the description. The pipeline adds the credit to every video automatically.
+#
+#   mood       cinematic: rising, hopeful, building (motivational, Bible story, Jesus, facts)
+#              prayer: calm, ambient, piano (prayer and sleep videos)
+#   seconds    track length; long videos prefer a track that lasts the whole video
+#
+# To use your own licensed tracks instead, put them in assets/music/cinematic/ and
+# assets/music/prayer/ (they win over this list). Remove a line here to stop using a track.
+
+credit: '"{title}" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/'
+base_url: https://incompetech.com/music/royalty-free/mp3-royaltyfree/
+
+tracks:
+  - {title: Eternal Hope, mood: cinematic, seconds: 282}
+  - {title: Dreams Become Real, mood: cinematic, seconds: 408}
+  - {title: Inspired, mood: cinematic, seconds: 288}
+  - {title: Majestic Hills, mood: cinematic, seconds: 198}
+  - {title: Ascending the Vale, mood: cinematic, seconds: 246}
+  - {title: Touching Moments Two - Higher, mood: cinematic, seconds: 174}
+  - {title: Lasting Hope, mood: cinematic, seconds: 144}
+  - {title: Heartwarming, mood: cinematic, seconds: 72}
+  - {title: Healing, mood: prayer, seconds: 522}
+  - {title: Meditation Impromptu 01, mood: prayer, seconds: 210}
+  - {title: Meditation Impromptu 02, mood: prayer, seconds: 252}
+  - {title: Clean Soul, mood: prayer, seconds: 306}
+  - {title: Long Note Two, mood: prayer, seconds: 462}

@@ -76,3 +76,20 @@ Following the creative direction "don't just tell them about faith, make them fe
 - Bible references that span chapters ("Genesis 42:29–43:15") were cut to "Genesis 42:29-43" and failed to fetch; they now keep their end chapter. Passages only mentioned in the Wikipedia background are kept only when short enough to quote.
 - Every file the pipeline reads or writes now uses UTF-8, so Windows (cp1252) no longer fails on characters like narrow spaces or curly quotes in a script.
 - Stock clips are converted to 30 fps H.264 at the video's exact size before rendering, slowed (up to 2x) or looped to cover their scene, and replaced by a still if they can't be converted. Mixed Pexels clips (25/59.94 fps, 1080x2048) crashed Remotion with "No frame found at position".
+
+## Music, length and polish (after the first automatic runs)
+
+- **Music was missing** because `assets/music` is not committed, so GitHub Actions had no tracks. The
+  pipeline now falls back to a free library (`content/music.yaml`): 13 cinematic and calm tracks by
+  Kevin MacLeod, Creative Commons Attribution 4.0, downloaded on first use and cached between runs. The
+  required credit is added to every description. Your own tracks in `assets/music/` still win.
+- Every track is levelled to the same loudness, cut to the video, and (for cinematic tracks) started so
+  the video's ending meets the music's peak instead of its fade-out. Music sits about 15 dB under the
+  voice and swells in the pauses and at the end (`music_volume: 0.3`).
+- Long videos: a chapter far under its length is rewritten longer, so 10-minute videos stop coming out
+  at 5-6 minutes.
+- A loose Scripture quote from a long passage is replaced by its closest single verse, not the whole
+  passage (no more walls of text on screen).
+- Shorts no longer end on a "loop" line that repeats the hook; they end on strength and the closing card.
+- Off-brand stock results (brand logos, caps, parties, neon...) are skipped (`stock_skip_words`).
+- The closing card fully covers the last scene's text.

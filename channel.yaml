@@ -85,14 +85,19 @@ voice:
   elevenlabs_style: 0.35
 
 music_dir: assets/music         # TODO: add licensed cinematic tracks (see assets/music/README.md)
-music_volume: 0.14              # under the voice; it swells in the pauses and at the turning points
+music_volume: 0.3               # under the voice (~15 dB below it); swells in the pauses and at the turning points
 music_dynamics: true            # the music follows the emotional journey (see timeline.music_levels)
-music_swell: 2.0
+music_swell: 2.2
 tail_seconds: 3.0               # the music carries the ending after the last word
 closing_card: true              # "THE WAY OF CHRIST" + tagline over the last seconds
 letterbox: true                 # cinematic bars on long videos
 mix_loudness: -14               # finished videos at YouTube's playback loudness
 visuals_dir: assets/visuals     # optional: your own artwork, matched to scenes by file name
+# Pexels results described with any of these are skipped: keeps brands, parties and modern
+# clutter out of the imagery.
+stock_skip_words: [logo, brand, supreme, nike, adidas, cap, hat, party, club, nightclub, neon, dj, concert,
+  beer, wine, alcohol, cigarette, smoking, bikini, selfie, phone, laptop, office, money, casino, halloween,
+  skull, gun, weapon, tattoo, graffiti, sports car]
 stock_footage: true             # uses PEXELS_API_KEY if set, otherwise artwork and plain backgrounds
 captions: true
 visualizer: false               # no audio bars: this channel is calm
@@ -140,6 +145,7 @@ schedule:
 
 growth:
   polish: true
+  loop_shorts: false            # end every Short on strength and the closing card, not a replay hook
   rank_topics: false            # topics come from the curated catalog
   cuts_per_long: 6              # each master video becomes up to 6 Shorts that link back to it
   series:                       # a playlist each; catalog ideas name their own series

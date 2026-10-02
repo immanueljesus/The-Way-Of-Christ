@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import re
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from urllib.parse import quote
 
 import requests
@@ -39,6 +39,8 @@ class Passage:
     reference: str
     text: str
     translation: str
+    # The passage verse by verse: (reference of the single verse, its text). Empty if unknown.
+    verses: list[tuple[str, str]] = field(default_factory=list)
 
 
 def find_references(text: str) -> list[str]:
@@ -77,10 +79,15 @@ def fetch(cfg: Config, reference: str) -> Passage:
             raise LookupError(f"no such passage: {reference}")
         r.raise_for_status()
         body = r.json()
+        verses = [
+            (f"{v.get('book_name', '')} {v.get('chapter')}:{v.get('verse')}".strip(), _clean(v.get("text", "")))
+            for v in body.get("verses") or []
+        ]
         return Passage(
             reference=body.get("reference") or reference,
             text=_clean(body.get("text", "")),
             translation=body.get("translation_name") or cfg.scripture.translation_name,
+            verses=verses,
         )
     raise LookupError(f"could not fetch {reference}")
 
@@ -133,12 +140,29 @@ def check_quotes(cfg: Config, script: Script, passages: dict[str, Passage]) -> t
         quoted = _words(s.text or "")
         if quoted and quoted in _words(passage.text):
             continue
-        if len(passage.text) <= cfg.scripture.max_verse_chars:
+        # A loose quote is replaced by the single verse it is closest to (a whole passage is too much
+        # to read on screen), or the whole passage when it is one verse or the verses are unknown.
+        verse = best_verse(passage, s.text or s.narration)
+        if verse:
+            ref, text = verse
+            print(f"scene {i + 1}: replaced a loose quote of {refs[0]} with the exact verse {ref}")
+            scenes[i] = s.model_copy(update={"text": text, "author": ref})
+        elif len(passage.text) <= cfg.scripture.max_verse_chars:
             print(f"scene {i + 1}: replaced a loose quote of {refs[0]} with the exact verse")
             scenes[i] = s.model_copy(update={"text": passage.text})
         else:
             problems.append(f"scene {i + 1}'s quote doesn't match {refs[0]} and the passage is too long to show")
     return script.model_copy(update={"scenes": scenes}), problems
+
+
+def best_verse(passage: Passage, quote: str) -> tuple[str, str] | None:
+    """The verse of a multi-verse passage that shares the most words with a loose quote."""
+    if len(passage.verses) < 2:
+        return None
+    want = set(_words(quote).split())
+    scored = [(len(want & set(_words(t).split())), ref, t) for ref, t in passage.verses]
+    score, ref, text = max(scored, key=lambda x: x[0])
+    return (ref, text) if score > 0 else None
 
 
 def credit(cfg: Config, passages: dict[str, Passage]) -> str:

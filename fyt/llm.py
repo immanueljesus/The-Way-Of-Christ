@@ -296,7 +296,7 @@ How it sounds (a warm, deep, deliberate narrator reads every word):
 - Speak to one person, "you", like someone who has been there, not a teacher and not a preacher.
 - Short, spoken sentences. Vary the rhythm: a long line, then a short one. Then shorter.
 - Leave space. End a line with "..." where the voice should trail off and breathe. Use repetition that
-  builds ("Not forgotten. Not abandoned. Not alone.").
+  builds, written fresh for this video (never reuse a stock phrase from these instructions).
 - Never sound like a documentary or a lecture: no "in this video", "let's explore", "scholars say",
   "historically", "the text tells us", "fun fact", "did you know", no dates or numbers unless they hurt or
   heal. Even a Bible fact is a doorway to a feeling.
@@ -552,6 +552,21 @@ def write_long_script(
                     raise
                 chunk = chunk[: len(chunk) // 2]
                 print(f"request too large; retrying chapter {i} with {len(chunk)} characters of notes")
+        # Free models tend to write short. A chapter well under its length gets one more try,
+        # and the longer of the two drafts is kept, so long videos reach their target length.
+        got = sum(len(sc.narration.split()) for sc in part.scenes)
+        if got < 0.7 * words:
+            note = (
+                f"\n\nYour previous draft of this chapter had only {got} words of narration. It needs about "
+                f"{words} words: write more scenes (about {max(3, words // 30)} in total), going deeper into the "
+                "story and the feeling. Don't pad with repetition."
+            )
+            try:
+                longer = _openai_structured(cfg, system, user + note, ChapterScenes, max_tokens=3000)
+                if sum(len(sc.narration.split()) for sc in longer.scenes) > got:
+                    part = longer
+            except ClaudeError as e:
+                print(f"chapter {i} stays short ({got} words): {str(e)[:200]}")
         if not part.scenes:
             continue
         chapters.append(Chapter(title=plan.heading, scene=len(scenes)))

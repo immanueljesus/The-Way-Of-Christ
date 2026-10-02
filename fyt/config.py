@@ -175,6 +175,7 @@ class ScheduleConfig(BaseModel):
 
 class GrowthConfig(BaseModel):
     polish: bool = True  # second pass on title, hook and thumbnail text (plus a loop line for Shorts)
+    loop_shorts: bool = True  # Shorts end on a line that leads back into the hook (seamless replay)
     rank_topics: bool = True  # pick articles by fit with the niche and Wikipedia pageviews
     min_topic_fit: int = 6  # 0-10; articles the model rates lower are skipped
     cuts_per_long: int = 2  # Shorts cut from each long video (they fill regular Short slots)
@@ -230,6 +231,8 @@ class Config(BaseModel):
     research: bool = True  # use Claude's web search before scripting (source: web)
     voice: VoiceConfig = Field(default_factory=VoiceConfig)
     music_dir: str = "assets/music"
+    # Free, credited music used when music_dir has none of your own tracks (see content/music.yaml).
+    music_manifest: str = "content/music.yaml"
     # Your own licensed or AI-generated artwork. Files whose names share words with a scene's
     # footage search (e.g. "joseph-prison-light.jpg" for "joseph prison") are used before stock footage.
     visuals_dir: str = "assets/visuals"
@@ -258,6 +261,8 @@ class Config(BaseModel):
     # Normalise the finished video's sound to this loudness (LUFS; YouTube plays at -14). None to skip.
     mix_loudness: float | None = None
     stock_footage: bool = True  # needs PEXELS_API_KEY
+    # Stock results whose description contains one of these are skipped (off-brand for the channel).
+    stock_skip_words: list[str] = Field(default_factory=list)
     captions: bool = True
     visualizer: bool = True
     theme: Theme = Field(default_factory=Theme)

@@ -154,3 +154,38 @@ def test_stock_clips_are_conformed_for_the_renderer(tmp_path):
     info = subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-i", str(clip)], capture_output=True, text=True).stderr
     assert "1080x1920" in info and "30 fps" in info
     assert 1 not in out  # unusable clip and no still: the scene falls back to its background
+
+
+def test_free_music_library_is_used_when_there_are_no_own_tracks(tmp_path, monkeypatch):
+    """GitHub Actions has no assets/music of its own: a credited CC BY track is downloaded,
+    levelled, cut to the video and its credit handed to the description."""
+    import subprocess
+
+    import imageio_ffmpeg
+
+    monkeypatch.setattr(media, "ROOT", tmp_path)
+    (tmp_path / "content").mkdir()
+    (tmp_path / "content" / "music.yaml").write_text(
+        "credit: '\"{title}\" by Someone (CC BY 4.0)'\nbase_url: https://example.org/\n"
+        "tracks:\n  - {title: Short Hope, mood: cinematic, seconds: 60}\n"
+        "  - {title: Long Hope, mood: cinematic, seconds: 600}\n  - {title: Calm, mood: prayer, seconds: 600}\n",
+        encoding="utf-8",
+    )
+    fetched = []
+
+    def fake_download(url, dst):
+        fetched.append(url)
+        subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-loglevel", "error", "-y", "-f", "lavfi", "-i",
+                        "sine=frequency=220:duration=20", "-f", "mp3", str(dst)], check=True)
+
+    monkeypatch.setattr(media, "_download", fake_download)
+    cfg = Config(music_dir="music")
+    public = tmp_path / "public"
+    public.mkdir()
+    assert media.pick_music(cfg, public, category="motivational", seconds=300) == "music.m4a"
+    assert fetched == ["https://example.org/Long%20Hope.mp3"]  # a track long enough for the video
+    assert media.music_credit(public) == '"Long Hope" by Someone (CC BY 4.0)'
+    media.pick_music(cfg, public, category="motivational", seconds=300)
+    assert len(fetched) == 1  # downloaded once, then reused
+    media.pick_music(cfg, public, category="prayer", seconds=30)
+    assert fetched[-1].endswith("/Calm.mp3")

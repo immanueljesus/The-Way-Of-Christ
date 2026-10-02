@@ -157,7 +157,7 @@ growth:
 # a prayer, a community post, a pinned comment and 6 Short ideas.
 repurpose: true
 
-# true: videos wait in jobs/ for `python -m fyt approve <job> --upload` (recommended while the
-# channel is new: watch every video before it goes out). Set to false to let `fill` upload
-# automatically, then turn on the workflow's schedule (see SETUP.md).
-require_review: true
+# false: the scheduled GitHub Actions runs make and upload every video automatically (`fill`).
+# true: videos only get made; upload them with `python -m fyt approve <job> --upload` or a
+# manual workflow run with upload checked. Switch back to true to pause automatic uploads.
+require_review: false

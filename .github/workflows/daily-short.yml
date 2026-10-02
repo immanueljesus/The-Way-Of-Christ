@@ -18,10 +18,10 @@
 name: Daily videos
 
 on:
-  # TODO (SETUP.md step 6): uncomment to run automatically.
-  # schedule:
-  #   # Twice a day is enough to keep two days of videos scheduled ahead, and saves free minutes.
-  #   - cron: "17 3,15 * * *"
+  schedule:
+    # Twice a day is enough to keep two days of videos scheduled ahead, and saves free minutes.
+    # To pause automatic uploads, comment these two lines out (or set require_review: true).
+    - cron: "17 3,15 * * *"
   workflow_dispatch:
     inputs:
       task:

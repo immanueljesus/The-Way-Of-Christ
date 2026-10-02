@@ -81,7 +81,7 @@ def test_a_failed_polish_keeps_the_video(monkeypatch, tmp_path):
     monkeypatch.setattr(pipeline.qa, "check_script", lambda cfg, s: ["stop here"])
     with pytest.raises(RuntimeError, match="stop here"):
         pipeline._make(cfg, job, "t", script(), None, polish=True)
-    assert json.loads(job.file("script.json").read_text())["title"] == "Old title"
+    assert json.loads(job.file("script.json").read_text(encoding="utf-8"))["title"] == "Old title"
 
 
 def test_rank_prefers_fit_then_readers():

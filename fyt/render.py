@@ -30,6 +30,11 @@ def ensure_renderer() -> None:
         subprocess.run([npm, "install"], cwd=RENDERER_DIR, check=True)
 
 
+def dims(fmt: str) -> tuple[int, int]:
+    """Frame size of a video format (same as renderer/src/theme.ts dims)."""
+    return (1080, 1920) if fmt == "short" else (1920, 1080)
+
+
 def normalize_loudness(video: Path, lufs: float) -> None:
     """Bring the finished mix to a target loudness, in place. The picture is copied untouched."""
     import imageio_ffmpeg

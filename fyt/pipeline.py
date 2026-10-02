@@ -60,8 +60,14 @@ def research_notes(cfg: Config, job: Job, topic: str) -> tuple[str, str, "wiki.A
     if cfg.research and cfg.llm.provider == "anthropic" and article is None:
         log(job, "researching")
         notes = (notes + "\n\n" + llm.research(cfg, subject)).strip()
-    refs += [r for r in scripture.find_references(notes) if r not in refs]
-    passages = scripture.fetch_all(cfg, refs[:12])
+    # The idea's own passages always; ones merely mentioned in the background notes (often whole
+    # chapters, e.g. "Genesis 42:29–43:15") only when short enough to quote, so they don't crowd
+    # the notes the model sees.
+    passages = scripture.fetch_all(cfg, refs[:8])
+    extra = [r for r in scripture.find_references(notes) if r not in refs][: max(0, 12 - len(passages))]
+    passages.update(
+        {r: p for r, p in scripture.fetch_all(cfg, extra).items() if len(p.text) <= cfg.scripture.max_verse_chars}
+    )
     if passages:
         log(job, f"fetched {len(passages)} Scripture passages ({cfg.scripture.translation})")
     notes = (scripture.notes(passages) + "\n\n" + notes).strip()
@@ -135,21 +141,22 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
 
     log(job, "fetching visuals")
     scene_media, credits, used = scene_visuals(cfg, job, script, images, topic)
+    scene_media = conform_clips(cfg, job, scene_media, spans)
     if credits:
         script = script.model_copy(
             update={"description": script.description.rstrip() + "\n\nImages from Wikimedia Commons:\n" + "\n".join(credits)}
         )
-        job.file("script.json").write_text(script.model_dump_json(indent=2))
+        job.file("script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
     chapters = chapter_list(script, spans)
     if chapters:
         script = script.model_copy(update={"description": script.description.rstrip() + "\n\n" + chapters})
-        job.file("script.json").write_text(script.model_dump_json(indent=2))
-    job.file("youtube.txt").write_text(youtube.upload_sheet(cfg, script))
+        job.file("script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
+    job.file("youtube.txt").write_text(youtube.upload_sheet(cfg, script), encoding="utf-8")
     music = media.pick_music(cfg, job.public, category=idea.category if idea else None)
 
     props = build_props(cfg, script, spans, [c.words for c in clips], scene_media, voice_src, music)
-    job.file("props.json").write_text(props.model_dump_json(indent=2))
-    job.file("captions.srt").write_text(to_srt(props.captions))
+    job.file("props.json").write_text(props.model_dump_json(indent=2), encoding="utf-8")
+    job.file("captions.srt").write_text(to_srt(props.captions), encoding="utf-8")
 
     log(job, f"rendering {props.duration:.0f}s {cfg.format} video")
     video = render.render(job.file("props.json"), job.public, job.file("video.mp4"))
@@ -176,7 +183,7 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
         theme=cfg.theme.model_dump(),
         background=bg,
     )
-    job.file("thumbnail.json").write_text(thumb.model_dump_json(indent=2))
+    job.file("thumbnail.json").write_text(thumb.model_dump_json(indent=2), encoding="utf-8")
     render.render(job.file("thumbnail.json"), job.public, job.file("thumbnail.png"), still=True)
     if extras:
         quote_cards(cfg, job, extras, bg)
@@ -274,6 +281,41 @@ def scene_visuals(
     return scene_media, credits, used
 
 
+CROSSFADE_SECONDS = 0.8  # renderer/src/scenes CROSSFADE: a scene runs on under the next one
+
+
+def conform_clips(
+    cfg: Config, job: Job, scene_media: dict[int, Media], spans: list[tuple[float, float]], tail: float | None = None
+) -> dict[int, Media]:
+    """Make every video clip safe for the renderer and long enough for its scene (see
+    media.conform_clip). A clip that can't be converted becomes a still from it, or is dropped."""
+    from fyt.render import dims
+
+    width, height = dims(cfg.format)
+    out = dict(scene_media)
+    for i, m in scene_media.items():
+        if m.kind != "video" or i >= len(spans):
+            continue
+        start = 0.0 if i == 0 else spans[i][0]
+        end = spans[i + 1][0] if i + 1 < len(spans) else spans[-1][1] + (tail or cfg.tail_seconds) + 4
+        seconds = end - start + CROSSFADE_SECONDS + 0.5
+        src = job.public / m.src
+        dst = src.with_name(src.stem + "-cfr.mp4")
+        try:
+            media.conform_clip(src, dst, seconds, width, height)
+            out[i] = Media(src=str(Path(m.src).with_name(dst.name)).replace("\\", "/"), kind="video")
+            src.unlink(missing_ok=True)
+        except Exception as e:
+            log(job, f"warning: clip for scene {i + 1} can't be used as video ({e}); using a still from it")
+            still = src.with_suffix(".jpg")
+            try:
+                media.still_from_clip(src, still)
+                out[i] = Media(src=str(Path(m.src).with_suffix(".jpg")).replace("\\", "/"), kind="image")
+            except Exception:
+                out.pop(i, None)
+    return out
+
+
 def wiki_attribute(script: Script, article: "wiki.Article") -> Script:
     """CC BY-SA requires attribution: put it in the description and sources."""
     description = script.description.rstrip()
@@ -289,7 +331,7 @@ def upload_job(cfg: Config, job: Job, force: bool = False, publish_at: datetime 
         raise SystemExit(f"{job.id} is already uploaded: https://youtu.be/{job.meta.get('youtube_id')}")
     if status not in ("approved", "upload_failed") and not force:
         raise SystemExit(f"{job.id} is '{status}'. Review it, then `python -m fyt approve {job.id}` (or --force).")
-    script = Script.model_validate_json(job.file("script.json").read_text())
+    script = Script.model_validate_json(job.file("script.json").read_text(encoding="utf-8"))
     cfg = cfg.model_copy(update={"format": job.meta.get("format", cfg.format)})  # e.g. #Shorts in the description
     video_id = youtube.upload(
         cfg, script, job.file("video.mp4"), job.file("thumbnail.png"), job.file("captions.srt"), publish_at=publish_at
@@ -320,7 +362,7 @@ def queue_cuts(cfg: Config, script: Script, video_id: str) -> None:
     names = []
     for i, cut in enumerate(cuts, 1):
         name = f"{video_id}-{i}"
-        (folder / f"{name}.json").write_text(cut.model_dump_json(indent=2))
+        (folder / f"{name}.json").write_text(cut.model_dump_json(indent=2), encoding="utf-8")
         names.append(CUT + name)
     if names:
         Topics(cfg).add(names)
@@ -463,4 +505,4 @@ def performance_summary(cfg: Config, limit: int = 10) -> str:
 
 
 def load_script(path: Path) -> Script:
-    return Script.model_validate(json.loads(path.read_text()))
+    return Script.model_validate(json.loads(path.read_text(encoding="utf-8")))

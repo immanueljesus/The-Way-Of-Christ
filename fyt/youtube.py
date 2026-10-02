@@ -38,7 +38,7 @@ def auth() -> None:
         raise SystemExit(f"Missing {CLIENT_SECRET}. Download a Desktop OAuth client JSON from Google Cloud.")
     flow = InstalledAppFlow.from_client_secrets_file(str(CLIENT_SECRET), SCOPES)
     creds = flow.run_local_server(port=0, open_browser=True)
-    TOKEN.write_text(creds.to_json())
+    TOKEN.write_text(creds.to_json(), encoding="utf-8")
     print(f"Saved credentials to {TOKEN}")
 
 
@@ -54,7 +54,7 @@ def can_manage() -> bool:
     """Whether the token may do more than upload (caption tracks, playlists, stats).
     Tokens made with only the upload scope get 403 for those."""
     try:
-        raw = TOKEN.read_text() if TOKEN.exists() else os.environ.get("YOUTUBE_TOKEN_JSON", "")
+        raw = TOKEN.read_text(encoding="utf-8") if TOKEN.exists() else os.environ.get("YOUTUBE_TOKEN_JSON", "")
         scopes = json.loads(raw).get("scopes")
     except (OSError, ValueError):
         return False
@@ -91,7 +91,7 @@ def _service():
     # In CI the token comes from a secret; locally from `fyt auth`.
     if not TOKEN.exists() and os.environ.get("YOUTUBE_TOKEN_JSON", "").strip():
         SECRETS.mkdir(exist_ok=True)
-        TOKEN.write_text(os.environ["YOUTUBE_TOKEN_JSON"])
+        TOKEN.write_text(os.environ["YOUTUBE_TOKEN_JSON"], encoding="utf-8")
     if not TOKEN.exists():
         raise SystemExit("Not authorised. Run `python -m fyt auth` first.")
     # No scopes here: refreshing then keeps whatever the login granted. Asking for
@@ -100,7 +100,7 @@ def _service():
     creds = Credentials.from_authorized_user_file(str(TOKEN))
     if not creds.valid and creds.refresh_token:
         creds.refresh(Request())
-        TOKEN.write_text(creds.to_json())
+        TOKEN.write_text(creds.to_json(), encoding="utf-8")
     return build("youtube", "v3", credentials=creds, cache_discovery=False)
 
 

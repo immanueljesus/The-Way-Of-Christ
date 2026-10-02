@@ -37,7 +37,7 @@ class FakeChannel:
             return None
         job = Job.create(cfg, f"topic {len(self.made)}")
         job.file("video.mp4").write_bytes(b"x")
-        job.file("script.json").write_text("{}")
+        job.file("script.json").write_text("{}", encoding="utf-8")
         job.update(status="approved")
         self.made.append(cfg.format)
         return job

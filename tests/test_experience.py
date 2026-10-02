@@ -123,3 +123,34 @@ def test_music_is_picked_to_suit_the_video(tmp_path, monkeypatch):
         media.pick_music(cfg, public, category="motivational")
     # motivational videos only ever get the cinematic track
     assert all(media.pick_music(cfg, public, category="motivational") for _ in range(3))
+
+
+def test_stock_clips_are_conformed_for_the_renderer(tmp_path):
+    """Odd stock clips (25 fps, 1080x2048, shorter than the scene) broke Remotion with
+    "No frame found at position"; they are re-encoded to 30 fps H.264 at the frame size, long enough."""
+    import subprocess
+
+    import imageio_ffmpeg
+
+    from fyt import pipeline, qa
+    from fyt.models import Media
+    from fyt.store import Job
+
+    job = Job.create(Config(jobs_dir=str(tmp_path), format="short"), "t")
+    (job.public / "media").mkdir()
+    src = job.public / "media" / "s1.mp4"
+    subprocess.run(
+        [imageio_ffmpeg.get_ffmpeg_exe(), "-loglevel", "error", "-y", "-f", "lavfi", "-i",
+         "testsrc=size=1080x2048:rate=25:duration=2", "-c:v", "libx264", str(src)],
+        check=True,
+    )
+    (job.public / "media" / "broken.mp4").write_bytes(b"not a video")
+    spans = [(0.0, 5.0), (6.0, 8.0)]
+    media_in = {0: Media(src="media/s1.mp4", kind="video"), 1: Media(src="media/broken.mp4", kind="video")}
+    out = pipeline.conform_clips(Config(format="short"), job, media_in, spans)
+    assert out[0].src == "media/s1-cfr.mp4" and not src.exists()
+    clip = job.public / out[0].src
+    assert qa.media_duration(clip) >= 6.0 + pipeline.CROSSFADE_SECONDS
+    info = subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-i", str(clip)], capture_output=True, text=True).stderr
+    assert "1080x1920" in info and "30 fps" in info
+    assert 1 not in out  # unusable clip and no still: the scene falls back to its background

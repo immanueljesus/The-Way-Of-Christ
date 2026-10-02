@@ -5,9 +5,11 @@ from __future__ import annotations
 import random
 import re
 import shutil
+import subprocess
 import time
 from pathlib import Path
 
+import imageio_ffmpeg
 import requests
 
 from fyt.config import ROOT, Config, secret
@@ -155,6 +157,49 @@ def fetch_photo(cfg: Config, query: str, public: Path, name: str, used: set[str]
         used.add(f"p{photo['id']}")
         return Media(src=rel, kind="image")
     return None
+
+
+CLIP_FPS = 30
+MAX_SLOWDOWN = 2.0  # a short clip is slowed (cinematic slow motion) up to this much before it loops
+
+
+def _probe_seconds(path: Path) -> float | None:
+    proc = subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-i", str(path)], capture_output=True, text=True, check=False)
+    m = re.search(r"Duration: (\d+):(\d+):(\d+\.\d+)", proc.stderr)
+    return int(m[1]) * 3600 + int(m[2]) * 60 + float(m[3]) if m else None
+
+
+def conform_clip(src: Path, dst: Path, seconds: float, width: int, height: int) -> None:
+    """Re-encode a stock clip into what the renderer handles reliably: H.264, constant 30 fps,
+    exactly the video's frame size, no audio, starting at 0 and at least `seconds` long.
+
+    Stock clips come in every shape (25/29.97/59.94 fps, variable frame rates, odd sizes like
+    1080x2048, edit lists), and some make Remotion fail with "No frame found at position".
+    A clip shorter than its scene is first slowed down (up to 2x), then looped."""
+    have = _probe_seconds(src)
+    if not have:
+        raise RuntimeError(f"could not read {src.name}")
+    slow = max(1.0, min(MAX_SLOWDOWN, seconds / have))
+    vf = (
+        f"setpts={slow:.4f}*PTS,scale={width}:{height}:force_original_aspect_ratio=increase,"
+        f"crop={width}:{height},fps={CLIP_FPS},format=yuv420p"
+    )
+    loop = ["-stream_loop", "-1"] if have * slow < seconds else []
+    subprocess.run(
+        [imageio_ffmpeg.get_ffmpeg_exe(), "-loglevel", "error", "-y", *loop, "-i", str(src), "-t", f"{seconds:.3f}",
+         "-vf", vf, "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-movflags", "+faststart", str(dst)],
+        check=True,
+    )
+
+
+def still_from_clip(src: Path, dst: Path) -> None:
+    """A frame from a third of the way into a clip, for when the clip itself can't be used."""
+    have = _probe_seconds(src) or 0
+    subprocess.run(
+        [imageio_ffmpeg.get_ffmpeg_exe(), "-loglevel", "error", "-y", "-ss", f"{have / 3:.2f}", "-i", str(src),
+         "-frames:v", "1", "-q:v", "2", str(dst)],
+        check=True,
+    )
 
 
 def pick_music(cfg: Config, public: Path, category: str | None = None) -> str | None:

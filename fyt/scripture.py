@@ -25,11 +25,12 @@ BOOKS = """Genesis Exodus Leviticus Numbers Deuteronomy Joshua Judges Ruth|1 Sam
 |Colossians|1 Thessalonians|2 Thessalonians|1 Timothy|2 Timothy|Titus|Philemon|Hebrews|James|1 Peter|2 Peter
 |1 John|2 John|3 John|Jude|Revelation""".replace("\n", "").replace(" ", "|", 7).split("|")
 
-# "John 3:16", "1 Peter 5:7", "Psalm 23:1-4", "Song of Solomon 2:4", "Genesis 50:19–21"
+# "John 3:16", "1 Peter 5:7", "Psalm 23:1-4", "Song of Solomon 2:4", "Genesis 50:19–21",
+# and ranges across chapters: "Genesis 42:29–43:15" (end chapter in group 4, end verse in group 5).
 REFERENCE = re.compile(
     r"(?<![A-Za-z0-9])("
     + "|".join(re.escape(b) for b in sorted(BOOKS, key=len, reverse=True))
-    + r")\s(\d{1,3}):(\d{1,3})(?:\s?[-–]\s?(\d{1,3}))?\b"
+    + r")\s(\d{1,3}):(\d{1,3})(?:\s?[-–]\s?(\d{1,3})(?::(\d{1,3}))?)?\b"
 )
 
 
@@ -44,7 +45,7 @@ def find_references(text: str) -> list[str]:
     """Bible references mentioned in a piece of text, in order, without repeats."""
     out: list[str] = []
     for m in REFERENCE.finditer(text or ""):
-        ref = f"{m[1]} {m[2]}:{m[3]}" + (f"-{m[4]}" if m[4] else "")
+        ref = f"{m[1]} {m[2]}:{m[3]}" + (f"-{m[4]}" if m[4] else "") + (f":{m[5]}" if m[5] else "")
         if ref not in out:
             out.append(ref)
     return out

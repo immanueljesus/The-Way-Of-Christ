@@ -70,3 +70,9 @@ Following the creative direction "don't just tell them about faith, make them fe
 - Narration is normalised to -16 LUFS and every finished video to -14 LUFS (YouTube's playback level).
 - Wikimedia requests now retry when rate-limited.
 - `tests/test_experience.py` covers the pacing, pauses, music curve, closing card and music choice.
+
+## Fixes
+
+- Bible references that span chapters ("Genesis 42:29–43:15") were cut to "Genesis 42:29-43" and failed to fetch; they now keep their end chapter. Passages only mentioned in the Wikipedia background are kept only when short enough to quote.
+- Every file the pipeline reads or writes now uses UTF-8, so Windows (cp1252) no longer fails on characters like narrow spaces or curly quotes in a script.
+- Stock clips are converted to 30 fps H.264 at the video's exact size before rendering, slowed (up to 2x) or looped to cover their scene, and replaced by a still if they can't be converted. Mixed Pexels clips (25/59.94 fps, 1080x2048) crashed Remotion with "No frame found at position".

@@ -17,7 +17,7 @@ def load_dotenv(path: Path = ROOT / ".env") -> None:
     """Minimal .env loader: KEY=VALUE lines, existing env vars win."""
     if not path.exists():
         return
-    for line in path.read_text().splitlines():
+    for line in path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if not line or line.startswith("#") or "=" not in line:
             continue
@@ -289,7 +289,7 @@ def load_config(path: str | Path | None = None) -> Config:
     path = Path(path or os.environ.get("FYT_CONFIG", ROOT / "channel.yaml"))
     if not path.exists():
         return Config()
-    return Config.model_validate(yaml.safe_load(path.read_text()) or {})
+    return Config.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")) or {})
 
 
 def secret(name: str) -> str | None:

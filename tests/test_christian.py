@@ -35,6 +35,11 @@ def test_find_references():
     assert scripture.is_reference("Matthew 11:28") and not scripture.is_reference("C. S. Lewis")
 
 
+def test_ranges_across_chapters_keep_their_end_chapter():
+    text = "betrayal (Genesis 42:29–43:15). Then the meal (Genesis 43:16–44:34) and Genesis 42:1–28."
+    assert scripture.find_references(text) == ["Genesis 42:29-43:15", "Genesis 43:16-44:34", "Genesis 42:1-28"]
+
+
 def test_loose_scripture_quotes_are_replaced_with_the_real_verse():
     cfg = Config()
     passages = {
@@ -179,3 +184,16 @@ def test_description_footer_is_added():
     cfg.channel.description_footer = "Subscribe for encouragement."
     body = build_body(cfg, script())
     assert body["snippet"]["description"].endswith("Subscribe for encouragement.")
+
+
+def test_job_files_are_utf8_whatever_the_system_encoding(tmp_path):
+    """Windows defaults to cp1252, which can't hold characters models often write ( , curly quotes)."""
+    from fyt.pipeline import load_script
+    from fyt.store import Job
+
+    job = Job.create(Config(jobs_dir=str(tmp_path)), "idea:x")
+    s = script(ScriptScene(narration="God sees you “now”.", type="statement", text="t"))
+    job.update(title="Not forgotten")
+    job.file("script.json").write_text(s.model_dump_json(indent=2), encoding="utf-8")
+    assert load_script(job.file("script.json")).scenes[0].narration == s.scenes[0].narration
+    assert Job(job.path).meta["title"] == "Not forgotten"

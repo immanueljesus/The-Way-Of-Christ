@@ -123,7 +123,7 @@ class Job:
         self.path = path
         self.public = path / "public"
         self.meta_path = path / "job.json"
-        self.meta: dict = json.loads(self.meta_path.read_text()) if self.meta_path.exists() else {}
+        self.meta: dict = json.loads(self.meta_path.read_text(encoding="utf-8")) if self.meta_path.exists() else {}
 
     @classmethod
     def create(cls, cfg: Config, topic: str) -> "Job":
@@ -140,7 +140,7 @@ class Job:
 
     def update(self, **fields) -> None:
         self.meta.update(fields, updated=now())
-        self.meta_path.write_text(json.dumps(self.meta, indent=2))
+        self.meta_path.write_text(json.dumps(self.meta, indent=2), encoding="utf-8")
 
     def file(self, name: str) -> Path:
         return self.path / name

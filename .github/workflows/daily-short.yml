@@ -25,10 +25,10 @@ on:
   workflow_dispatch:
     inputs:
       task:
-        description: "fill: top up the schedule. short / long: make one video now"
+        description: "short / long: make (and upload) one video now. fill: top up the schedule (needs require_review: false)"
         type: choice
-        options: [fill, short, long]
-        default: fill
+        options: [short, long, fill]
+        default: short
       upload:
         description: "Upload (for short / long; off only renders the video and keeps it as an artifact)"
         type: boolean

@@ -20,8 +20,8 @@ name: Daily videos
 on:
   # TODO (SETUP.md step 6): uncomment to run automatically.
   # schedule:
-  #   # Four chances a day to top up the schedule. A run with nothing to do takes about a minute.
-  #   - cron: "17 1,7,13,19 * * *"
+  #   # Twice a day is enough to keep two days of videos scheduled ahead, and saves free minutes.
+  #   - cron: "17 3,15 * * *"
   workflow_dispatch:
     inputs:
       task:

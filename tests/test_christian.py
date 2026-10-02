@@ -155,7 +155,9 @@ def test_plan_slots_carry_category_and_length():
 
 def test_shipped_channel_config_loads_with_the_weekly_plan():
     cfg = load_config()
-    assert cfg.source == "catalog" and len(cfg.schedule.plan) == 7
+    assert cfg.source == "catalog"
+    assert {p.weekday for p in cfg.schedule.plan if p.kind == "short"} == set(range(7))  # a Short every morning
+    assert len([p for p in cfg.schedule.plan if p.kind == "long"]) == 2
     assert {p.category for p in cfg.schedule.plan} <= set(cfg.catalog.mix)
 
 

@@ -88,24 +88,27 @@ Every video is filed under its series playlist automatically (needs the full You
 `catalog.mix` in `channel.yaml`. Slots without a fixed category take the category furthest below
 its share.
 
-## 7. Weekly schedule
+## 7. Monthly schedule (free)
 
-Times are UTC (12:00 UTC is 8 am in New York; 01:00 UTC is 9 pm the evening before). Change them in
-`schedule.plan` for your audience.
+Everything runs on GitHub Actions' free allowance (2,000 minutes a month for a private repo), the free
+Groq and Pexels tiers, the free Kokoro voice and the free YouTube API quota.
 
-| Day | Slot | Content | Category |
+| | Morning Short (11:00 UTC) | Long video (15:00 UTC) | Evening Short (23:00 UTC) |
 |---|---|---|---|
-| Monday | 12:00 | 30-60 s motivational Short | motivational |
-| Tuesday | 16:00 | 5-8 min Bible story (6 min) | bible_story |
-| Wednesday | 12:00 | Short prayer | prayer |
-| Thursday | 12:00 | Jesus / Bible Short | jesus |
-| Friday | 16:00 | 8-12 min inspirational video (10 min) | motivational |
-| Saturday | 12:00 | Bible fact / story Short | facts |
-| Sunday | 14:00 | Longer prayer and reflection (12 min) | prayer |
-| Every day | 01:00 | Evening Short: cuts from the long videos first, then the mix | any |
+| Monday | motivational | | cut from a long video, else the mix |
+| Tuesday | One Minute With Jesus | Bible story, 6 min | " |
+| Wednesday | short prayer | | " |
+| Thursday | motivational | | " |
+| Friday | Bible story | inspirational, 10 min | " |
+| Saturday | Did You Know? | | " |
+| Sunday | prayer | | " |
 
-That is 4 planned Shorts + 3 long videos + 7 evening Shorts a week. Once you trust the output, add
-more `short_slots` (the API quota allows about 4 uploads a day).
+A month: about 60 Shorts and 9 long videos, roughly 1,300 runner minutes. Every video goes live at a
+random minute up to 3 hours after its slot (`youtube.publish_jitter_minutes: 180`), so the channel never
+posts at the same time twice. Each long video is cut into Shorts that fill the evening slots. The workflow
+runs twice a day and keeps two days of videos scheduled ahead, so one failed run never misses a publish.
+Occasional 20-40 minute sleep or prayer videos are made by hand (`--minutes 30`) to stay inside the budget.
+Change the slots in `schedule.plan`.
 
 ## 8. The emotional journey (script structure)
 

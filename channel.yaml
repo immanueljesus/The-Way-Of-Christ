@@ -108,7 +108,7 @@ theme:                          # warm candlelight on deep umber; see "Visual id
 
 youtube:
   privacy: public
-  publish_jitter_minutes: 45
+  publish_jitter_minutes: 180   # each video goes live at a random minute up to 3 hours after its slot
   category_id: "22"             # People & Blogs (27 Education also fits)
   made_for_kids: false
   contains_synthetic_media: true  # AI narration: keep the disclosure on
@@ -116,21 +116,27 @@ youtube:
 
 # Publish slots that `python -m fyt fill` keeps filled ahead of time. Times are UTC;
 # 12:00 UTC is 8 am in New York, 01:00 UTC is 9 pm the evening before.
+# A month on the free GitHub Actions allowance (2,000 minutes a month for a private repo):
+#   ~60 Shorts (two a day) and ~9 long videos (Tuesday and Friday), every one going live at a
+#   random time inside its window (publish_jitter_minutes). Roughly 1,300 runner minutes a month.
+# Times are UTC: 11:00 is 7 am New York / 4:30 pm India; 23:00 is 7 pm New York.
 schedule:
-  short_slots: ["01:00"]        # an evening Short every day: Shorts cut from the long videos, then the mix
+  short_slots: ["23:00"]        # an evening Short every day: Shorts cut from the long videos first, then the mix
   long_weekday: null            # long videos come from the weekly plan below
   buffer_days: 2
   long_lead_days: 3
   max_uploads_per_day: 4        # YouTube API quota
-  max_run_minutes: 200          # a 12 minute video takes ~2 hours on the free runner
-  plan:                         # the weekly schedule from the channel plan
-    - {weekday: 0, time: "12:00", kind: short, category: motivational, label: "Mon: motivational Short"}
-    - {weekday: 1, time: "16:00", kind: long, category: bible_story, minutes: 6, label: "Tue: Bible story (5-8 min)"}
-    - {weekday: 2, time: "12:00", kind: short, category: prayer, label: "Wed: short prayer"}
-    - {weekday: 3, time: "12:00", kind: short, category: jesus, label: "Thu: Jesus / Bible Short"}
-    - {weekday: 4, time: "16:00", kind: long, category: motivational, minutes: 10, label: "Fri: inspirational video (8-12 min)"}
-    - {weekday: 5, time: "12:00", kind: short, category: facts, label: "Sat: Bible fact Short"}
-    - {weekday: 6, time: "14:00", kind: long, category: prayer, minutes: 12, label: "Sun: prayer and reflection"}
+  max_run_minutes: 200
+  plan:                         # a morning Short every day, plus two long videos a week
+    - {weekday: 0, time: "11:00", kind: short, category: motivational, label: "Mon: motivational Short"}
+    - {weekday: 1, time: "11:00", kind: short, category: jesus, label: "Tue: One Minute With Jesus"}
+    - {weekday: 1, time: "15:00", kind: long, category: bible_story, minutes: 6, label: "Tue: Bible story (6 min)"}
+    - {weekday: 2, time: "11:00", kind: short, category: prayer, label: "Wed: short prayer"}
+    - {weekday: 3, time: "11:00", kind: short, category: motivational, label: "Thu: motivational Short"}
+    - {weekday: 4, time: "11:00", kind: short, category: bible_story, label: "Fri: Bible story Short"}
+    - {weekday: 4, time: "15:00", kind: long, category: motivational, minutes: 10, label: "Fri: inspirational video (10 min)"}
+    - {weekday: 5, time: "11:00", kind: short, category: facts, label: "Sat: Did You Know? Short"}
+    - {weekday: 6, time: "11:00", kind: short, category: prayer, label: "Sun: prayer Short"}
 
 growth:
   polish: true

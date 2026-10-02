@@ -42,6 +42,7 @@ class Slot:
     category: str | None = None  # from the weekly plan: the catalog category to draw from
     minutes: float | None = None  # from the weekly plan: the long video's length
     label: str = ""
+    topic: str | None = None  # a specific video for this slot (a Christian-calendar campaign video)
 
     @property
     def key(self) -> str:
@@ -77,7 +78,40 @@ def upcoming_slots(cfg: Config, now: datetime) -> list[Slot]:
                 slots.append(Slot(at, p.kind, p.category, p.minutes, p.label))
         day += timedelta(days=1)
     unique = {s.key: s for s in slots}  # plan entries come later, so one wins a clash with a daily slot
+    for s in calendar_slots(cfg, now, unique):
+        unique[s.key] = s
     return sorted(unique.values(), key=lambda s: s.at)
+
+
+def calendar_slots(cfg: Config, now: datetime, regular: dict[str, Slot]) -> list[Slot]:
+    """Christian-calendar campaign videos (fyt/liturgy.py) in the coming `liturgy.lead_days`.
+
+    A campaign long video takes that day's long slot from the weekly plan (keeping its time) or gets
+    its own at liturgy.long_time; campaign Shorts get their own slots at liturgy.short_times, on top
+    of the day's regular Shorts. So the evergreen engine keeps running while a campaign is on."""
+    from fyt import liturgy
+
+    lt = cfg.liturgy
+    if not lt.enabled:
+        return []
+    start = now + timedelta(minutes=LEAD_MINUTES)
+    end = now + timedelta(days=lt.lead_days)
+    out: list[Slot] = []
+    used_times: dict[tuple, int] = {}
+    for e in liturgy.entries(cfg, start.date(), end.date()):
+        if e.kind == "long":
+            same_day = [s for s in regular.values() if s.kind == "long" and s.at.date() == e.on and not s.topic]
+            at = same_day[0].at if same_day else _at(e.on, lt.long_time)
+        else:
+            k = used_times.get((e.on, "short"), 0)
+            used_times[(e.on, "short")] = k + 1
+            if k >= len(lt.short_times):
+                continue  # more campaign Shorts on one day than slots for them
+            at = _at(e.on, lt.short_times[k])
+        if start <= at <= end:
+            out.append(Slot(at, e.kind, None, e.minutes or (cfg.target_minutes if e.kind == "long" else None),
+                            f"{e.event}: {e.title}", e.topic))
+    return out
 
 
 def make_minutes(slot: Slot, cfg: Config) -> float:
@@ -231,7 +265,10 @@ def fill(cfg: Config, now: datetime | None = None, rng: random.Random | None = N
         if elapsed + make_minutes(slot, cfg) > cfg.schedule.max_run_minutes:
             print(f"not enough time left in this run for a {slot.kind} video; the next run continues")
             continue  # a Short may still fit after a skipped long video
-        job = pipeline.make_next(slot_config(cfg, slot), topics, category=slot.category)
+        if slot.topic:
+            job = pipeline.make_planned(slot_config(cfg, slot), topics, slot.topic, category=slot.category)
+        else:
+            job = pipeline.make_next(slot_config(cfg, slot), topics, category=slot.category)
         if job is None or job.meta.get("status") != "approved":
             failures += 1
             if failures >= 3:

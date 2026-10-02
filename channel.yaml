@@ -56,6 +56,19 @@ catalog:
   use_wikipedia: true   # Bible-story ideas pull background and classical paintings from Wikipedia
   ideate_when_empty: true # a pillar running low gets new ideas written in the same shape (free, Groq)
 
+# The Christian calendar engine: campaigns before, on and after Advent, Christmas, Lent, Holy Week,
+# Easter, Pentecost, feasts, saints' days and world moments (content/calendar.yaml). They run on
+# top of the evergreen plan (roughly 70% evergreen, 20% seasonal, 10% world moments) and are made
+# a week ahead. Evergreen picks also lean towards the season's themes.
+liturgy:
+  enabled: true
+  traditions: [ecumenical, western, world, saints]   # add catholic for Marian feasts, Corpus Christi...
+  easter: western                                    # or orthodox
+  lead_days: 7
+  long_time: "15:00"
+  short_times: ["17:00", "19:00"]
+  season_bias: true
+
 # Exact Bible text for every reference, from bible-api.com (public-domain translations).
 scripture:
   enabled: true
@@ -169,6 +182,11 @@ growth:
     - Untold Stories
     - Faith in Everyday Life
     - Proverbs for Real Life
+    - Advent & Christmas
+    - Lent
+    - Holy Week & Easter
+    - Pentecost
+    - Saints & Heroes of Faith
   bonus_shorts_per_day: 0       # evergreen channel: no videos chasing trending topics
   bonus_longs_per_week: 0
 

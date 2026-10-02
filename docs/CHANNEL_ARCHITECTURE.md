@@ -284,3 +284,41 @@ Curated ideas always go first, so add your own to `content/ideas.yaml` at any ti
 - The AI-voice disclosure (`contains_synthetic_media`) stays on.
 - Scripture is quoted from a public-domain translation (World English Bible), credited in each
   description. Don't switch to NIV/ESV text without a licence.
+
+## 17. The Christian calendar
+
+Two engines run side by side: **evergreen** videos (watchable any day) and **Christian calendar**
+campaigns (`content/calendar.yaml`, `fyt/liturgy.py`). Roughly 70% evergreen, 20% seasonal, 10% world
+moments, so someone discovering the channel in August doesn't see a page of Easter videos.
+
+**Every event is a campaign, not a single upload:** videos 7-14 days **before** (anticipation), **on the
+day** (the emotional centrepiece) and 1-7 days **after** (reflection). Dates are computed for every year
+(Easter by the computus, Western or Orthodox), so the same framework returns each year as new videos:
+
+| Event | Before | On the day | After |
+|---|---|---|---|
+| Advent & Christmas | *The World Was Waiting*, *400 Years of Silence*, *Mary Said Yes*, *Joseph's Difficult Decision*, *Why Bethlehem?* | Christmas Eve: *The Night Everything Changed* (long); Christmas: *A Savior Is Born* | *Why Did God Come to Us?*, *The Meaning of Emmanuel* |
+| Lent (6 themed weeks) | Ash Wednesday: *Remember You Are Dust* | repentance, temptation, sacrifice, forgiveness, faith, the cross | leads into Holy Week |
+| Holy Week & Easter | *Why Did Jesus Have to Enter Jerusalem?*, *The Road to Jerusalem*, Palm Sunday | Maundy Thursday (long), **Good Friday: *It Is Finished*** (long; minimal narration, dark, calm music), Holy Saturday: *When God Seems Silent*, **Easter: *He Is Risen*** (the biggest production, 10 min) | *What the Resurrection Means for Your Life*, *Why the Disciples Were Changed Forever* |
+| Pentecost | *The Disciples Were Afraid*, *Jesus Told Them to Wait* | ***And Then the Fire Came*** (long) | *What Pentecost Means Today* |
+| Feasts | Epiphany, Baptism of Jesus, Ascension, Trinity, All Saints, All Souls, Christ the King | | |
+| Saints & heroes of faith | St Patrick, Bonhoeffer, Dominic Savio, Peter & Paul, Monica, Augustine, Mother Teresa, Francis, Nicholas | | |
+| World moments | New Year, Valentine's Day, Mother's Day (Hannah), graduation, Father's Day, Thanksgiving | | |
+
+About 60 campaign videos a year (11 of them long). Long videos are cut into Shorts like any other, so
+Easter alone yields a dozen or more Shorts.
+
+**Made in advance.** Campaign videos are scripted, voiced, rendered and scheduled up to a week ahead
+(`liturgy.lead_days`), so Good Friday's video is ready days before. A campaign long video takes that
+day's long slot or gets its own at 15:00 UTC; campaign Shorts get their own slots at 17:00 and 19:00 UTC
+on top of the day's regular Shorts. If a campaign video fails, the slot still gets an evergreen video.
+
+**Seasons.** Between events the evergreen picks lean towards the season (`seasons` in calendar.yaml): Lent
+favours forgiveness and spiritual battles, Eastertide joy and hope, Advent hope and peace, January new
+beginnings, the summer Bible stories and practical faith, November gratitude and remembrance.
+
+**Traditions.** `liturgy.traditions` in channel.yaml chooses what is included: ecumenical, western,
+world and saints by default; add `catholic` for Marian feasts, Corpus Christi and the Sacred Heart;
+set `liturgy.easter: orthodox` to follow the Orthodox Easter date.
+
+`python -m fyt calendar --days 120` lists the coming campaign videos.

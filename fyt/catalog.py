@@ -41,6 +41,7 @@ class Idea(BaseModel):
     wiki: str | None = None  # Wikipedia article for background and artwork
     angle: str = ""  # the pain point or hook, and what the viewer should leave with
     generated: bool = False  # written by the model when the list ran low (stored in jobs/state.db)
+    music: str = ""  # calm | cinematic: overrides the music the category would get (calendar videos)
 
     @property
     def topic(self) -> str:
@@ -110,6 +111,13 @@ def load(cfg: Config) -> list[Idea]:
 
 def get(cfg: Config, topic_or_id: str) -> Idea:
     key = topic_or_id.removeprefix(PREFIX)
+    if "@" in key:  # a Christian-calendar campaign video, e.g. "easter-he-is-risen@2027"
+        from fyt import liturgy
+
+        data = liturgy.idea_data(cfg, key.split("@")[0])
+        if data is None:
+            raise KeyError(f"no calendar video {key!r} in {cfg.liturgy.path}")
+        return Idea.model_validate({**data, "id": key})
     for idea in load(cfg):
         if idea.id == key:
             return idea
@@ -133,12 +141,21 @@ def pick(
     category: str | None = None,
     minutes: float | None = None,
     recent: list[str] | None = None,
+    season: dict | None = None,
 ) -> Idea | None:
     """The next unused idea for this format: from `category` if given (falling back to any
     category), otherwise from the category furthest below its share of `catalog.mix`.
 
     Within a category, ideas that repeat the emotion, Bible character or story shape of the last
-    few videos (`recent`, topics newest last) wait their turn, so the channel keeps its variety."""
+    few videos (`recent`, topics newest last) wait their turn, so the channel keeps its variety.
+    In a season of the Christian year (`season`, see liturgy.season) ideas with its feelings go first,
+    and its pillars get a little extra weight in the mix."""
+    season = season or {}
+    feel = set(season.get("emotions") or [])
+    lean = set(season.get("categories") or [])
+
+    def off_season(i: "Idea") -> int:
+        return 0 if (not feel or i.emotion in feel) else 1
     ideas = load(cfg)
     by_topic = {i.topic: i for i in ideas}
     last = [by_topic[t] for t in (recent or [])[-6:] if t in by_topic]
@@ -163,7 +180,7 @@ def pick(
     if category:
         same = [i for i in fits if i.category == category]
         if same:
-            return min(same, key=lambda i: (repeats(i), same.index(i)))
+            return min(same, key=lambda i: (repeats(i), off_season(i), same.index(i)))
         print(f"note: no unused {category} ideas for a {bucket} video; picking by the content mix")
     made = Counter(i.category for i in ideas if i.topic in used)
     total = sum(made.values()) or 1
@@ -171,12 +188,13 @@ def pick(
     weight = sum(mix.values()) or 1
 
     def deficit(i: Idea) -> float:
-        return mix.get(i.category, 0) / weight - made[i.category] / total
+        bonus = 0.05 if i.category in lean else 0.0  # roughly a fifth more of the season's pillars
+        return mix.get(i.category, 0) / weight - made[i.category] / total + bonus
 
     # The category furthest below its share; within it the freshest idea, then the one listed first.
     best = max(deficit(i) for i in fits)
     pool = [i for i in fits if deficit(i) == best]
-    return min(pool, key=lambda i: (repeats(i), pool.index(i)))
+    return min(pool, key=lambda i: (repeats(i), off_season(i), pool.index(i)))
 
 
 def counts(cfg: Config, used: set[str]) -> Counter:

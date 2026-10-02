@@ -42,6 +42,10 @@ class Topics:
     def titles(self) -> list[str]:
         return [r[0] for r in self.db.execute("select topic from topics")]
 
+    def status(self, topic_id: int) -> str | None:
+        row = self.db.execute("select status from topics where id=?", (topic_id,)).fetchone()
+        return row[0] if row else None
+
     def recent(self, n: int = 8) -> list[str]:
         """The last n topics taken (made or being made), oldest first."""
         rows = self.db.execute(

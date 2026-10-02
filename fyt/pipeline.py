@@ -185,7 +185,8 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
         script = script.model_copy(update={"description": script.description.rstrip() + "\n\n" + chapters})
         job.file("script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
     seconds = (spans[-1][1] if spans else 0) + max(cfg.tail_seconds, 4.0)
-    music = media.pick_music(cfg, job.public, category=idea.category if idea else None, seconds=seconds)
+    feel = {"calm": "prayer", "cinematic": "motivation"}.get(idea.music, idea.category) if idea else None
+    music = media.pick_music(cfg, job.public, category=feel, seconds=seconds)
     credit = media.music_credit(job.public) if music else ""
     if credit and credit not in script.description:
         script = script.model_copy(update={"description": script.description.rstrip() + "\n\nMusic: " + credit})
@@ -415,7 +416,10 @@ def catalog_topic(cfg: Config, topics: Topics, category: str | None = None) -> t
             catalog.top_up(cfg, used, category, topics.recent(12))
         except Exception as e:  # the curated list still works without new ideas
             print(f"warning: could not add new ideas: {e}")
-    idea = catalog.pick(cfg, used, category=category, recent=topics.recent(8))
+    from fyt import liturgy
+
+    season = liturgy.season(cfg, datetime.now().date()) if cfg.liturgy.season_bias else {}
+    idea = catalog.pick(cfg, used, category=category, recent=topics.recent(8), season=season)
     if idea is None:
         return None
     topics.add([idea.topic])
@@ -452,6 +456,26 @@ def next_topic(
             topics.add(llm.ideate_topics(cfg, ideate_when_empty, topics.titles(), performance_summary(cfg)))
             nxt = topics.next_pending(exclude_prefix=CUT)
     return nxt
+
+
+def make_planned(cfg: Config, topics: Topics, topic: str, category: str | None = None) -> Job | None:
+    """Make a specific video (a Christian-calendar campaign video) for its slot. If it fails,
+    the slot still gets a video: the next evergreen idea."""
+    found = topics.find(topic)
+    if found and topics.status(found[0]) == "done":
+        print(f"{topic} was already made; using the next idea for this slot")
+        return make_next(cfg, topics, category=category)
+    topics.add([topic])
+    topic_id, _ = topics.find(topic)
+    topics.set(topic_id, "in_progress")
+    try:
+        job = make_topic(cfg, topic)
+    except Exception as e:
+        topics.set(topic_id, "failed")
+        print(f"::warning::calendar video failed: {topic}: {e}; using the next idea for this slot")
+        return make_next(cfg, topics, category=category)
+    topics.set(topic_id, "done", job.id)
+    return job
 
 
 def make_next(cfg: Config, topics: Topics, attempts: int = 3, category: str | None = None) -> Job | None:

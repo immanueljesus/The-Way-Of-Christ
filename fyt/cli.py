@@ -51,6 +51,8 @@ def main(argv: list[str] | None = None) -> None:
     b.add_argument("--needed", action="store_true", help="print yes/no: whether `fill` has work to do")
 
     sub.add_parser("ideas", help="summarise the idea catalog (content/ideas.yaml)")
+    cal = sub.add_parser("calendar", help="the Christian-calendar campaign videos coming up (content/calendar.yaml)")
+    cal.add_argument("--days", type=int, default=90)
     sub.add_parser("jobs", help="list jobs and their status")
     a = sub.add_parser("approve", help="mark a reviewed job as approved")
     a.add_argument("job")
@@ -150,6 +152,15 @@ def main(argv: list[str] | None = None) -> None:
         from fyt import catalog
 
         print(catalog.summary(cfg))
+    elif args.cmd == "calendar":
+        from datetime import date, timedelta
+
+        from fyt import liturgy
+
+        today = date.today()
+        print(f"season now: {liturgy.season(cfg, today).get('name', '(ordinary time)')}")
+        for e in liturgy.entries(cfg, today, today + timedelta(days=args.days)):
+            print(f"{e.on:%a %d %b %Y}  {e.kind:5s}  {e.title}  [{e.event}]")
     elif args.cmd == "jobs":
         for j in list_jobs(cfg):
             m = j.meta

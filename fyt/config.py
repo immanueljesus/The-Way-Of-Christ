@@ -215,6 +215,21 @@ class CatalogConfig(BaseModel):
     ideate_when_empty: bool = True
 
 
+class LiturgyConfig(BaseModel):
+    """The Christian calendar engine (fyt/liturgy.py, content/calendar.yaml)."""
+
+    enabled: bool = False
+    path: str = "content/calendar.yaml"
+    # Which events to include, by their `tradition` in calendar.yaml: ecumenical (shared by most
+    # Christians), western, catholic, orthodox, world (New Year, Mother's Day...), saints.
+    traditions: list[str] = Field(default_factory=lambda: ["ecumenical", "western", "world"])
+    easter: Literal["western", "orthodox"] = "western"  # which Easter the moveable feasts follow
+    lead_days: float = 7  # campaign videos are made and scheduled up to this many days ahead
+    long_time: str = "15:00"  # UTC; a campaign long video takes the plan's long slot that day, or this time
+    short_times: list[str] = Field(default_factory=lambda: ["17:00", "19:00"])  # UTC, for campaign Shorts
+    season_bias: bool = True  # evergreen picks lean towards the season's themes (Lent: repentance...)
+
+
 class Config(BaseModel):
     channel: ChannelInfo = Field(default_factory=ChannelInfo)
     format: Literal["long", "short"] = "long"
@@ -228,6 +243,7 @@ class Config(BaseModel):
     wikipedia: WikipediaConfig = Field(default_factory=WikipediaConfig)
     catalog: CatalogConfig = Field(default_factory=CatalogConfig)
     scripture: ScriptureConfig = Field(default_factory=ScriptureConfig)
+    liturgy: LiturgyConfig = Field(default_factory=LiturgyConfig)
     research: bool = True  # use Claude's web search before scripting (source: web)
     voice: VoiceConfig = Field(default_factory=VoiceConfig)
     music_dir: str = "assets/music"

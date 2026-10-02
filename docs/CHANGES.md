@@ -113,3 +113,17 @@ Following the creative direction "don't just tell them about faith, make them fe
   Scripture exists; they are stored in `jobs/state.db` so GitHub keeps them.
 - Empty narration from the model no longer fails a video: a Scripture scene reads its verse, other
   empty scenes are dropped.
+
+## The Christian calendar engine
+
+- `fyt/liturgy.py` computes the Christian year for any year (Western or Orthodox Easter and the
+  moveable feasts, Advent, Christ the King, fixed feasts, Mother's/Father's Day, Thanksgiving).
+- `content/calendar.yaml`: 67 campaign videos across Advent & Christmas, New Year, Epiphany, the
+  Baptism of Jesus, Valentine's Day, Lent's six themed weeks, Holy Week & Easter, Ascension, Pentecost,
+  Trinity, saints and heroes of faith, world moments and (off by default) Catholic feasts. Each event has
+  videos before, on and after the day; every Scripture reference was checked.
+- Campaign videos get their own publish slots, made up to a week ahead; long campaign videos take the
+  day's long slot. A failed campaign video falls back to an evergreen one.
+- Seasons lean the evergreen picks (Lent, Eastertide, Advent, new beginnings, summer stories...).
+- Solemn days (Good Friday, Holy Saturday, All Souls) get calm music; Easter and Pentecost cinematic.
+- `python -m fyt calendar` lists what's coming. Tests in `tests/test_liturgy.py`.

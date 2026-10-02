@@ -1,0 +1,833 @@
+# The Christian calendar engine (fyt/liturgy.py). Two engines run side by side: the evergreen ideas
+# (content/ideas.yaml) and these seasonal campaigns. Each event becomes a small campaign: videos days
+# BEFORE (anticipation), ON THE DAY (the emotional centrepiece) and AFTER (reflection). Dates are
+# computed for every year, so the same campaigns come back each year as new videos.
+#
+# events.<key>:
+#   name        shown in the schedule
+#   anchor      easter, ash_wednesday, palm_sunday, ascension, pentecost, trinity, corpus_christi,
+#               sacred_heart, advent (first Sunday), christ_the_king, christmas, epiphany, baptism,
+#               "MM-DD" (fixed), or "may:sun:2" (2nd Sunday of May), "nov:thu:4", "jun:sun:3"
+#   tradition   ecumenical | western | catholic | orthodox | world | saints
+#               (channel.yaml liturgy.traditions picks which are included)
+#   category    pillar used for the music and description (default jesus)
+#   series      playlist for the campaign
+#   videos      one entry per video:
+#     id        unique; each year's video is "idea:<id>@<year>"
+#     offset    days from the anchor (negative = before)
+#     kind      short | long (long videos may set minutes)
+#     title, angle, scriptures, arc, emotion, character   as in content/ideas.yaml
+#     music     calm | cinematic (calm tracks for solemn days like Good Friday)
+#
+# seasons: what the evergreen videos lean towards in each part of the year (emotions and pillars).
+# The first season that contains a day wins, so specific seasons come before broad ones.
+
+seasons:
+  - {name: Holy Week, from: palm_sunday, to: easter, to_offset: -1, emotions: [love, grief, strength], categories: [jesus, prayer]}
+  - {name: Lent, from: ash_wednesday, to: palm_sunday, to_offset: -1, emotions: [forgiveness, temptation, strength], categories: [spiritual_battles, prayer, jesus]}
+  - {name: Eastertide, from: easter, to: pentecost, emotions: [joy, hope, courage], categories: [jesus, purpose, motivation]}
+  - {name: Advent, from: advent, to: christmas, to_offset: -1, emotions: [hope, peace, joy], categories: [jesus, prayer, peace]}
+  - {name: Christmastide, from: christmas, to: epiphany, emotions: [joy, love, gratitude], categories: [jesus, relationships]}
+  - {name: New beginnings, from: "01-07", to: "01-31", emotions: [purpose, hope, courage], categories: [purpose, motivation]}
+  - {name: Summer of stories, from: "06-01", to: "08-31", emotions: [courage, wisdom, joy], categories: [bible_story, jesus, everyday_life, wisdom]}
+  - {name: The cross and discipleship, from: "09-01", to: "09-30", emotions: [purpose, strength], categories: [purpose, motivation, jesus]}
+  - {name: Saints and courage, from: "10-01", to: "10-31", emotions: [courage, wisdom], categories: [bible_story, history]}
+  - {name: Remembrance and gratitude, from: "11-01", to: christ_the_king, emotions: [gratitude, grief, hope], categories: [prayer, peace]}
+
+events:
+  # ======================================================================= ADVENT and CHRISTMAS
+  christmas:
+    name: Advent & Christmas
+    anchor: christmas
+    tradition: ecumenical
+    category: jesus
+    series: Advent & Christmas
+    videos:
+      - id: advent-world-was-waiting
+        offset: -26
+        kind: short
+        title: "The World Was Waiting for a Savior"
+        angle: "The first Sunday of Advent. People walking in darkness, waiting for a light. Begin the story weeks before Christmas."
+        scriptures: [Isaiah 9:2, Galatians 4:4]
+        arc: story
+        emotion: hope
+      - id: advent-400-years-of-silence
+        offset: -24
+        kind: long
+        minutes: 6
+        title: "400 Years of Silence"
+        angle: "Between Malachi and Matthew, no prophet spoke. What it is like to wait when heaven seems quiet, and how the silence ended in an old priest's temple service."
+        scriptures: [Malachi 4:5-6, Luke 1:13-17]
+        arc: story
+        emotion: hope
+        character: "Zechariah"
+      - id: advent-prophecy-of-a-king
+        offset: -19
+        kind: short
+        title: "The Prophecy of a Coming King"
+        angle: "Centuries before Bethlehem, Isaiah and Micah described a child, a ruler, a little town."
+        scriptures: [Isaiah 9:6-7, Micah 5:2]
+        arc: curiosity
+        emotion: hope
+      - id: advent-mary-said-yes
+        offset: -15
+        kind: short
+        title: "Mary Said Yes"
+        angle: "A teenage girl, an angel, a question that would change her life and her reputation. 'Let it be to me according to your word.'"
+        scriptures: [Luke 1:30-31, Luke 1:38]
+        arc: story
+        emotion: courage
+        character: "Mary"
+      - id: advent-josephs-decision
+        offset: -12
+        kind: long
+        minutes: 6
+        title: "Joseph's Difficult Decision"
+        angle: "A righteous man, a broken engagement, a dream in the night, and the quiet courage to obey."
+        scriptures: [Matthew 1:19-21, Matthew 1:24]
+        arc: story
+        emotion: love
+        character: "Joseph of Nazareth"
+      - id: advent-why-bethlehem
+        offset: -8
+        kind: short
+        title: "Why Bethlehem?"
+        angle: "The smallest town in Judah, David's hometown, the house of bread. Why the King was born there."
+        scriptures: [Micah 5:2, Luke 2:4]
+        arc: curiosity
+        emotion: curiosity
+      - id: advent-zechariah-elizabeth
+        offset: -5
+        kind: short
+        title: "When God Answers After Years of Waiting"
+        angle: "Elizabeth and Zechariah had prayed for a child for decades. Advent is about God keeping promises late."
+        scriptures: [Luke 1:13, Luke 1:24-25]
+        arc: story
+        emotion: hope
+        character: "Elizabeth"
+      - id: christmas-eve-night-everything-changed
+        offset: -1
+        kind: long
+        minutes: 8
+        title: "The Night Everything Changed"
+        angle: "Christmas Eve. A crowded town, a manger, shepherds in the dark fields, and the sky breaking open with joy. Tell it slowly, cinematically, as if we were there."
+        scriptures: [Luke 2:6-7, Luke 2:10-11, Luke 2:14]
+        arc: story
+        emotion: joy
+        music: cinematic
+      - id: christmas-a-savior-is-born
+        offset: 0
+        kind: short
+        title: "A Savior Is Born"
+        angle: "Christmas morning. The centrepiece: one announcement that changed history, spoken over the viewer."
+        scriptures: [Luke 2:11, Isaiah 9:6]
+        arc: joy
+        emotion: joy
+        music: cinematic
+      - id: christmas-why-god-came
+        offset: 2
+        kind: short
+        title: "Why Did God Come to Us?"
+        angle: "Not to condemn the world, but to save it. God emptied himself and came close."
+        scriptures: [John 3:16-17, Philippians 2:6-7]
+        arc: wisdom
+        emotion: love
+      - id: christmas-emmanuel
+        offset: 5
+        kind: short
+        title: "The Meaning of Emmanuel"
+        angle: "God with us. In the manger, and in the room you are sitting in now."
+        scriptures: [Matthew 1:23, Isaiah 7:14]
+        arc: curiosity
+        emotion: peace
+      - id: christmas-what-it-means
+        offset: 8
+        kind: short
+        title: "What Christmas Actually Means"
+        angle: "After the wrapping paper: the Word became flesh and lived among us."
+        scriptures: [John 1:14]
+        arc: wisdom
+        emotion: gratitude
+
+  # ======================================================================= NEW YEAR, EPIPHANY, BAPTISM
+  new_year:
+    name: New Year
+    anchor: "01-01"
+    tradition: world
+    category: motivation
+    videos:
+      - id: new-year-leave-yesterday-behind
+        offset: -1
+        kind: short
+        title: "Leave Yesterday Behind"
+        angle: "New Year's Eve. Forgetting what lies behind, pressing on. God is doing a new thing."
+        scriptures: [Philippians 3:13-14, Isaiah 43:18-19]
+        arc: journey
+        emotion: hope
+      - id: new-year-give-god-your-beginning
+        offset: 0
+        kind: short
+        title: "Give God Your New Beginning"
+        angle: "A prayer for the first morning of the year: his mercies are new every morning."
+        scriptures: [Lamentations 3:22-23, Proverbs 16:3]
+        arc: prayer
+        emotion: hope
+        category: prayer
+  epiphany:
+    name: Epiphany
+    anchor: epiphany
+    tradition: ecumenical
+    category: bible_story
+    videos:
+      - id: epiphany-wise-men
+        offset: 0
+        kind: short
+        title: "They Followed a Star for Months"
+        angle: "Foreign scholars crossed deserts to kneel before a child. Seekers are welcome."
+        scriptures: [Matthew 2:1-2, Matthew 2:10-11]
+        arc: story
+        emotion: joy
+        character: "The wise men"
+  baptism_of_jesus:
+    name: Baptism of Jesus
+    anchor: baptism
+    tradition: ecumenical
+    videos:
+      - id: baptism-you-are-my-beloved
+        offset: 0
+        kind: short
+        title: "Before He Did Anything, He Was Loved"
+        angle: "At the Jordan, before a single miracle, the Father said 'my beloved Son, in whom I am well pleased'. Identity before achievement."
+        scriptures: [Matthew 3:16-17]
+        arc: story
+        emotion: love
+        character: "Jesus"
+
+  # ======================================================================= VALENTINE'S DAY
+  valentines:
+    name: Valentine's Day
+    anchor: "02-14"
+    tradition: world
+    category: relationships
+    videos:
+      - id: valentines-what-the-bible-says-about-love
+        offset: 0
+        kind: short
+        title: "What Does the Bible Actually Say About Love?"
+        angle: "Patient, kind, not self-seeking. Love as a choice, and the love that came first."
+        scriptures: [1 Corinthians 13:4-7, 1 John 4:19]
+        arc: wisdom
+        emotion: love
+
+  # ======================================================================= LENT (six themed weeks)
+  lent:
+    name: Lent
+    anchor: ash_wednesday
+    tradition: western
+    category: spiritual_battles
+    series: Lent
+    videos:
+      - id: lent-ash-wednesday
+        offset: 0
+        kind: short
+        title: "Remember You Are Dust"
+        angle: "Ash Wednesday: humility, honesty, and the invitation to return to God with all your heart."
+        scriptures: [Genesis 3:19, Joel 2:12-13]
+        arc: journey
+        emotion: forgiveness
+        music: calm
+      - id: lent-week1-road-back-to-god
+        offset: 4
+        kind: long
+        minutes: 6
+        title: "The Road Back to God"
+        angle: "Week 1: repentance. The son who came to his senses, and the father already running down the road."
+        scriptures: [Luke 15:17-20, Joel 2:13]
+        arc: story
+        emotion: forgiveness
+      - id: lent-week2-forty-days
+        offset: 11
+        kind: short
+        title: "Forty Days Without Bread"
+        angle: "Week 2: temptation. Jesus hungry in the desert, answering every lie with Scripture."
+        scriptures: [Matthew 4:1-4, Hebrews 4:15]
+        arc: story
+        emotion: temptation
+        character: "Jesus"
+      - id: lent-week3-what-would-you-give-up
+        offset: 18
+        kind: short
+        title: "What Are You Willing to Give Up?"
+        angle: "Week 3: sacrifice. Losing your life to find it."
+        scriptures: [Mark 8:34-35, Philippians 3:7-8]
+        arc: wisdom
+        emotion: purpose
+      - id: lent-week4-people-who-hurt-you
+        offset: 25
+        kind: short
+        title: "The People Who Hurt You"
+        angle: "Week 4: forgiveness. Releasing the debt, as you have been released."
+        scriptures: [Colossians 3:13, Matthew 6:14-15]
+        arc: journey
+        emotion: forgiveness
+        category: relationships
+      - id: lent-week5-trust-when-you-cant-see
+        offset: 32
+        kind: short
+        title: "Trusting God When You Can't See the Way"
+        angle: "Week 5: faith. The assurance of things hoped for."
+        scriptures: [Proverbs 3:5-6, Hebrews 11:1]
+        arc: journey
+        emotion: hope
+      - id: lent-week6-road-to-calvary
+        offset: 37
+        kind: short
+        title: "The Road to Calvary"
+        angle: "Week 6: the cross. Take up your cross daily, and follow the One who carried his."
+        scriptures: [Luke 23:26-27, Luke 9:23]
+        arc: story
+        emotion: love
+        music: calm
+
+  # ======================================================================= HOLY WEEK and EASTER
+  easter:
+    name: Holy Week & Easter
+    anchor: easter
+    tradition: ecumenical
+    category: jesus
+    series: Holy Week & Easter
+    videos:
+      - id: easter-why-jerusalem
+        offset: -14
+        kind: short
+        title: "Why Did Jesus Have to Enter Jerusalem?"
+        angle: "He set his face toward Jerusalem, knowing what waited there."
+        scriptures: [Luke 9:51, Luke 19:41-42]
+        arc: curiosity
+        emotion: purpose
+      - id: easter-road-to-jerusalem
+        offset: -10
+        kind: long
+        minutes: 6
+        title: "The Road to Jerusalem"
+        angle: "The last journey: the disciples arguing about greatness, Jesus walking ahead to give his life as a ransom."
+        scriptures: [Mark 10:32-34, Mark 10:45]
+        arc: story
+        emotion: courage
+      - id: easter-he-knew-what-was-coming
+        offset: -9
+        kind: short
+        title: "When Jesus Knew What Was Coming"
+        angle: "He told them plainly what would happen, and kept walking."
+        scriptures: [Mark 10:33-34]
+        arc: story
+        emotion: courage
+      - id: easter-palm-sunday
+        offset: -7
+        kind: short
+        title: "The King Who Entered Jerusalem on a Donkey"
+        angle: "Palm Sunday. The crowd shouted Hosanna. Days later, they would shout something very different."
+        scriptures: [Zechariah 9:9, Matthew 21:8-9]
+        arc: story
+        emotion: joy
+      - id: easter-maundy-thursday-night-betrayed
+        offset: -3
+        kind: long
+        minutes: 8
+        title: "The Night Jesus Was Betrayed"
+        angle: "Maundy Thursday. The Last Supper, bread and cup, the kiss in the garden. What happened that night."
+        scriptures: [Luke 22:19-20, Luke 22:47-48]
+        arc: story
+        emotion: love
+        music: calm
+      - id: easter-maundy-thursday-servant
+        offset: -3
+        kind: short
+        title: "The Servant Who Washed Their Feet"
+        angle: "Hours before the cross, the King knelt with a towel. 'Love one another as I have loved you.'"
+        scriptures: [John 13:4-5, John 13:34]
+        arc: story
+        emotion: love
+      - id: easter-good-friday-it-is-finished
+        offset: -2
+        kind: long
+        minutes: 8
+        title: "It Is Finished"
+        angle: "Good Friday: one of the most powerful videos of the year. Minimal narration, dark visuals, slow music, long silences. Jesus' final hours, the cross, silence, then the final words. Reverent, never graphic."
+        scriptures: [John 19:30, Isaiah 53:5, Luke 23:46]
+        arc: story
+        emotion: love
+        music: calm
+      - id: easter-good-friday-into-your-hands
+        offset: -2
+        kind: short
+        title: "Father, Into Your Hands"
+        angle: "Good Friday Short: his last words, and the trust in them."
+        scriptures: [Luke 23:46, Psalm 31:5]
+        arc: peace
+        emotion: grief
+        music: calm
+      - id: easter-holy-saturday-silent
+        offset: -1
+        kind: short
+        title: "When God Seems Silent"
+        angle: "Holy Saturday. Don't jump to celebration. The disciples didn't know what Sunday would bring. What do you do when you prayed, and nothing seems to have changed?"
+        scriptures: [Luke 23:55-56, Psalm 13:1]
+        arc: journey
+        emotion: hope
+        music: calm
+      - id: easter-he-is-risen
+        offset: 0
+        kind: long
+        minutes: 10
+        title: "He Is Risen"
+        angle: "Easter Sunday: the biggest production of the year. From darkness to light, sorrow to triumph, silence to music. The stone, the empty tomb, Mary hearing her name."
+        scriptures: [Matthew 28:5-6, John 20:16, 1 Corinthians 15:55]
+        arc: story
+        emotion: joy
+        music: cinematic
+      - id: easter-stone-rolled-away
+        offset: 0
+        kind: short
+        title: "The Stone Was Already Rolled Away"
+        angle: "They worried who would move the stone. It was already moved."
+        scriptures: [Mark 16:3-4, Mark 16:6]
+        arc: story
+        emotion: joy
+        music: cinematic
+      - id: easter-what-resurrection-means
+        offset: 2
+        kind: short
+        title: "What the Resurrection Means for Your Life"
+        angle: "New life is not just for later. Walking in newness of life now."
+        scriptures: [1 Corinthians 15:20, Romans 6:4]
+        arc: wisdom
+        emotion: hope
+      - id: easter-story-doesnt-end-at-cross
+        offset: 4
+        kind: short
+        title: "The Story Doesn't End at the Cross"
+        angle: "Locked doors, frightened friends, and Jesus standing among them: 'Peace be with you.'"
+        scriptures: [John 20:19-20, Revelation 1:18]
+        arc: story
+        emotion: hope
+      - id: easter-disciples-changed-forever
+        offset: 6
+        kind: long
+        minutes: 6
+        title: "Why the Disciples Were Changed Forever"
+        angle: "From hiding to proclaiming in the same city weeks later. What they saw."
+        scriptures: [Acts 2:32, Acts 4:13, 1 Corinthians 15:5-8]
+        arc: curiosity
+        emotion: courage
+
+  # ======================================================================= ASCENSION and PENTECOST
+  ascension:
+    name: Ascension
+    anchor: ascension
+    tradition: ecumenical
+    videos:
+      - id: ascension-why-jesus-went-away
+        offset: 0
+        kind: short
+        title: "Why Jesus Went Away"
+        angle: "'It is to your advantage that I go away.' The disciples staring at the sky, and the promise of the Helper."
+        scriptures: [Acts 1:9-11, John 16:7]
+        arc: curiosity
+        emotion: hope
+  pentecost:
+    name: Pentecost
+    anchor: pentecost
+    tradition: ecumenical
+    category: bible_story
+    series: Pentecost
+    videos:
+      - id: pentecost-disciples-were-afraid
+        offset: -9
+        kind: short
+        title: "The Disciples Were Afraid"
+        angle: "Behind locked doors for fear. The bravest movement in history began as a frightened few."
+        scriptures: [John 20:19, Acts 1:4]
+        arc: story
+        emotion: fear
+      - id: pentecost-told-them-to-wait
+        offset: -6
+        kind: short
+        title: "Jesus Told Them to Wait"
+        angle: "Stay in the city until you are clothed with power. Waiting as obedience."
+        scriptures: [Acts 1:4-5, Luke 24:49]
+        arc: wisdom
+        emotion: hope
+      - id: pentecost-what-were-they-waiting-for
+        offset: -3
+        kind: short
+        title: "What Were They Waiting For?"
+        angle: "Joel's promise of the Spirit poured out on everyone, young and old."
+        scriptures: [Joel 2:28-29, Acts 1:8]
+        arc: curiosity
+        emotion: curiosity
+      - id: pentecost-then-the-fire-came
+        offset: 0
+        kind: long
+        minutes: 8
+        title: "And Then the Fire Came"
+        angle: "Pentecost: a completely different emotional style. Powerful music, wind, fire, the disciples transformed, Peter preaching to thousands."
+        scriptures: [Acts 2:1-4, Acts 2:14, Acts 2:41]
+        arc: story
+        emotion: joy
+        music: cinematic
+      - id: pentecost-wind-and-fire
+        offset: 0
+        kind: short
+        title: "A Sound Like a Mighty Wind"
+        angle: "The moment in the upper room, in under a minute."
+        scriptures: [Acts 2:2-3]
+        arc: story
+        emotion: joy
+        music: cinematic
+      - id: pentecost-what-it-means-today
+        offset: 3
+        kind: short
+        title: "What Pentecost Means for Christians Today"
+        angle: "The promise is for you and your children. The fruit of the Spirit in ordinary life."
+        scriptures: [Acts 2:38-39, Galatians 5:22-23]
+        arc: wisdom
+        emotion: purpose
+  trinity:
+    name: Trinity Sunday
+    anchor: trinity
+    tradition: western
+    videos:
+      - id: trinity-father-son-spirit
+        offset: 0
+        kind: short
+        title: "Father, Son and Spirit"
+        angle: "A mystery of love at the heart of God, in the words Jesus and Paul used."
+        scriptures: [Matthew 28:19, 2 Corinthians 13:14]
+        arc: curiosity
+        emotion: curiosity
+
+  # ======================================================================= WORLD MOMENTS
+  mothers_day:
+    name: Mother's Day
+    anchor: may:sun:2
+    tradition: world
+    category: relationships
+    videos:
+      - id: mothers-day-hannah
+        offset: 0
+        kind: short
+        title: "The Faith of a Mother"
+        angle: "Hannah prayed for a child, then gave him back to God. For every mother, and everyone missing one."
+        scriptures: [1 Samuel 1:27-28]
+        arc: story
+        emotion: love
+        character: "Hannah"
+  graduation:
+    name: Graduation season
+    anchor: "05-28"
+    tradition: world
+    category: purpose
+    videos:
+      - id: graduation-what-comes-next
+        offset: 0
+        kind: short
+        title: "When You Don't Know What Comes Next"
+        angle: "Graduation, a new job, an empty calendar. Trusting God with the next step, not the whole map."
+        scriptures: [Proverbs 3:5-6, Jeremiah 29:11]
+        arc: journey
+        emotion: hope
+  fathers_day:
+    name: Father's Day
+    anchor: jun:sun:3
+    tradition: world
+    category: relationships
+    videos:
+      - id: fathers-day-what-makes-a-father
+        offset: 0
+        kind: short
+        title: "What Makes a Father?"
+        angle: "A father who runs to his child. For good fathers, absent ones, and the Father who never leaves."
+        scriptures: [Psalm 103:13, Luke 15:20]
+        arc: wisdom
+        emotion: love
+  thanksgiving:
+    name: Thanksgiving
+    anchor: nov:thu:4
+    tradition: world
+    category: prayer
+    videos:
+      - id: thanksgiving-thankful-in-a-hard-year
+        offset: 0
+        kind: short
+        title: "A Thankful Heart in a Hard Year"
+        angle: "Give thanks in all circumstances, not for all of them. Counting what is still good."
+        scriptures: [1 Thessalonians 5:18, Psalm 100:4]
+        arc: joy
+        emotion: gratitude
+
+  # ======================================================================= AUTUMN FEASTS
+  all_saints:
+    name: All Saints
+    anchor: "11-01"
+    tradition: western
+    videos:
+      - id: all-saints-cloud-of-witnesses
+        offset: 0
+        kind: short
+        title: "A Great Cloud of Witnesses"
+        angle: "The faithful who ran before us, cheering us on to finish the race."
+        scriptures: [Hebrews 12:1-2]
+        arc: journey
+        emotion: hope
+  all_souls:
+    name: All Souls
+    anchor: "11-02"
+    tradition: western
+    category: prayer
+    videos:
+      - id: all-souls-missing-someone
+        offset: 0
+        kind: short
+        title: "When You Miss Someone Who Is Gone"
+        angle: "A day of remembrance. We grieve, but not without hope."
+        scriptures: [1 Thessalonians 4:13-14, John 11:25]
+        arc: prayer
+        emotion: grief
+        music: calm
+  christ_the_king:
+    name: Christ the King
+    anchor: christ_the_king
+    tradition: western
+    videos:
+      - id: christ-the-king-crown-of-thorns
+        offset: 0
+        kind: short
+        title: "The King Who Wore a Crown of Thorns"
+        angle: "'My kingdom is not of this world.' A different kind of King."
+        scriptures: [John 18:36-37, Revelation 19:16]
+        arc: story
+        emotion: love
+
+  # ======================================================================= SAINTS and HEROES OF FAITH
+  st_patrick:
+    name: St Patrick
+    anchor: "03-17"
+    tradition: saints
+    category: bible_story
+    series: Saints & Heroes of Faith
+    videos:
+      - id: saint-patrick-slave-who-went-back
+        offset: 0
+        kind: short
+        title: "The Slave Who Went Back to Ireland"
+        angle: "Kidnapped as a teenager, enslaved in Ireland, escaped, and then chose to go back to the people who enslaved him."
+        scriptures: [Matthew 5:44, Romans 12:21]
+        arc: story
+        emotion: forgiveness
+        character: "St Patrick"
+        wiki: Saint Patrick
+  bonhoeffer:
+    name: Dietrich Bonhoeffer
+    anchor: "04-09"
+    tradition: saints
+    category: bible_story
+    series: Saints & Heroes of Faith
+    videos:
+      - id: bonhoeffer-cost-of-following
+        offset: 0
+        kind: short
+        title: "The Pastor Who Wouldn't Stay Silent"
+        angle: "A German pastor who stood against the Nazis, wrote about the cost of discipleship, and died weeks before the war ended."
+        scriptures: [Luke 14:27, Matthew 5:10]
+        arc: story
+        emotion: courage
+        character: "Dietrich Bonhoeffer"
+        wiki: Dietrich Bonhoeffer
+  dominic_savio:
+    name: St Dominic Savio
+    anchor: "05-06"
+    tradition: saints
+    category: bible_story
+    series: Saints & Heroes of Faith
+    videos:
+      - id: saint-dominic-savio
+        offset: 0
+        kind: short
+        title: "The Young Saint Who Changed Everything"
+        angle: "He died at fourteen, but the way he lived inspired thousands. Don't let anyone look down on you because you are young."
+        scriptures: [1 Timothy 4:12]
+        arc: story
+        emotion: purpose
+        character: "St Dominic Savio"
+        wiki: Dominic Savio
+  peter_and_paul:
+    name: Sts Peter and Paul
+    anchor: "06-29"
+    tradition: saints
+    category: bible_story
+    series: Saints & Heroes of Faith
+    videos:
+      - id: peter-and-paul-second-chances
+        offset: 0
+        kind: short
+        title: "Two Apostles, Two Second Chances"
+        angle: "A fisherman who denied Jesus and a persecutor who hunted his followers. Both restored, both sent."
+        scriptures: [John 21:17, 1 Timothy 1:15-16]
+        arc: story
+        emotion: forgiveness
+  st_monica:
+    name: St Monica
+    anchor: "08-27"
+    tradition: saints
+    category: prayer
+    series: Saints & Heroes of Faith
+    videos:
+      - id: saint-monica-wouldnt-give-up
+        offset: 0
+        kind: short
+        title: "The Woman Who Wouldn't Give Up"
+        angle: "Seventeen years of praying for a wayward son. That son became St Augustine."
+        scriptures: [Luke 18:1, James 5:16]
+        arc: story
+        emotion: hope
+        character: "St Monica"
+        wiki: Saint Monica
+  st_augustine:
+    name: St Augustine
+    anchor: "08-28"
+    tradition: saints
+    category: bible_story
+    series: Saints & Heroes of Faith
+    videos:
+      - id: saint-augustine-restless-heart
+        offset: 0
+        kind: long
+        minutes: 6
+        title: "The Restless Heart: The Story of St Augustine"
+        angle: "A brilliant young man chasing everything, a garden, a child's voice saying 'take up and read', and a heart that finally found rest."
+        scriptures: [Romans 13:13-14, Psalm 42:1]
+        arc: story
+        emotion: forgiveness
+        character: "St Augustine"
+        wiki: Augustine of Hippo
+  mother_teresa:
+    name: St Teresa of Calcutta
+    anchor: "09-05"
+    tradition: saints
+    category: relationships
+    series: Saints & Heroes of Faith
+    videos:
+      - id: mother-teresa-small-things
+        offset: 0
+        kind: short
+        title: "Small Things With Great Love"
+        angle: "The streets of Calcutta, the dying no one wanted, and Jesus' words about the least of these."
+        scriptures: [Matthew 25:40]
+        arc: story
+        emotion: love
+        character: "Mother Teresa"
+        wiki: Mother Teresa
+  st_francis:
+    name: St Francis of Assisi
+    anchor: "10-04"
+    tradition: saints
+    category: bible_story
+    series: Saints & Heroes of Faith
+    videos:
+      - id: saint-francis-gave-everything-away
+        offset: 0
+        kind: short
+        title: "The Man Who Gave Everything Away"
+        angle: "A rich merchant's son who handed back even his clothes, and found a joy money never gave him."
+        scriptures: [Matthew 19:21, Matthew 6:19-21]
+        arc: story
+        emotion: joy
+        character: "St Francis of Assisi"
+        wiki: Francis of Assisi
+  st_nicholas:
+    name: St Nicholas
+    anchor: "12-06"
+    tradition: saints
+    category: bible_story
+    series: Saints & Heroes of Faith
+    videos:
+      - id: saint-nicholas-the-real-one
+        offset: 0
+        kind: short
+        title: "The Real Saint Nicholas"
+        angle: "Before Santa Claus: a bishop who gave in secret, like Jesus taught."
+        scriptures: [Matthew 6:3-4, Proverbs 19:17]
+        arc: story
+        emotion: gratitude
+        character: "St Nicholas"
+        wiki: Saint Nicholas
+
+  # ======================================================================= CATHOLIC FEASTS (off unless "catholic" is in liturgy.traditions)
+  exaltation_of_the_cross:
+    name: Exaltation of the Holy Cross
+    anchor: "09-14"
+    tradition: catholic
+    videos:
+      - id: exaltation-why-the-cross
+        offset: 0
+        kind: short
+        title: "Why the Cross?"
+        angle: "Foolishness to some, the power of God to us. Lifted up like the serpent in the wilderness."
+        scriptures: [1 Corinthians 1:18, John 3:14-15]
+        arc: curiosity
+        emotion: love
+  corpus_christi:
+    name: Corpus Christi
+    anchor: corpus_christi
+    tradition: catholic
+    videos:
+      - id: corpus-christi-bread-of-life
+        offset: 0
+        kind: short
+        title: "I Am the Bread of Life"
+        angle: "Bread broken on the night he was betrayed, and the hunger only he fills."
+        scriptures: [John 6:35, 1 Corinthians 11:23-24]
+        arc: curiosity
+        emotion: love
+  sacred_heart:
+    name: Sacred Heart of Jesus
+    anchor: sacred_heart
+    tradition: catholic
+    videos:
+      - id: sacred-heart-gentle-and-lowly
+        offset: 0
+        kind: short
+        title: "Gentle and Lowly in Heart"
+        angle: "The only time Jesus describes his own heart."
+        scriptures: [Matthew 11:28-29]
+        arc: peace
+        emotion: peace
+  assumption:
+    name: Assumption of Mary
+    anchor: "08-15"
+    tradition: catholic
+    videos:
+      - id: assumption-magnificat
+        offset: 0
+        kind: short
+        title: "My Soul Magnifies the Lord"
+        angle: "Mary's song of a God who lifts up the humble."
+        scriptures: [Luke 1:46-49]
+        arc: joy
+        emotion: joy
+        character: "Mary"
+  immaculate_conception:
+    name: Immaculate Conception
+    anchor: "12-08"
+    tradition: catholic
+    videos:
+      - id: immaculate-full-of-grace
+        offset: 0
+        kind: short
+        title: "Full of Grace"
+        angle: "The angel's greeting to Mary, and what grace means."
+        scriptures: [Luke 1:28, Luke 1:30]
+        arc: curiosity
+        emotion: joy
+        character: "Mary"

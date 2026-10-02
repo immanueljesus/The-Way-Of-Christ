@@ -1,0 +1,118 @@
+{
+  "title": "If You Feel Forgotten Tonight, Watch This",
+  "description": "You've done what was right, again and again, and it feels like nobody noticed. Maybe not even God. Joseph knew that feeling, in a pit, in a foreign land, in a prison where the one man who could help him forgot.\n\nThis is for anyone in a waiting season. You are not forgotten.\n\nKey Scriptures: Genesis 40:23, Isaiah 49:15, Genesis 50:20, Psalm 34:18.\n\nLord, when I feel forgotten, remind me that you never forget me. Amen.",
+  "tags": [
+    "god has not forgotten you",
+    "when you feel forgotten",
+    "joseph bible story",
+    "christian encouragement",
+    "waiting on god",
+    "you are not alone",
+    "christian motivation",
+    "the way of christ"
+  ],
+  "thumbnail_text": "Not Forgotten",
+  "thumbnail_kicker": "When You Feel...",
+  "thumbnail_query": "lone figure light darkness",
+  "sources": ["Genesis 37-50", "Isaiah 49:15", "Psalm 34:18"],
+  "scenes": [
+    {
+      "narration": "It's late. The house is quiet... and the thing you've been carrying all day is still there.",
+      "type": "broll",
+      "mood": "struggle",
+      "pause_after": 1.0,
+      "broll_query": "rain on window night",
+      "visual_prompt": "Rain running down a dark window, city lights blurred behind it, very slow push in"
+    },
+    {
+      "narration": "You've done what was right. Again and again. And it feels like nobody noticed.",
+      "type": "title",
+      "mood": "struggle",
+      "pause_after": 1.0,
+      "heading": "Not Forgotten",
+      "text": "The Way of Christ",
+      "broll_query": "person alone in the dark",
+      "visual_prompt": "A lone figure at a kitchen table in the dark, one lamp, stillness"
+    },
+    {
+      "narration": "Maybe you've stopped saying it out loud. But the question is still there. Where are you, God?",
+      "type": "broll",
+      "mood": "uncertainty",
+      "pause_after": 1.4,
+      "broll_query": "empty road fog",
+      "visual_prompt": "An empty road disappearing into fog, camera drifting forward"
+    },
+    {
+      "narration": "Joseph knew that question. Thrown into a pit by his own brothers. Sold to strangers. Carried to a land where no one knew his name.",
+      "type": "broll",
+      "mood": "faith",
+      "pause_after": 0.9,
+      "broll_query": "desert caravan dunes",
+      "visual_prompt": "A caravan crossing desert dunes at dusk, long shadows, wide"
+    },
+    {
+      "narration": "Then a prison cell. He helped a man there, and asked only one thing. Remember me. The Bible says it plainly. Yet the chief cup bearer didn't remember Joseph, but forgot him.",
+      "type": "quote",
+      "mood": "faith",
+      "pause_after": 1.6,
+      "text": "Yet the chief cup bearer didn't remember Joseph, but forgot him.",
+      "author": "Genesis 40:23",
+      "broll_query": "prison cell window light",
+      "visual_prompt": "Dim stone cell, a single shaft of light on a young man's hands"
+    },
+    {
+      "narration": "Two more years... in the dark. But people forgetting Joseph was never the same as God forgetting him.",
+      "type": "statement",
+      "mood": "realization",
+      "pause_after": 1.2,
+      "text": "People forgot him. God never did.",
+      "broll_query": "light through clouds",
+      "visual_prompt": "Light breaking through heavy clouds over dark hills, slow tilt up"
+    },
+    {
+      "narration": "And God is saying the same thing to you tonight. Yes, these may forget, yet I will not forget you.",
+      "type": "quote",
+      "mood": "realization",
+      "pause_after": 2.5,
+      "text": "Yes, these may forget, yet I will not forget you!",
+      "author": "Isaiah 49:15",
+      "broll_query": "sun rays through forest",
+      "visual_prompt": "Sun rays streaming through a misty forest, camera rising slowly"
+    },
+    {
+      "narration": "The prison was not the end of Joseph's story. One day, everything changed. And your waiting is not wasted either.",
+      "type": "broll",
+      "mood": "hope",
+      "pause_after": 1.0,
+      "broll_query": "sunrise over mountains",
+      "visual_prompt": "Sunrise spilling over a mountain ridge, golden light filling the valley"
+    },
+    {
+      "narration": "The Lord is near to those who have a broken heart. Near to you. Right now.",
+      "type": "quote",
+      "mood": "hope",
+      "pause_after": 1.6,
+      "text": "The LORD is near to those who have a broken heart, and saves those who have a crushed spirit.",
+      "author": "Psalm 34:18",
+      "broll_query": "golden field sunrise",
+      "visual_prompt": "A wheat field glowing in first light, wind moving through it"
+    },
+    {
+      "narration": "So lift your head. Pray with me. Lord, when I feel forgotten, remind me that you never forget me. Give me strength for the next step. Amen.",
+      "type": "broll",
+      "mood": "strength",
+      "pause_after": 1.0,
+      "broll_query": "person walking toward light",
+      "visual_prompt": "A figure walking up a hill toward the rising sun, wide and steady"
+    },
+    {
+      "narration": "You are not forgotten. You are not alone. And your story isn't over.",
+      "type": "statement",
+      "mood": "strength",
+      "pause_after": 0.8,
+      "text": "Your story isn't over",
+      "broll_query": "cross on hill sunrise",
+      "visual_prompt": "A simple wooden cross on a hilltop against a bright sky, slow push in"
+    }
+  ]
+}

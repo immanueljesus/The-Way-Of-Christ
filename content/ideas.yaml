@@ -1,0 +1,1352 @@
+# The channel's curated idea list (source: catalog in channel.yaml).
+#
+# Each idea becomes one video. The pipeline picks the next unused idea whose `formats` fit the
+# publish slot, from the category the weekly plan asks for (schedule.plan) or the category furthest
+# below its share of the content mix (catalog.mix). Order matters: within a category, ideas higher
+# in the list go first, so put the strongest ideas near the top.
+#
+# Fields
+#   id          unique, lowercase-with-dashes. Used as the topic "idea:<id>". Never reuse or rename
+#               an id after its video is made (the queue remembers ids).
+#   title       working title (the script step writes the final one)
+#   category    motivational | bible_story | prayer | jesus | facts   (the content mix)
+#   pillar      Jesus, Bible, Prayer, Motivation, Hope, Faith, Wisdom, Spiritual struggle,
+#               Transformation, Peace, Bible stories, Did you know
+#   series      playlist the video is filed under (see growth.series)
+#   formats     short (20-60 s), medium (2-6 min), long (8-15 min), sleep (20-40 min)
+#   scriptures  the passages the video rests on. Their exact text is fetched before the script is
+#               written and every on-screen quote is checked against it. Use "Book chapter:verse".
+#   wiki        optional Wikipedia article: background notes and classical artwork for the visuals
+#   angle       the pain point or hook, and what the viewer should leave with
+#
+# Add ideas any time; `python -m fyt ideas` shows the counts, `python -m fyt topics next` queues some.
+
+ideas:
+  # ---------------------------------------------------------------- motivational (40%)
+  - id: when-you-feel-forgotten
+    title: "When You Feel Forgotten"
+    category: motivational
+    pillar: Hope
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Genesis 40:23, Genesis 41:1, Isaiah 49:15-16]
+    wiki: Joseph (Genesis)
+    angle: "Joseph helped the cupbearer, then sat in prison two more years, forgotten. God had not forgotten him, and he has not forgotten you."
+
+  - id: when-you-feel-like-giving-up
+    title: "When You Feel Like Giving Up"
+    category: motivational
+    pillar: Motivation
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [1 Kings 19:4-8, Galatians 6:9, 2 Corinthians 4:8-9]
+    wiki: Elijah
+    angle: "Elijah asked to die under a broom tree. God's answer was not a lecture but bread, water and sleep. Rest is not quitting."
+
+  - id: when-you-feel-alone
+    title: "When You Feel Alone"
+    category: motivational
+    pillar: Hope
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Deuteronomy 31:6, Psalm 139:7-10, Hebrews 13:5]
+    angle: "Loneliness says nobody is there. Psalm 139 says there is nowhere you can go where God is not already waiting."
+
+  - id: when-youre-afraid
+    title: "When You're Afraid"
+    category: motivational
+    pillar: Faith
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Isaiah 41:10, Joshua 1:9, Psalm 56:3]
+    angle: "\"Do not be afraid\" was never said to people with nothing to fear. It came with a promise: I am with you."
+
+  - id: when-you-dont-know-what-to-do
+    title: "When You Don't Know What To Do"
+    category: motivational
+    pillar: Wisdom
+    series: When You Feel...
+    formats: [short, medium]
+    scriptures: [2 Chronicles 20:12, Proverbs 3:5-6, James 1:5]
+    angle: "King Jehoshaphat, surrounded by armies, prayed \"we don't know what to do, but our eyes are on you.\" That is a real prayer."
+
+  - id: when-youve-failed
+    title: "When You've Failed"
+    category: motivational
+    pillar: Transformation
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Luke 22:61-62, John 21:15-17, Micah 7:8]
+    wiki: Denial of Peter
+    angle: "Peter's worst failure was not the end of his calling. Jesus restored him with three questions, one for each denial."
+
+  - id: when-someone-betrays-you
+    title: "When Someone Betrays You"
+    category: motivational
+    pillar: Spiritual struggle
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Psalm 41:9, Luke 22:48, Genesis 50:20]
+    angle: "Jesus knew the sting of a friend's kiss. Joseph knew the pit his brothers dug. Both show betrayal does not get the last word."
+
+  - id: when-youre-waiting-for-an-answer
+    title: "When You're Waiting for an Answer"
+    category: motivational
+    pillar: Faith
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Psalm 27:14, Habakkuk 2:3, Isaiah 40:31]
+    angle: "Waiting feels like nothing is happening. In Scripture, waiting is where God does his deepest work in people."
+
+  - id: when-you-feel-unworthy
+    title: "When You Feel Unworthy"
+    category: motivational
+    pillar: Transformation
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Luke 15:20-24, Romans 5:8, 2 Corinthians 5:17]
+    angle: "The prodigal rehearsed a speech about being unworthy. The father ran to him before he could finish it."
+
+  - id: when-life-doesnt-make-sense
+    title: "When Life Doesn't Make Sense"
+    category: motivational
+    pillar: Faith
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Isaiah 55:8-9, Romans 8:28, Proverbs 16:9]
+    angle: "You don't need to understand the whole story to trust the one writing it."
+
+  - id: when-god-seems-silent
+    title: "When God Seems Silent"
+    category: motivational
+    pillar: Faith
+    series: When You Feel...
+    formats: [short, medium, long, sleep]
+    scriptures: [Psalm 13:1-2, Psalm 22:1-2, Lamentations 3:25-26]
+    angle: "David asked \"how long, Lord?\" and it made it into the Bible. Silence is not absence, and honest prayer is still prayer."
+
+  - id: why-god-makes-you-wait
+    title: "Why God Sometimes Makes You Wait"
+    category: motivational
+    pillar: Faith
+    series: Lessons From...
+    formats: [medium, long]
+    scriptures: [Genesis 12:4, Genesis 21:5, Psalm 37:7]
+    wiki: Abraham
+    angle: "Abraham was 75 when the promise came and 100 when Isaac was born. Twenty-five years of waiting shaped the man who received it."
+
+  - id: when-you-didnt-get-the-job
+    title: "When You Didn't Get the Job"
+    category: motivational
+    pillar: Wisdom
+    series: When You Feel...
+    formats: [short, medium]
+    scriptures: [Proverbs 16:9, Colossians 3:23, Jeremiah 29:11]
+    angle: "A closed door is painful and real. It is also not the end of your story or the measure of your worth."
+
+  - id: gods-timing-vs-your-timeline
+    title: "God's Timing vs Your Timeline"
+    category: motivational
+    pillar: Faith
+    formats: [short, medium, long]
+    scriptures: [Ecclesiastes 3:1, 2 Peter 3:8-9, Galatians 4:4]
+    angle: "Your timeline says you should be further along. Ecclesiastes says there is a season for everything, and yours is not late."
+
+  - id: dont-compare-your-life
+    title: "Don't Compare Your Life to Others"
+    category: motivational
+    pillar: Wisdom
+    formats: [short, medium]
+    scriptures: [John 21:21-22, Galatians 6:4-5, Psalm 139:14]
+    angle: "Peter asked Jesus \"what about him?\" Jesus answered \"what is that to you? Follow me.\" Your path is yours."
+
+  - id: working-hard-when-nobody-notices
+    title: "Working Hard When Nobody Notices"
+    category: motivational
+    pillar: Motivation
+    formats: [short, medium, long]
+    scriptures: [1 Samuel 16:11, Colossians 3:23-24, Matthew 6:4]
+    wiki: David
+    angle: "David wasn't even invited in when Samuel came. He was out with the sheep. God sees the unseen faithful work."
+
+  - id: when-someone-walks-away
+    title: "When Someone Walks Away"
+    category: motivational
+    pillar: Hope
+    series: When You Feel...
+    formats: [short, medium]
+    scriptures: [Psalm 27:10, Psalm 34:18, Deuteronomy 31:8]
+    angle: "People leave, sometimes the ones we trusted most. The Lord promises he will never leave or forsake you."
+
+  - id: learning-to-forgive
+    title: "Why Forgiveness Is So Difficult"
+    category: motivational
+    pillar: Spiritual struggle
+    formats: [short, medium, long]
+    scriptures: [Matthew 18:21-22, Ephesians 4:32, Colossians 3:13]
+    angle: "Forgiveness is not pretending it didn't hurt. It is releasing the debt to God, often again and again."
+
+  - id: when-your-heart-is-broken
+    title: "When Your Heart Is Broken"
+    category: motivational
+    pillar: Hope
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Psalm 147:3, Psalm 34:18, Revelation 21:4]
+    angle: "God draws near to the brokenhearted. Not after you heal. Now, in the middle of it."
+
+  - id: loving-people-who-hurt-you
+    title: "Loving People Who Hurt You"
+    category: motivational
+    pillar: Spiritual struggle
+    formats: [short, medium]
+    scriptures: [Luke 6:27-28, Romans 12:17-21, Matthew 5:44]
+    angle: "Jesus' hardest command, and the one that sets you free from the person who hurt you."
+
+  - id: ashamed-of-your-past
+    title: "When You're Ashamed of Your Past"
+    category: motivational
+    pillar: Transformation
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [1 Timothy 1:15-16, 2 Corinthians 5:17, Psalm 103:12]
+    wiki: Paul the Apostle
+    angle: "Paul once hunted Christians. He called himself the worst of sinners, and God still wrote half the New Testament through him."
+
+  - id: afraid-of-the-future
+    title: "When You're Afraid of the Future"
+    category: motivational
+    pillar: Peace
+    series: When You Feel...
+    formats: [short, medium]
+    scriptures: [Matthew 6:34, Jeremiah 29:11, Isaiah 41:10]
+    angle: "You were given grace for today, not for every imagined tomorrow."
+
+  - id: when-you-cant-stop-overthinking
+    title: "When You Can't Stop Overthinking"
+    category: motivational
+    pillar: Peace
+    series: When You Feel...
+    formats: [short, medium]
+    scriptures: [Philippians 4:6-8, Isaiah 26:3, 2 Corinthians 10:5]
+    angle: "Paul wrote \"think about these things\" from prison. A practical, Biblical way to quiet a racing mind."
+
+  - id: when-you-feel-lost
+    title: "When You Feel Lost"
+    category: motivational
+    pillar: Hope
+    series: When You Feel...
+    formats: [short, medium]
+    scriptures: [Luke 15:4-7, Psalm 119:105, John 14:6]
+    angle: "In Jesus' story, the lost sheep doesn't find its way home. The shepherd comes looking."
+
+  - id: when-anxiety-wont-leave
+    title: "When Anxiety Won't Leave You Alone"
+    category: motivational
+    pillar: Peace
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Philippians 4:6-7, 1 Peter 5:7, Matthew 6:26-27]
+    angle: "Casting your cares is a daily practice, not a one-time fix, and God invites it. (Encouragement, not a substitute for professional help.)"
+
+  - id: when-grief-is-heavy
+    title: "When Grief Is Heavy"
+    category: motivational
+    pillar: Hope
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [John 11:35, Psalm 34:18, 1 Thessalonians 4:13-14]
+    angle: "Jesus knew Lazarus would rise, and he still wept. Your tears are not a lack of faith."
+
+  - id: when-youre-exhausted
+    title: "When You're Exhausted"
+    category: motivational
+    pillar: Peace
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Matthew 11:28-30, Isaiah 40:29-31, Psalm 23:1-3]
+    angle: "Jesus did not say \"try harder.\" He said \"come to me, and I will give you rest.\""
+
+  - id: when-youre-tempted
+    title: "When You're Tempted"
+    category: motivational
+    pillar: Spiritual struggle
+    formats: [short, medium, long]
+    scriptures: [1 Corinthians 10:13, James 1:12-14, Matthew 4:1-4]
+    angle: "Temptation is not sin, and you are not alone in it. Jesus faced it hungry in the desert and answered with Scripture."
+
+  - id: when-anger-rises
+    title: "What the Bible Says When Anger Rises"
+    category: motivational
+    pillar: Spiritual struggle
+    formats: [short, medium]
+    scriptures: [Ephesians 4:26-27, James 1:19-20, Proverbs 15:1]
+    angle: "\"Be angry and don't sin.\" Anger is a signal, not a master."
+
+  - id: when-you-doubt
+    title: "When You Doubt"
+    category: motivational
+    pillar: Faith
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Mark 9:23-24, John 20:27-29, Jude 1:22]
+    angle: "\"I believe; help my unbelief.\" Jesus did not turn that father away. Doubt brought honestly to God can grow into faith."
+
+  - id: discipline-when-motivation-fades
+    title: "Discipline When Motivation Fades"
+    category: motivational
+    pillar: Motivation
+    formats: [short, medium, long]
+    scriptures: [1 Corinthians 9:24-27, Hebrews 12:11, Proverbs 6:6-8]
+    angle: "Paul trained like an athlete. Feelings come and go; faithfulness in small daily things builds a life."
+
+  - id: courage-to-start-again
+    title: "The Courage to Start Again"
+    category: motivational
+    pillar: Transformation
+    formats: [short, medium, long]
+    scriptures: [Lamentations 3:22-23, Philippians 3:13-14, Isaiah 43:19]
+    angle: "His mercies are new every morning, written by a man sitting in the ruins of Jerusalem."
+
+  - id: when-you-feel-small
+    title: "When You Feel Too Small for the Battle"
+    category: motivational
+    pillar: Motivation
+    formats: [short, medium, long]
+    scriptures: [1 Samuel 17:45-47, 1 Samuel 16:7, Zechariah 4:10]
+    wiki: Goliath
+    angle: "David did not win because he was big enough. He won because the battle was the Lord's."
+
+  - id: your-difficult-chapter
+    title: "Your Difficult Chapter Isn't Your Final Chapter"
+    category: motivational
+    pillar: Hope
+    formats: [short, medium, long]
+    scriptures: [Genesis 50:20, Job 42:10, Romans 8:18]
+    angle: "Joseph didn't understand the pit. Job didn't understand his suffering. But the story wasn't over."
+
+  - id: when-money-is-tight
+    title: "When Money Is Tight"
+    category: motivational
+    pillar: Wisdom
+    formats: [short, medium]
+    scriptures: [Matthew 6:31-33, Philippians 4:19, Hebrews 13:5]
+    angle: "Worry about provision is ancient. Jesus pointed to the birds and the lilies, and to seeking God first. (No prosperity promises.)"
+
+  - id: when-you-feel-rejected
+    title: "When You Feel Rejected"
+    category: motivational
+    pillar: Hope
+    series: When You Feel...
+    formats: [short, medium]
+    scriptures: [Isaiah 53:3, Psalm 118:22, 1 Peter 2:4]
+    angle: "Jesus was the stone the builders rejected. He knows exactly what rejection feels like."
+
+  - id: when-your-family-is-hurting
+    title: "When Your Family Is Falling Apart"
+    category: motivational
+    pillar: Hope
+    formats: [medium, long]
+    scriptures: [Genesis 45:4-5, Psalm 68:6, Colossians 3:13]
+    wiki: Joseph (Genesis)
+    angle: "Joseph's family was a mess of favouritism, jealousy and betrayal. God still brought them back together."
+
+  - id: when-youre-waiting-for-healing
+    title: "When You're Waiting for Healing"
+    category: motivational
+    pillar: Faith
+    formats: [short, medium]
+    scriptures: [2 Corinthians 12:9, Psalm 41:3, Mark 5:34]
+    angle: "Paul prayed three times and heard \"my grace is sufficient.\" Faith for the waiting room. (Encouragement only; no medical claims.)"
+
+  - id: does-your-life-matter
+    title: "When You Wonder If Your Life Matters"
+    category: motivational
+    pillar: Transformation
+    formats: [short, medium, long]
+    scriptures: [Ephesians 2:10, Jeremiah 1:5, Esther 4:14]
+    angle: "You were made on purpose, for a purpose. Esther's \"for such a time as this\" moment came in ordinary life."
+
+  - id: why-god-uses-ordinary-people
+    title: "Why God Uses Ordinary People"
+    category: motivational
+    pillar: Transformation
+    formats: [short, medium, long]
+    scriptures: [1 Corinthians 1:27, Amos 7:14-15, Acts 4:13]
+    angle: "Fishermen, a shepherd, a farmer of figs. The leaders noticed the apostles were ordinary men who had been with Jesus."
+
+  - id: when-you-feel-behind
+    title: "When You Feel Behind in Life"
+    category: motivational
+    pillar: Hope
+    series: When You Feel...
+    formats: [short, medium]
+    scriptures: [Exodus 7:7, Joel 2:25, Ecclesiastes 3:11]
+    angle: "Moses was 80 when he stood before Pharaoh. It is not too late for you."
+
+  - id: start-your-day-with-courage
+    title: "Start Your Day With Courage"
+    category: motivational
+    pillar: Motivation
+    series: Start Your Day With God
+    formats: [short, medium]
+    scriptures: [Joshua 1:9, Psalm 118:24, Lamentations 3:22-23]
+    angle: "A morning word before the noise starts: be strong and courageous, the Lord goes with you today."
+
+  - id: give-god-your-plans-today
+    title: "Give God Your Plans Today"
+    category: motivational
+    pillar: Wisdom
+    series: Start Your Day With God
+    formats: [short, medium]
+    scriptures: [Proverbs 16:3, James 4:13-15, Proverbs 19:21]
+    angle: "Plan well, hold loosely. Commit today's work to the Lord before you begin it."
+
+  - id: when-you-cant-forgive-yourself
+    title: "When You Can't Forgive Yourself"
+    category: motivational
+    pillar: Transformation
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [1 John 1:9, Psalm 32:5, Romans 8:1]
+    angle: "If God has forgiven you, holding on to the guilt is not humility. There is no condemnation."
+
+  - id: strength-for-today
+    title: "Strength for Today"
+    category: motivational
+    pillar: Motivation
+    series: Start Your Day With God
+    formats: [short, medium]
+    scriptures: [Philippians 4:11-13, Isaiah 40:29]
+    angle: "\"I can do all things\" was written about contentment in need and in plenty. Strength for whatever today holds."
+
+  - id: when-you-feel-stuck
+    title: "When You Feel Stuck in the Wilderness"
+    category: motivational
+    pillar: Faith
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Deuteronomy 8:2-4, Isaiah 43:19, Hosea 2:14]
+    angle: "Israel's forty years were hard, yet their clothes did not wear out. God provides in the wilderness and speaks there too."
+
+  - id: when-others-succeed
+    title: "When Everyone Else Seems to Succeed"
+    category: motivational
+    pillar: Wisdom
+    formats: [short, medium]
+    scriptures: [Psalm 73:2-3, Psalm 73:16-17, Psalm 73:26]
+    angle: "Asaph nearly slipped watching others prosper, until he went into God's sanctuary and saw differently."
+
+  - id: when-you-are-overwhelmed
+    title: "When You Are Overwhelmed"
+    category: motivational
+    pillar: Peace
+    series: When You Feel...
+    formats: [short, medium, long]
+    scriptures: [Psalm 61:1-2, Isaiah 43:2, 2 Corinthians 4:16-18]
+    angle: "\"Lead me to the rock that is higher than I.\" A prayer for when life rises above your head."
+
+  # ---------------------------------------------------------------- bible stories (25%)
+  - id: joseph-pit-to-palace
+    title: "Joseph: From the Pit to the Palace"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [medium, long, sleep]
+    scriptures: [Genesis 37:23-28, Genesis 39:20-21, Genesis 41:39-41, Genesis 50:20]
+    wiki: Joseph (Genesis)
+    angle: "The master story. Betrayed, enslaved, falsely accused and forgotten, yet God was with Joseph at every step. Split into 6 Shorts."
+
+  - id: david-anointed-among-sheep
+    title: "David Was Anointed While Still Tending Sheep"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [1 Samuel 16:7, 1 Samuel 16:11-13]
+    wiki: David
+    angle: "Chosen while everyone else was looking somewhere else. Years passed before the crown; the calling came first."
+
+  - id: david-when-everyone-turned
+    title: "What David Did When Everyone Turned Against Him"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [medium, long]
+    scriptures: [1 Samuel 30:3-6, Psalm 62:1-2]
+    wiki: David
+    angle: "At Ziklag his own men spoke of stoning him. David strengthened himself in the Lord his God."
+
+  - id: david-and-goliath
+    title: "David and Goliath, the Whole Story"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [medium, long]
+    scriptures: [1 Samuel 17:32-37, 1 Samuel 17:45-47]
+    wiki: Goliath
+    angle: "Not a story about being brave enough. A shepherd who had seen God's faithfulness with lions and bears."
+
+  - id: moses-burning-bush
+    title: "Moses Had Every Excuse"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [Exodus 3:10-12, Exodus 4:10-12]
+    wiki: Burning bush
+    angle: "\"Who am I?\" \"I am not eloquent.\" God's answer to every excuse: \"I will be with you.\""
+
+  - id: moses-red-sea
+    title: "When There's No Way Forward (The Red Sea)"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [short, medium, long]
+    scriptures: [Exodus 14:13-14, Exodus 14:21-22]
+    wiki: Crossing the Red Sea
+    angle: "Army behind, sea in front. \"The Lord will fight for you, and you shall be still.\""
+
+  - id: moses-whole-story
+    title: "The Life of Moses"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [long, sleep]
+    scriptures: [Exodus 2:1-10, Exodus 3:10-12, Exodus 14:13-14, Deuteronomy 34:10]
+    wiki: Moses
+    angle: "From a basket on the Nile to Mount Nebo: a reluctant leader God used anyway."
+
+  - id: peter-failure-restoration
+    title: "The Life of Peter: Failure, Restoration and Faith"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [medium, long, sleep]
+    scriptures: [Matthew 4:18-20, Matthew 16:15-18, Luke 22:54-62, John 21:15-19]
+    wiki: Saint Peter
+    angle: "Fishing boat, following Jesus, denial, restoration. The rock was built from a man who fell."
+
+  - id: peter-walks-on-water
+    title: "Peter Walked on Water, Then Sank"
+    category: bible_story
+    pillar: Faith
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [Matthew 14:28-31]
+    wiki: Jesus walking on water
+    angle: "He sank when he looked at the wind, and Jesus caught him immediately. Sinking isn't the end if you call out."
+
+  - id: paul-joy-in-prison
+    title: "Paul Wrote About Joy From Prison"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [short, medium, long]
+    scriptures: [Philippians 1:12-14, Philippians 4:4, Acts 16:25-26]
+    wiki: Epistle to the Philippians
+    angle: "Where Paul was, what he was facing, and why \"rejoice in the Lord always\" was not a slogan."
+
+  - id: paul-damascus-road
+    title: "The Man Who Hunted Christians"
+    category: bible_story
+    pillar: Transformation
+    series: Lessons From...
+    formats: [short, medium, long]
+    scriptures: [Acts 9:3-6, Acts 9:17-18]
+    wiki: Conversion of Paul the Apostle
+    angle: "Saul on the road to Damascus: nobody is beyond God's reach."
+
+  - id: esther-for-such-a-time
+    title: "For Such a Time as This"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [short, medium, long]
+    scriptures: [Esther 4:14-16]
+    wiki: Esther
+    angle: "An orphan in a foreign palace, a risk that could cost her life, and a quiet providence behind every scene."
+
+  - id: ruth-loyalty
+    title: "Ruth: Loyalty in the Hardest Season"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [medium, long]
+    scriptures: [Ruth 1:16-17, Ruth 4:13-17]
+    wiki: Book of Ruth
+    angle: "A widow gleaning leftovers became the great-grandmother of King David."
+
+  - id: job-why-good-people-suffer
+    title: "When Good People Suffer: The Story of Job"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [long, sleep]
+    scriptures: [Job 1:20-22, Job 38:1-4, Job 42:5, Job 42:10]
+    wiki: Book of Job
+    angle: "Job never got an explanation. He got an encounter with God, and that was enough."
+
+  - id: daniel-lions-den
+    title: "Daniel Kept Praying"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [Daniel 6:10, Daniel 6:21-22]
+    wiki: Daniel in the lions' den
+    angle: "He knew the law was signed, went home, opened his windows and prayed as he always had."
+
+  - id: fiery-furnace
+    title: "Even If He Does Not"
+    category: bible_story
+    pillar: Faith
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [Daniel 3:16-18, Daniel 3:25]
+    wiki: Shadrach, Meshach, and Abednego
+    angle: "Faith that trusts God whether or not he rescues you the way you want, and a fourth man in the fire."
+
+  - id: elijah-broom-tree
+    title: "The Prophet Who Wanted to Quit"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [short, medium, long]
+    scriptures: [1 Kings 19:4-8, 1 Kings 19:11-12]
+    wiki: Elijah
+    angle: "After his greatest victory, Elijah collapsed. God came in a gentle whisper."
+
+  - id: jonah-running
+    title: "Jonah Ran the Other Way"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [Jonah 1:1-3, Jonah 2:1-2, Jonah 4:2]
+    wiki: Jonah
+    angle: "You can run from God, but not beyond his mercy, for you or for the people you'd rather he didn't forgive."
+
+  - id: nehemiah-rebuilding
+    title: "Rebuilding the Broken Walls"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [medium, long]
+    scriptures: [Nehemiah 2:17-18, Nehemiah 4:14, Nehemiah 6:15-16]
+    wiki: Nehemiah
+    angle: "Fifty-two days, mocking enemies, tired workers. A blueprint for rebuilding what life has broken."
+
+  - id: noah-faith-before-rain
+    title: "Noah Built Before It Rained"
+    category: bible_story
+    pillar: Faith
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [Genesis 6:22, Hebrews 11:7]
+    wiki: Noah's Ark
+    angle: "Obedience that looked foolish for years, until it didn't."
+
+  - id: abraham-mount-moriah
+    title: "God Will Provide"
+    category: bible_story
+    pillar: Faith
+    series: Lessons From...
+    formats: [medium, long]
+    scriptures: [Genesis 22:7-8, Genesis 22:14]
+    wiki: Binding of Isaac
+    angle: "The hardest walk in Genesis, and the name Abraham gave the place: the Lord will provide."
+
+  - id: jacob-wrestling
+    title: "The Night Jacob Wrestled With God"
+    category: bible_story
+    pillar: Transformation
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [Genesis 32:24-28]
+    wiki: Jacob wrestling with the angel
+    angle: "He walked away limping, with a new name. Some blessings come through the struggle."
+
+  - id: gideon-least-of-the-least
+    title: "God Called the Weakest Man in the Weakest Clan"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [Judges 6:12-16, Judges 7:2]
+    wiki: Gideon
+    angle: "Hiding in a winepress, called \"mighty man of valour.\" God sees who you can become."
+
+  - id: samson-second-chance
+    title: "Samson's Last Prayer"
+    category: bible_story
+    pillar: Transformation
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [Judges 16:28-30]
+    wiki: Samson
+    angle: "Blind, chained and humiliated, Samson prayed \"remember me.\" Failure does not put you out of God's reach."
+
+  - id: hannah-prayer
+    title: "Hannah Poured Out Her Soul"
+    category: bible_story
+    pillar: Prayer
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [1 Samuel 1:10-11, 1 Samuel 1:27]
+    wiki: Hannah (biblical figure)
+    angle: "Misunderstood even at the temple, she kept praying. God heard her."
+
+  - id: joshua-jericho
+    title: "The Walls of Jericho"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [Joshua 6:2-5, Joshua 6:20]
+    wiki: Battle of Jericho
+    angle: "Seven days of walking in silence. Sometimes obedience looks like doing the same faithful thing again."
+
+  - id: solomon-asked-for-wisdom
+    title: "What Solomon Asked For"
+    category: bible_story
+    pillar: Wisdom
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [1 Kings 3:5-9, James 1:5]
+    wiki: Solomon
+    angle: "God said \"ask what you want.\" Solomon asked for an understanding heart."
+
+  - id: elisha-eyes-opened
+    title: "Those Who Are With Us Are More"
+    category: bible_story
+    pillar: Faith
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [2 Kings 6:15-17]
+    wiki: Elisha
+    angle: "A frightened servant, an army outside, and a prayer: Lord, open his eyes."
+
+  - id: zacchaeus
+    title: "The Man Who Climbed a Tree to See Jesus"
+    category: bible_story
+    pillar: Transformation
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [Luke 19:5-10]
+    wiki: Zacchaeus
+    angle: "Everyone knew what he was. Jesus called him by name and went to his house."
+
+  - id: lazarus
+    title: "Jesus Waited Two More Days"
+    category: bible_story
+    pillar: Jesus
+    series: Lessons From...
+    formats: [short, medium, long]
+    scriptures: [John 11:5-6, John 11:25-26, John 11:43-44]
+    wiki: Raising of Lazarus
+    angle: "He loved them, so he stayed two more days. When God's delay feels like indifference."
+
+  - id: woman-at-the-well
+    title: "The Woman at the Well"
+    category: bible_story
+    pillar: Jesus
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [John 4:13-14, John 4:28-29]
+    wiki: Samaritan woman at the well
+    angle: "She came at noon to avoid people and left running into town to tell everyone."
+
+  - id: last-24-hours-of-jesus
+    title: "The Last 24 Hours of Jesus' Life"
+    category: bible_story
+    pillar: Jesus
+    series: Lessons From...
+    formats: [long, sleep]
+    scriptures: [Matthew 26:36-39, Luke 22:44, Luke 23:33-34, Luke 23:46]
+    wiki: Passion of Jesus
+    angle: "From the upper room to the tomb, told carefully and reverently."
+
+  - id: resurrection-morning
+    title: "The Morning Everything Changed"
+    category: bible_story
+    pillar: Jesus
+    series: Lessons From...
+    formats: [short, medium, long]
+    scriptures: [Matthew 28:5-6, John 20:15-16]
+    wiki: Resurrection of Jesus
+    angle: "Mary Magdalene thought he was the gardener, until he said her name."
+
+  - id: doubting-thomas
+    title: "Jesus Came Back for Thomas"
+    category: bible_story
+    pillar: Faith
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [John 20:24-29]
+    wiki: Doubting Thomas
+    angle: "A week of doubt, and Jesus met him exactly where his doubt was."
+
+  - id: joseph-forgives
+    title: "Joseph Forgave the Brothers Who Sold Him"
+    category: bible_story
+    pillar: Spiritual struggle
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [Genesis 45:4-8, Genesis 50:19-21]
+    wiki: Joseph (Genesis)
+    angle: "Why Joseph didn't become bitter, and how he could say \"God sent me here.\""
+
+  - id: creation-story-sleep
+    title: "In the Beginning: The Creation Story Before Sleep"
+    category: bible_story
+    pillar: Bible stories
+    series: Before You Sleep
+    formats: [long, sleep]
+    scriptures: [Genesis 1:1-3, Genesis 1:31, Psalm 19:1]
+    wiki: Genesis creation narrative
+    angle: "A slow, peaceful reading-style retelling. It was very good."
+
+  - id: pentecost
+    title: "The Day the Church Was Born"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [short, medium]
+    scriptures: [Acts 2:1-4, Acts 2:42-47]
+    wiki: Pentecost
+    angle: "Frightened followers became bold witnesses, and a community that shared everything."
+
+  - id: story-of-david-sleep
+    title: "The Story of David, Shepherd to King"
+    category: bible_story
+    pillar: Bible stories
+    series: Lessons From...
+    formats: [long, sleep]
+    scriptures: [1 Samuel 16:7, 1 Samuel 17:45, Psalm 23:1-4, 2 Samuel 7:16]
+    wiki: David
+    angle: "Shepherd, wilderness, Goliath, king: the long, gentle telling of a life shaped in hidden places."
+
+  # ---------------------------------------------------------------- prayer (15%)
+  - id: morning-prayer-for-strength
+    title: "A Morning Prayer for Strength"
+    category: prayer
+    pillar: Prayer
+    series: Start Your Day With God
+    formats: [short, medium]
+    scriptures: [Psalm 5:3, Psalm 143:8, Isaiah 40:31]
+    angle: "Pray this before you check your phone."
+
+  - id: prayer-before-sleep
+    title: "A Prayer Before Sleep"
+    category: prayer
+    pillar: Peace
+    series: Before You Sleep
+    formats: [short, medium, long, sleep]
+    scriptures: [Psalm 4:8, Psalm 121:3-4, Matthew 11:28]
+    angle: "Lay down the day. He who keeps you does not sleep."
+
+  - id: prayer-for-anxiety
+    title: "A Prayer for Anxiety"
+    category: prayer
+    pillar: Peace
+    formats: [short, medium, long]
+    scriptures: [Philippians 4:6-7, 1 Peter 5:7]
+    angle: "Slow, simple words for a racing heart."
+
+  - id: prayer-when-life-feels-unfair
+    title: "A Prayer When Life Feels Unfair"
+    category: prayer
+    pillar: Hope
+    formats: [short, medium]
+    scriptures: [Psalm 73:26, Genesis 50:20]
+    angle: "The companion prayer for the Joseph master video."
+
+  - id: prayer-for-healing
+    title: "A Prayer for Healing"
+    category: prayer
+    pillar: Prayer
+    formats: [short, medium, long]
+    scriptures: [Jeremiah 17:14, Psalm 103:2-3]
+    angle: "Asking God for healing and peace, with no promises he hasn't made."
+
+  - id: prayer-for-protection
+    title: "A Prayer for Protection"
+    category: prayer
+    pillar: Prayer
+    formats: [short, medium, long]
+    scriptures: [Psalm 91:1-2, Psalm 121:7-8]
+    angle: "Under his wings: a prayer for you and the people you love."
+
+  - id: prayer-for-family
+    title: "A Prayer for Your Family"
+    category: prayer
+    pillar: Prayer
+    formats: [short, medium]
+    scriptures: [Joshua 24:15, Numbers 6:24-26]
+    angle: "For the home, the hard conversations, and the people under your roof."
+
+  - id: prayer-for-work
+    title: "A Prayer Before Work"
+    category: prayer
+    pillar: Prayer
+    series: Start Your Day With God
+    formats: [short, medium]
+    scriptures: [Colossians 3:23, Psalm 90:17]
+    angle: "Establish the work of our hands."
+
+  - id: prayer-for-guidance
+    title: "A Prayer for Guidance"
+    category: prayer
+    pillar: Wisdom
+    formats: [short, medium]
+    scriptures: [Psalm 32:8, Proverbs 3:5-6]
+    angle: "For decisions you can't see through yet."
+
+  - id: prayer-of-gratitude
+    title: "A Prayer of Gratitude"
+    category: prayer
+    pillar: Prayer
+    formats: [short, medium]
+    scriptures: [Psalm 100:4-5, 1 Thessalonians 5:16-18]
+    angle: "Counting what is still good, even in a hard season."
+
+  - id: prayer-for-a-broken-heart
+    title: "A Prayer for a Broken Heart"
+    category: prayer
+    pillar: Hope
+    formats: [short, medium, long]
+    scriptures: [Psalm 34:18, Psalm 147:3]
+    angle: "When you don't have words, pray these."
+
+  - id: prayer-when-you-cant-sleep
+    title: "A Prayer When You Can't Sleep"
+    category: prayer
+    pillar: Peace
+    series: Before You Sleep
+    formats: [short, medium, long, sleep]
+    scriptures: [Psalm 3:5, Psalm 4:8, Psalm 63:6-7]
+    angle: "For the 3 a.m. mind. He is awake with you."
+
+  - id: prayer-for-strength-today
+    title: "A Prayer for Strength Today"
+    category: prayer
+    pillar: Motivation
+    series: Start Your Day With God
+    formats: [short, medium]
+    scriptures: [Isaiah 41:10, 2 Corinthians 12:9]
+    angle: "For the day you don't feel ready for."
+
+  - id: prayer-for-peace
+    title: "A Prayer for Peace"
+    category: prayer
+    pillar: Peace
+    formats: [short, medium, long]
+    scriptures: [John 14:27, Isaiah 26:3]
+    angle: "Not as the world gives."
+
+  - id: prayer-of-surrender
+    title: "A Prayer of Surrender"
+    category: prayer
+    pillar: Faith
+    formats: [short, medium]
+    scriptures: [Luke 22:42, Proverbs 16:3]
+    angle: "\"Not my will, but yours.\" Praying Jesus' hardest prayer."
+
+  - id: prayer-for-forgiveness
+    title: "A Prayer for Forgiveness"
+    category: prayer
+    pillar: Transformation
+    formats: [short, medium]
+    scriptures: [Psalm 51:10-12, 1 John 1:9]
+    angle: "David's prayer after his worst failure: create in me a clean heart."
+
+  - id: bible-verses-and-prayer-before-sleep
+    title: "30 Minutes of Bible Verses and Prayer Before Sleep"
+    category: prayer
+    pillar: Peace
+    series: Before You Sleep
+    formats: [long, sleep]
+    scriptures: [Psalm 23:1-6, Psalm 91:1-2, Psalm 4:8, Numbers 6:24-26, Matthew 11:28-30]
+    angle: "Calm narration, long pauses, minimal music."
+
+  - id: the-lords-prayer-slowly
+    title: "The Lord's Prayer, Line by Line"
+    category: prayer
+    pillar: Jesus
+    formats: [short, medium, long]
+    scriptures: [Matthew 6:9-13]
+    angle: "What each line means, then praying it slowly together."
+
+  - id: prayer-for-someone-you-love
+    title: "A Prayer for Someone You Love"
+    category: prayer
+    pillar: Prayer
+    formats: [short, medium]
+    scriptures: [Ephesians 3:16-19, Numbers 6:24-26]
+    angle: "Paul's prayer for the Ephesians, prayed for the person on your heart."
+
+  - id: prayer-when-god-feels-far
+    title: "A Prayer When God Feels Far Away"
+    category: prayer
+    pillar: Faith
+    formats: [short, medium, long]
+    scriptures: [Psalm 139:7-10, James 4:8]
+    angle: "Draw near to God, and he will draw near to you."
+
+  - id: give-your-worries-to-god-tonight
+    title: "Give Your Worries to God Tonight"
+    category: prayer
+    pillar: Peace
+    series: Before You Sleep
+    formats: [short, medium, long, sleep]
+    scriptures: [1 Peter 5:7, Psalm 55:22]
+    angle: "Name each worry, hand it over, and rest."
+
+  - id: god-is-with-you-in-the-darkness
+    title: "God Is With You in the Darkness"
+    category: prayer
+    pillar: Peace
+    series: Before You Sleep
+    formats: [short, medium, long, sleep]
+    scriptures: [Psalm 139:11-12, John 1:5]
+    angle: "Even the darkness is not dark to him."
+
+  # ---------------------------------------------------------------- Jesus (10%)
+  - id: come-to-me-matthew-11-28
+    title: "One Minute With Jesus: Matthew 11:28"
+    category: jesus
+    pillar: Jesus
+    series: One Minute With Jesus
+    formats: [short, medium]
+    scriptures: [Matthew 11:28-30]
+    angle: "What a yoke was, and why his is easy. The verse in modern language."
+
+  - id: what-jesus-said-about-fear
+    title: "What Jesus Actually Said About Fear"
+    category: jesus
+    pillar: Jesus
+    series: One Minute With Jesus
+    formats: [short, medium, long]
+    scriptures: [Matthew 10:29-31, Mark 5:36, John 14:27]
+    angle: "Sparrows, a synagogue leader's daughter, and peace in the upper room."
+
+  - id: jesus-in-the-wilderness
+    title: "Why Jesus Went Into the Wilderness"
+    category: jesus
+    pillar: Jesus
+    formats: [short, medium, long]
+    scriptures: [Matthew 4:1-4, Luke 4:1-2]
+    wiki: Temptation of Christ
+    angle: "Forty days, hungry, tempted, and answering with Scripture. Why the Spirit led him there."
+
+  - id: jesus-wept
+    title: "One Minute With Jesus: Jesus Wept"
+    category: jesus
+    pillar: Jesus
+    series: One Minute With Jesus
+    formats: [short]
+    scriptures: [John 11:35]
+    angle: "The shortest verse, and what it says about how God feels about your pain."
+
+  - id: do-not-worry-about-tomorrow
+    title: "One Minute With Jesus: Don't Worry About Tomorrow"
+    category: jesus
+    pillar: Jesus
+    series: One Minute With Jesus
+    formats: [short, medium]
+    scriptures: [Matthew 6:26, Matthew 6:33-34]
+    angle: "Look at the birds. Seek first the kingdom. Today has enough."
+
+  - id: the-good-shepherd
+    title: "One Minute With Jesus: I Am the Good Shepherd"
+    category: jesus
+    pillar: Jesus
+    series: One Minute With Jesus
+    formats: [short, medium]
+    scriptures: [John 10:11, John 10:14]
+    angle: "What shepherds actually did, and what it means that he knows you."
+
+  - id: in-this-world-trouble
+    title: "One Minute With Jesus: In This World You Will Have Trouble"
+    category: jesus
+    pillar: Jesus
+    series: One Minute With Jesus
+    formats: [short, medium]
+    scriptures: [John 16:33]
+    angle: "Jesus never promised an easy life. He promised he has overcome the world."
+
+  - id: prodigal-son
+    title: "The Father Ran"
+    category: jesus
+    pillar: Jesus
+    series: Lessons From...
+    formats: [short, medium, long]
+    scriptures: [Luke 15:11-13, Luke 15:20-24]
+    wiki: Parable of the Prodigal Son
+    angle: "In that culture, dignified fathers didn't run. This one did."
+
+  - id: good-samaritan
+    title: "Who Is My Neighbour?"
+    category: jesus
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Luke 10:29, Luke 10:33-37]
+    wiki: Parable of the Good Samaritan
+    angle: "The hero of Jesus' story was the person his listeners least expected."
+
+  - id: jesus-calms-the-storm
+    title: "Jesus Was Asleep in the Storm"
+    category: jesus
+    pillar: Peace
+    formats: [short, medium]
+    scriptures: [Mark 4:37-40]
+    wiki: Calming the storm
+    angle: "\"Teacher, don't you care?\" He cared enough to be in the boat."
+
+  - id: the-beatitudes
+    title: "The Beatitudes: Blessed Are the Broken"
+    category: jesus
+    pillar: Jesus
+    formats: [medium, long]
+    scriptures: [Matthew 5:3-10]
+    wiki: Beatitudes
+    angle: "The upside-down blessings of the Sermon on the Mount, for people who don't feel blessed."
+
+  - id: jesus-and-nicodemus
+    title: "The Man Who Came to Jesus at Night"
+    category: jesus
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [John 3:1-3, John 3:16-17]
+    wiki: Nicodemus
+    angle: "A respected teacher with honest questions, and the most famous verse in the Bible in its setting."
+
+  - id: why-jesus-left-the-99
+    title: "One Minute With Jesus: Why He Left the 99"
+    category: jesus
+    pillar: Jesus
+    series: One Minute With Jesus
+    formats: [short]
+    scriptures: [Luke 15:4-7]
+    wiki: Parable of the Lost Sheep
+    angle: "You are not a statistic to him."
+
+  - id: jesus-in-gethsemane
+    title: "Jesus in Gethsemane"
+    category: jesus
+    pillar: Jesus
+    formats: [short, medium, long]
+    scriptures: [Matthew 26:38-39, Luke 22:44]
+    wiki: Agony in the Garden
+    angle: "The Son of God was overwhelmed with sorrow, and he prayed. What that means for your darkest night."
+
+  - id: father-forgive-them
+    title: "One Minute With Jesus: Father, Forgive Them"
+    category: jesus
+    pillar: Jesus
+    series: One Minute With Jesus
+    formats: [short]
+    scriptures: [Luke 23:34]
+    angle: "Spoken from the cross, about the people putting him there."
+
+  - id: i-am-the-way
+    title: "One Minute With Jesus: Let Not Your Heart Be Troubled"
+    category: jesus
+    pillar: Jesus
+    series: One Minute With Jesus
+    formats: [short, medium]
+    scriptures: [John 14:1-6]
+    angle: "Said the night before the cross, to frightened friends."
+
+  - id: vine-and-branches
+    title: "One Minute With Jesus: Abide in Me"
+    category: jesus
+    pillar: Jesus
+    series: One Minute With Jesus
+    formats: [short, medium]
+    scriptures: [John 15:4-5]
+    angle: "Fruit comes from staying connected, not from straining harder."
+
+  - id: jesus-touches-the-leper
+    title: "Jesus Touched the Untouchable"
+    category: jesus
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Mark 1:40-42]
+    wiki: Cleansing the leper
+    angle: "He could have healed with a word. He reached out and touched him first."
+
+  # ---------------------------------------------------------------- Did you know? (10%)
+  - id: why-the-wilderness-matters
+    title: "Why the Wilderness Was So Important in the Bible"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Exodus 16:35, Matthew 4:1-2, Hosea 2:14]
+    angle: "Israel, Elijah, John the Baptist, Jesus: why so much of God's work happens in the desert."
+
+  - id: psalm-23-in-context
+    title: "Psalm 23 Was Written by a Shepherd"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Psalm 23:1-4, 1 Samuel 17:34-35]
+    angle: "What rod, staff and green pastures meant to someone who had actually done the job."
+
+  - id: the-mustard-seed
+    title: "How Small Is a Mustard Seed?"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short]
+    scriptures: [Matthew 13:31-32, Matthew 17:20]
+    angle: "Why Jesus picked the tiniest seed his listeners knew."
+
+  - id: jesus-the-builder
+    title: "Jesus Worked With His Hands"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Mark 6:3]
+    wiki: Jesus
+    angle: "The word often translated \"carpenter\" (tekton) means a builder or craftsman. Most of his life was ordinary work."
+
+  - id: sea-of-galilee-storms
+    title: "Why Storms Hit the Sea of Galilee So Fast"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Mark 4:37, Matthew 14:24]
+    wiki: Sea of Galilee
+    angle: "The geography behind the disciples' fear, and why experienced fishermen panicked."
+
+  - id: pool-of-bethesda
+    title: "The Pool the Skeptics Said Never Existed"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [John 5:2-3, John 5:8-9]
+    wiki: Pool of Bethesda
+    angle: "John described five porticoes. Archaeologists later uncovered the pool in Jerusalem."
+
+  - id: dead-sea-scrolls
+    title: "The Shepherd Who Found the Dead Sea Scrolls"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium, long]
+    scriptures: [Isaiah 40:8]
+    wiki: Dead Sea Scrolls
+    angle: "A stone thrown into a cave, and the oldest known copies of Isaiah. The word of our God stands forever."
+
+  - id: temple-veil-torn
+    title: "Why the Temple Curtain Tore"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Matthew 27:50-51, Hebrews 10:19-20]
+    wiki: Veil of the temple
+    angle: "What the curtain separated, and what it meant that it tore from top to bottom."
+
+  - id: gethsemane-oil-press
+    title: "What \"Gethsemane\" Means"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short]
+    scriptures: [Matthew 26:36]
+    wiki: Gethsemane
+    angle: "The name means \"oil press.\" Where olives were crushed, Jesus prayed under the heaviest weight."
+
+  - id: tax-collectors
+    title: "Why Everyone Hated Tax Collectors"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Matthew 9:9-10, Luke 19:2]
+    wiki: Publican
+    angle: "Who they were in Roman Judea, and why Jesus eating with them was a scandal."
+
+  - id: abraham-waited-25-years
+    title: "Abraham Waited 25 Years for a Promise"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short]
+    scriptures: [Genesis 12:4, Genesis 21:5]
+    angle: "75 when the promise came, 100 when it arrived."
+
+  - id: ruth-in-jesus-family-tree
+    title: "A Foreign Widow in Jesus' Family Tree"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Ruth 4:17, Matthew 1:5-6]
+    angle: "Ruth, and the other surprising names Matthew chose to include."
+
+  - id: water-into-wine
+    title: "Jesus' First Miracle Was at a Wedding"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [John 2:7-11]
+    wiki: Marriage at Cana
+    angle: "Why running out of wine was a real crisis, and why he started there."
+
+  - id: samaritans-and-jews
+    title: "Why Jews and Samaritans Didn't Speak"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [John 4:9]
+    wiki: Samaritans
+    angle: "The centuries-old divide behind the Good Samaritan and the woman at the well."
+
+  - id: the-number-forty
+    title: "Why the Number 40 Keeps Appearing in the Bible"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Genesis 7:12, Exodus 24:18, Matthew 4:2]
+    angle: "Forty days of rain, forty days on the mountain, forty days in the desert: seasons of testing and preparation."
+
+  - id: why-jesus-spoke-in-parables
+    title: "Why Jesus Spoke in Parables"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Matthew 13:34-35, Mark 4:33-34]
+    angle: "Stories that stay with you long after the sermon ends."
+
+  - id: psalms-were-songs
+    title: "The Psalms Were a Songbook"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [Psalm 150:6, Ephesians 5:19]
+    wiki: Psalms
+    angle: "Laments, thanks and praise, written to be sung, including songs of complaint."
+
+  - id: nazareth-small-village
+    title: "Can Anything Good Come From Nazareth?"
+    category: facts
+    pillar: Did you know
+    series: Did You Know?
+    formats: [short, medium]
+    scriptures: [John 1:46]
+    wiki: Nazareth
+    angle: "Jesus grew up in a small, unimportant village. God is not limited by where you come from."

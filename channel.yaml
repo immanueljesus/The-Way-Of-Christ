@@ -1,0 +1,157 @@
+# Config for The Way of Christ, used locally and by the GitHub Actions
+# workflow (.github/workflows/daily-short.yml). See channel.example.yaml for every option and
+# docs/CHANNEL_ARCHITECTURE.md for the thinking behind these choices.
+#
+# Before the first real upload, fill in everything marked TODO (also listed in SETUP.md).
+
+channel:
+  name: "The Way of Christ"
+  niche: "Biblical wisdom and Christian encouragement for the battles of everyday life"
+  # Creative principle: don't just tell them about faith, make them feel faith.
+  promise: "Come here tired, lost, afraid or alone, and leave uplifted, strengthened and closer to God."
+  tagline: "You are not alone."  # closing card line under the channel name
+  audience: >-
+    people of all ages going through hard seasons (fear, waiting, failure, loneliness, grief, temptation)
+    who want hope, strength and Scripture they can hold on to; believers and the curious alike
+  tone: >-
+    cinematic and deeply emotional: a warm, deep, deliberate voice speaking to one person who is hurting,
+    moving from struggle to hope to strength; an experience of faith, never a lecture, documentary or sermon;
+    honest, tender, never hype, guilt or fear-driven
+  language: en
+  description_footer: |-
+    If you needed to hear this today, subscribe to The Way of Christ. You are not alone.
+    Narration is AI-generated. Visuals include public-domain artwork and licensed stock footage.
+
+format: short          # `fill` picks the format per publish slot
+target_minutes: 8      # default length of long videos (the weekly plan sets its own)
+
+# Scripts are written by a free open model on Groq (secret: GROQ_API_KEY).
+# To use Claude instead: provider: anthropic (secret: ANTHROPIC_API_KEY); Claude also does web research.
+llm:
+  provider: openai
+  base_url: https://api.groq.com/openai/v1
+  model: openai/gpt-oss-120b
+  api_key_env: GROQ_API_KEY
+  temperature: 0.7
+  fallback_models: [openai/gpt-oss-20b, llama-3.3-70b-versatile]
+
+# Videos come from the curated list of 140+ ideas in content/ideas.yaml, in this content mix.
+source: catalog
+catalog:
+  path: content/ideas.yaml
+  mix:                  # percent of videos per category
+    motivational: 40
+    bible_story: 25
+    prayer: 15
+    jesus: 10
+    facts: 10
+  use_wikipedia: true   # Bible-story ideas pull background and classical paintings from Wikipedia
+  ideate_when_empty: true
+
+# Exact Bible text for every reference, from bible-api.com (public-domain translations).
+scripture:
+  enabled: true
+  translation: webbe    # World English Bible (British Edition): modern, public domain, says "the LORD"
+  translation_name: World English Bible
+
+# Used for Bible-story background (not as a topic source).
+wikipedia:
+  list_pages: []
+  min_chars: 3000
+  long_min_chars: 15000
+  # Keep the artwork to the channel's look (classical Biblical art): skip maps, diagrams and
+  # illustrations from other traditions that articles about shared figures often include.
+  image_skip_words: [map, diagram, chart, islamic, "qur'an", quran, qisas, "qiṣaṣ", yusuf, yaqub]
+
+# A warm, deep, deliberate narrator. Kokoro is free and runs locally (model downloads once, ~350 MB).
+# For the most emotional read, switch to ElevenLabs (paid): provider: elevenlabs, pick a deep, warm
+# narrator voice in your account and put its id in elevenlabs_voice_id.
+voice:
+  provider: kokoro
+  kokoro_voice: am_michael      # also try bm_george (British, deeper)
+  kokoro_speed: 0.88            # unhurried; mood pacing slows the heavy moments further
+  kokoro_sentence_pause: 0.5    # a breath between sentences; lines ending in "..." get twice that
+  gap_seconds: 0.8
+  words_per_minute: 120         # used to size scripts, pauses included
+  mood_pacing: true             # pace and pauses follow struggle -> ... -> strength (see config.py)
+  depth_semitones: 1.5          # a slightly deeper voice
+  warmth: true                  # low-end warmth, softer highs
+  room: 0.12                    # a touch of space
+  loudness: -16                 # consistent, full narration level (LUFS)
+  edge_voice: en-US-AndrewMultilingualNeural
+  edge_rate: "-8%"
+  edge_pitch: "-4Hz"
+  elevenlabs_stability: 0.35    # lower = more expressive
+  elevenlabs_style: 0.35
+
+music_dir: assets/music         # TODO: add licensed cinematic tracks (see assets/music/README.md)
+music_volume: 0.14              # under the voice; it swells in the pauses and at the turning points
+music_dynamics: true            # the music follows the emotional journey (see timeline.music_levels)
+music_swell: 2.0
+tail_seconds: 3.0               # the music carries the ending after the last word
+closing_card: true              # "THE WAY OF CHRIST" + tagline over the last seconds
+letterbox: true                 # cinematic bars on long videos
+mix_loudness: -14               # finished videos at YouTube's playback loudness
+visuals_dir: assets/visuals     # optional: your own artwork, matched to scenes by file name
+stock_footage: true             # uses PEXELS_API_KEY if set, otherwise artwork and plain backgrounds
+captions: true
+visualizer: false               # no audio bars: this channel is calm
+
+theme:                          # warm candlelight on deep umber; see "Visual identity" in the docs
+  background: "#120d09"
+  background2: "#3a2616"
+  accent: "#e8b86d"
+  accent2: "#7fa7c4"
+  text: "#fbf6ee"
+  muted: "#cdbca3"
+  font: "Georgia, 'DejaVu Serif', 'Times New Roman', serif"
+
+youtube:
+  privacy: public
+  publish_jitter_minutes: 45
+  category_id: "22"             # People & Blogs (27 Education also fits)
+  made_for_kids: false
+  contains_synthetic_media: true  # AI narration: keep the disclosure on
+  upload_captions: true
+
+# Publish slots that `python -m fyt fill` keeps filled ahead of time. Times are UTC;
+# 12:00 UTC is 8 am in New York, 01:00 UTC is 9 pm the evening before.
+schedule:
+  short_slots: ["01:00"]        # an evening Short every day: Shorts cut from the long videos, then the mix
+  long_weekday: null            # long videos come from the weekly plan below
+  buffer_days: 2
+  long_lead_days: 3
+  max_uploads_per_day: 4        # YouTube API quota
+  max_run_minutes: 200          # a 12 minute video takes ~2 hours on the free runner
+  plan:                         # the weekly schedule from the channel plan
+    - {weekday: 0, time: "12:00", kind: short, category: motivational, label: "Mon: motivational Short"}
+    - {weekday: 1, time: "16:00", kind: long, category: bible_story, minutes: 6, label: "Tue: Bible story (5-8 min)"}
+    - {weekday: 2, time: "12:00", kind: short, category: prayer, label: "Wed: short prayer"}
+    - {weekday: 3, time: "12:00", kind: short, category: jesus, label: "Thu: Jesus / Bible Short"}
+    - {weekday: 4, time: "16:00", kind: long, category: motivational, minutes: 10, label: "Fri: inspirational video (8-12 min)"}
+    - {weekday: 5, time: "12:00", kind: short, category: facts, label: "Sat: Bible fact Short"}
+    - {weekday: 6, time: "14:00", kind: long, category: prayer, minutes: 12, label: "Sun: prayer and reflection"}
+
+growth:
+  polish: true
+  rank_topics: false            # topics come from the curated catalog
+  cuts_per_long: 6              # each master video becomes up to 6 Shorts that link back to it
+  series:                       # a playlist each; catalog ideas name their own series
+    - When You Feel...
+    - Lessons From...
+    - One Minute With Jesus
+    - Before You Sleep
+    - Start Your Day With God
+    - Did You Know?
+    - Prayers
+  bonus_shorts_per_day: 0       # evergreen channel: no videos chasing trending topics
+  bonus_longs_per_week: 0
+
+# Each video also gets extras.md: storyboard, 3 quote cards (rendered as quote-N.png),
+# a prayer, a community post, a pinned comment and 6 Short ideas.
+repurpose: true
+
+# true: videos wait in jobs/ for `python -m fyt approve <job> --upload` (recommended while the
+# channel is new: watch every video before it goes out). Set to false to let `fill` upload
+# automatically, then turn on the workflow's schedule (see SETUP.md).
+require_review: true

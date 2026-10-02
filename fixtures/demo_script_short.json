@@ -1,0 +1,71 @@
+{
+  "title": "God Has Not Forgotten You",
+  "description": "If you've done everything right and still feel overlooked, this is for you. Joseph knew that feeling, and his story didn't end in the pit.\n\nKey Scriptures: Genesis 40:23, Isaiah 49:15.\n\nLord, when I feel forgotten, remind me that you never forget me. Amen.",
+  "tags": [
+    "god has not forgotten you",
+    "when you feel forgotten",
+    "joseph bible story",
+    "christian encouragement",
+    "isaiah 49 15",
+    "you are not alone",
+    "faith shorts",
+    "the way of christ"
+  ],
+  "thumbnail_text": "Not Forgotten",
+  "thumbnail_kicker": "When You Feel...",
+  "thumbnail_query": "lone figure light darkness",
+  "sources": ["Genesis 37-41", "Isaiah 49:15"],
+  "scenes": [
+    {
+      "narration": "You did everything right... and still, nobody remembered you.",
+      "type": "broll",
+      "mood": "struggle",
+      "pause_after": 0.9,
+      "broll_query": "person alone in the dark",
+      "visual_prompt": "A lone figure sits on the edge of a bed in a dark room, rain streaking the window, slow push in"
+    },
+    {
+      "narration": "Maybe you're asking the question you're afraid to say out loud. Has God forgotten me?",
+      "type": "broll",
+      "mood": "uncertainty",
+      "pause_after": 1.3,
+      "broll_query": "empty road fog",
+      "visual_prompt": "An empty road disappearing into fog at dawn, camera drifting forward"
+    },
+    {
+      "narration": "Joseph knew that feeling. Betrayed by his brothers. Sold as a slave. Left in a prison cell... for two more years.",
+      "type": "broll",
+      "mood": "faith",
+      "pause_after": 1.0,
+      "broll_query": "prison cell window light",
+      "visual_prompt": "Dim stone cell, a single shaft of light falling across a young man's hands"
+    },
+    {
+      "narration": "But hear what God says to you tonight. Yes, these may forget, yet I will not forget you.",
+      "type": "quote",
+      "mood": "realization",
+      "pause_after": 2.2,
+      "text": "Yes, these may forget, yet I will not forget you!",
+      "author": "Isaiah 49:15",
+      "broll_query": "light through clouds",
+      "visual_prompt": "Light breaking through heavy storm clouds, slow tilt up"
+    },
+    {
+      "narration": "The prison was not the end of Joseph's story. And this is not the end of yours.",
+      "type": "statement",
+      "mood": "hope",
+      "pause_after": 1.0,
+      "text": "This is not the end of your story",
+      "broll_query": "sunrise over mountains",
+      "visual_prompt": "Sunrise spilling over a mountain ridge, golden light across the valley"
+    },
+    {
+      "narration": "So lift your head. Take the next step. You are not forgotten.",
+      "type": "broll",
+      "mood": "strength",
+      "pause_after": 0.8,
+      "broll_query": "person walking toward light",
+      "visual_prompt": "A figure walking up a hill toward the rising sun, wide, steady"
+    }
+  ]
+}

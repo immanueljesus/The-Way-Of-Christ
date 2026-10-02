@@ -1,0 +1,122 @@
+# Every option, with its default. channel.yaml holds the settings the channel actually uses;
+# copy options from here into it. See docs/CHANNEL_ARCHITECTURE.md for the channel itself.
+
+channel:
+  name: "My Channel"                  # TODO: the channel's name
+  niche: "Biblical wisdom and Christian encouragement for the battles of everyday life"
+  promise: ""                         # one line: what every video gives the viewer
+  audience: "people going through hard seasons who want hope, strength and Scripture they can hold on to"
+  tone: "warm, calm, compassionate storytelling; hopeful, never preachy, hype-free or fear-driven"
+  language: en
+  description_footer: ""              # appended to every YouTube description
+
+format: long            # long (16:9) or short (9:16, < 60s)
+target_minutes: 6       # long videos only; 8+ minutes allows mid-roll ads. Override per run with --minutes
+
+model: claude-opus-5    # Claude model when llm.provider = anthropic
+llm:
+  provider: anthropic   # anthropic (Claude, with web research) | openai (any OpenAI-compatible API, e.g. Groq's free tier)
+  base_url: https://api.groq.com/openai/v1       # openai only; Ollama: http://localhost:11434/v1
+  model: openai/gpt-oss-120b                     # openai only
+  api_key_env: GROQ_API_KEY                      # openai only
+  fallback_models: []                            # openai only: tried in order if the model keeps failing
+
+# catalog: the curated ideas in content/ideas.yaml (recommended)
+# web: any topic you queue; Claude researches it with web search first
+# wikipedia: videos from Wikipedia articles (see `wikipedia`)
+source: catalog
+research: true          # Claude web research before scripting (anthropic only)
+catalog:
+  path: content/ideas.yaml
+  mix: {motivational: 40, bible_story: 25, prayer: 15, jesus: 10, facts: 10}   # percent per category
+  use_wikipedia: true   # ideas naming a Wikipedia article get its background and paintings
+  ideate_when_empty: true
+
+scripture:              # exact Bible text for every reference (bible-api.com, public domain)
+  enabled: true
+  translation: webbe    # webbe (World English Bible, British Ed.) | web (uses "Yahweh") | kjv
+  translation_name: World English Bible
+  max_verse_chars: 400  # a misquoted verse longer than this fails QA instead of being replaced
+
+wikipedia:              # background for Bible-story ideas, or a topic source (source: wikipedia)
+  list_pages: []
+  categories: []
+  articles: []
+  min_chars: 3000
+  long_min_chars: 15000
+  image_skip_words: []  # skip article images whose name or description contains these words
+
+voice:
+  provider: kokoro      # kokoro (free, local, natural) | edge (free) | elevenlabs (paid) | espeak (offline) | silent (testing)
+  kokoro_voice: am_michael   # e.g. am_michael, bm_george, af_heart, bf_emma
+  kokoro_speed: 0.9
+  kokoro_sentence_pause: 0.35
+  edge_voice: en-US-AndrewMultilingualNeural     # list: edge-tts --list-voices
+  edge_rate: "-5%"
+  elevenlabs_voice_id: JBFqnCBsd6RMkjVDRZzb      # an ElevenLabs library voice; pick your own in your account
+  elevenlabs_model: eleven_multilingual_v2
+  gap_seconds: 0.6
+  words_per_minute: 135 # narration pace, used to size scripts
+  mood_pacing: false    # pace and pauses follow the emotional journey (mood_speed, mood_pause)
+  depth_semitones: 0    # e.g. 1.5 for a deeper voice
+  warmth: false         # low-end warmth
+  room: 0               # 0-0.3, a touch of reverb
+  edge_pitch: "+0Hz"
+  elevenlabs_stability: 0.5
+  elevenlabs_style: 0.0
+
+music_dir: assets/music     # licensed cinematic tracks; subfolders by feel (see assets/music/README.md)
+music_volume: 0.1      # under the narration
+music_dynamics: false  # music follows the journey: ducks under words, swells in pauses and at the end
+music_swell: 2.0
+tail_seconds: 1.5      # picture and music held after the last word
+closing_card: false    # channel name + tagline at the end (channel.tagline)
+letterbox: false       # cinematic bars on long videos
+visuals_dir: assets/visuals # your own artwork, matched to scenes by file name
+stock_footage: true     # needs PEXELS_API_KEY; scenes fall back to artwork or plain backgrounds
+captions: true
+visualizer: false
+
+theme:                  # the channel's look; keep it consistent
+  background: "#120d09"
+  background2: "#3a2616"
+  accent: "#e8b86d"
+  accent2: "#7fa7c4"
+  text: "#fbf6ee"
+  muted: "#cdbca3"
+  font: "Georgia, 'DejaVu Serif', 'Times New Roman', serif"
+
+youtube:
+  privacy: private      # private | unlisted | public
+  category_id: "22"     # 22 People & Blogs, 27 Education, 29 Nonprofits & Activism
+  made_for_kids: false
+  contains_synthetic_media: true   # AI voice => disclose
+  publish_delay_hours: null        # e.g. 24 to schedule publishing a day after upload
+  publish_jitter_minutes: 0        # e.g. 45: go public at a random minute up to 45 min later
+  upload_captions: true
+
+schedule:               # what `fyt fill` keeps filled (times in UTC)
+  short_slots: ["14:00", "22:00"]
+  long_weekday: 5       # Monday = 0; null for none (use `plan` instead)
+  long_slot: "16:00"
+  buffer_days: 2
+  long_lead_days: 3
+  max_uploads_per_day: 4
+  max_run_minutes: 120
+  plan: []              # fixed weekly slots, e.g. {weekday: 1, time: "16:00", kind: long, category: bible_story, minutes: 6}
+
+growth:
+  polish: true          # second pass on title, hook and thumbnail text
+  rank_topics: true     # wikipedia source only
+  min_topic_fit: 6
+  cuts_per_long: 2      # Shorts cut from each long video, linking back to it
+  series: []            # playlists; every video is filed under one
+  bonus_shorts_per_day: 1   # wikipedia source only: videos on trending articles
+  bonus_longs_per_week: 1
+  bonus_min_fit: 7
+  bonus_long_min_fit: 9
+
+repurpose: true         # storyboard, quote cards, prayer, community post per video (extras.md)
+require_review: true    # videos wait for `fyt approve` before upload
+
+seed_topics: []         # queued first (any source)

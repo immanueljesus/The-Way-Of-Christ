@@ -202,10 +202,11 @@ Rendered by `renderer/src/Thumbnail.tsx` from `thumbnail_text` and `thumbnail_ki
 - Pace follows the journey (`voice.mood_speed`): slowest at the realization, lifting into strength.
 - Pauses: a breath between sentences, a longer one after lines that trail off ("..."), and a silence
   after each scene set by the script or its stage (`voice.mood_pause`).
-- Mastering: pitched down 1.5 semitones for depth, low-end warmth and a touch of room
-  (`depth_semitones`, `warmth`, `room`).
-- Voice: Kokoro `am_michael` (free). For the most emotional read, use ElevenLabs with a deep, warm
-  narrator voice; `elevenlabs_stability: 0.35` and `elevenlabs_style: 0.35` allow more expression.
+- Mastering: a slightly lowered pitch, low-end warmth, a touch of room, levelled loudness
+  (`edge_pitch`, `warmth`, `room`, `loudness`).
+- Voice: Microsoft's free neural voice Andrew (`edge`, en-US-AndrewMultilingualNeural), with exact
+  word timings for the subtitles. If it fails, that scene falls back to Kokoro (free, offline). Other
+  free options: Brian, Christopher (deeper), Ryan (British). ElevenLabs is the paid upgrade.
 
 **Music is a major part of the experience**: inspiring, cinematic, emotional Christian-style
 instrumentals that build gradually and become powerful at the key moments.
@@ -281,7 +282,10 @@ Curated ideas always go first, so add your own to `content/ideas.yaml` at any ti
 - The "inauthentic content" policy targets mass-produced, interchangeable videos. What keeps this
   channel safe: every script is written fresh from its own Scripture and story, visuals follow the
   story, series give each video a place, and the review gate keeps weak videos off the channel.
-- The AI-voice disclosure (`contains_synthetic_media`) stays on.
+- YouTube's "altered or synthetic content" label (`contains_synthetic_media`) is off: it is required for
+  realistic synthetic content (real people saying things they didn't, realistic AI footage of real places
+  or events, AI music), and these videos use stock footage, artwork, licensed music and a narrator voice
+  that imitates no one. Turn it on if realistic AI-generated imagery or cloned voices are ever added.
 - Scripture is quoted from a public-domain translation (World English Bible), credited in each
   description. Don't switch to NIV/ESV text without a licence.
 

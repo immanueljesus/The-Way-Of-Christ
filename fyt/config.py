@@ -72,6 +72,8 @@ class VoiceConfig(BaseModel):
     espeak_voice: str = "en-us"
     espeak_wpm: int = 165
     gap_seconds: float = 0.35  # pause between scenes (scenes can ask for longer: pause_after)
+    # Used for a scene when an online voice (edge, elevenlabs) keeps failing; "" to fail instead.
+    fallback_provider: str = "kokoro"
     # Pace and pauses follow the emotional journey: each mood slows or quickens the read
     # (multiplies the voice speed) and sets the default silence after its scenes.
     mood_pacing: bool = False
@@ -102,8 +104,11 @@ class YouTubeConfig(BaseModel):
     privacy: Literal["private", "unlisted", "public"] = "private"
     category_id: str = "27"  # Education
     made_for_kids: bool = False
-    # Must be true when the video has realistic AI-generated voices/footage.
-    contains_synthetic_media: bool = True
+    # YouTube's "altered or synthetic content" label. Required for REALISTIC synthetic content: a real
+    # person made to say or do something, realistic AI footage of real places or events, AI music.
+    # Not required for AI help with scripts, titles or captions, stock footage, artwork or a narrator
+    # voice that imitates no real person. Turn it on if you add realistic AI-generated imagery or video.
+    contains_synthetic_media: bool = False
     # Hours from upload to scheduled publish; forces privacy=private until then.
     publish_delay_hours: float | None = None
     # Adds a random 0..N minute delay on top, so videos don't go live at the exact

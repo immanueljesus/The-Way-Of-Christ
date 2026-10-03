@@ -11,6 +11,7 @@ import base64
 import re
 import shutil
 import subprocess
+import time
 import wave
 from dataclasses import dataclass
 from pathlib import Path
@@ -254,9 +255,22 @@ PROVIDERS = {"kokoro": _kokoro, "elevenlabs": _elevenlabs, "edge": _edge, "espea
 
 
 def synthesize(cfg: Config, text: str, out: Path, provider: str | None = None, speed: float = 1.0) -> Clip:
-    """Voice one scene. `speed` multiplies the configured pace (mood pacing)."""
+    """Voice one scene. `speed` multiplies the configured pace (mood pacing).
+
+    Online voices (edge, elevenlabs) are retried, then fall back to `voice.fallback_provider`
+    (Kokoro, offline) so a network hiccup never costs a video."""
     text = re.sub(r"\s+", " ", text).strip()
-    return PROVIDERS[provider or cfg.voice.provider](cfg, text, out, speed)
+    name = provider or cfg.voice.provider
+    if name not in ("edge", "elevenlabs") or not cfg.voice.fallback_provider:
+        return PROVIDERS[name](cfg, text, out, speed)
+    for attempt in range(3):
+        try:
+            return PROVIDERS[name](cfg, text, out, speed)
+        except Exception as e:
+            last = e
+            time.sleep(3 * (attempt + 1))
+    print(f"warning: {name} voice failed ({last}); using {cfg.voice.fallback_provider} for this scene")
+    return PROVIDERS[cfg.voice.fallback_provider](cfg, text, out, speed)
 
 
 def scene_speed(cfg: Config, mood: str | None) -> float:

@@ -79,8 +79,10 @@ Things to know:
 - **Custom thumbnails need a verified channel** (youtube.com/verify). Until then the upload
   still works and the thumbnail step is skipped with a warning.
 - **Quota:** the default 10,000 units a day allows about 6 uploads a day. That's plenty.
-- `contains_synthetic_media: true` sets YouTube's AI-content disclosure. Keep it on while
-  you use AI voices.
+- `contains_synthetic_media` sets YouTube's "altered or synthetic content" label. YouTube requires it
+  for realistic synthetic content (real people made to say things, realistic AI footage of real places
+  or events, AI music), not for AI-written scripts, stock footage or a narrator voice that imitates no
+  one. It is off; turn it on if you add realistic AI-generated imagery, video or cloned voices.
 
 ## Running it automatically
 

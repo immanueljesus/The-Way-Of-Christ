@@ -22,7 +22,6 @@ channel:
   language: en
   description_footer: |-
     If you needed to hear this today, subscribe to The Way of Christ. You are not alone.
-    Narration is AI-generated. Visuals include public-domain artwork and licensed stock footage.
 
 format: short          # `fill` picks the format per publish slot
 target_minutes: 8      # default length of long videos (the weekly plan sets its own)
@@ -84,24 +83,27 @@ wikipedia:
   # illustrations from other traditions that articles about shared figures often include.
   image_skip_words: [map, diagram, chart, islamic, "qur'an", quran, qisas, "qiṣaṣ", yusuf, yaqub]
 
-# A warm, deep, deliberate narrator. Kokoro is free and runs locally (model downloads once, ~350 MB).
-# For the most emotional read, switch to ElevenLabs (paid): provider: elevenlabs, pick a deep, warm
-# narrator voice in your account and put its id in elevenlabs_voice_id.
+# A warm, deep, deliberate narrator: Microsoft's free neural voice "Andrew" (Edge), which reads
+# far more naturally than Kokoro and gives exact word timings for the subtitles. If it ever fails,
+# that scene is voiced by Kokoro (free, offline) instead. Other good free choices: Brian
+# (en-US-BrianMultilingualNeural), Christopher (en-US-ChristopherNeural, deeper) and Ryan
+# (en-GB-RyanNeural, British). For the most emotional read, ElevenLabs is paid.
 voice:
-  provider: kokoro
+  provider: edge
+  fallback_provider: kokoro
   kokoro_voice: am_michael      # also try bm_george (British, deeper)
   kokoro_speed: 0.88            # unhurried; mood pacing slows the heavy moments further
   kokoro_sentence_pause: 0.5    # a breath between sentences; lines ending in "..." get twice that
   gap_seconds: 0.8
   words_per_minute: 120         # used to size scripts, pauses included
   mood_pacing: true             # pace and pauses follow struggle -> ... -> strength (see config.py)
-  depth_semitones: 1.5          # a slightly deeper voice
+  depth_semitones: 0             # Edge's pitch setting below does this more cleanly (Kokoro sounded best at 1.5)
   warmth: true                  # low-end warmth, softer highs
   room: 0.12                    # a touch of space
   loudness: -16                 # consistent, full narration level (LUFS)
   edge_voice: en-US-AndrewMultilingualNeural
-  edge_rate: "-8%"
-  edge_pitch: "-4Hz"
+  edge_rate: "-10%"             # unhurried; mood pacing slows the heavy moments further
+  edge_pitch: "-2Hz"            # a touch deeper
   elevenlabs_stability: 0.35    # lower = more expressive
   elevenlabs_style: 0.35
 
@@ -137,7 +139,11 @@ youtube:
   publish_jitter_minutes: 180   # each video goes live at a random minute up to 3 hours after its slot
   category_id: "22"             # People & Blogs (27 Education also fits)
   made_for_kids: false
-  contains_synthetic_media: true  # AI narration: keep the disclosure on
+  # YouTube's "altered or synthetic content" label is for REALISTIC synthetic content (real people
+  # saying things they didn't, realistic AI footage of real places or events, AI music). These videos
+  # use stock footage, artwork, licensed music and a narrator voice that imitates no one, so it's off.
+  # Turn it on if you ever add realistic AI-generated imagery, video or cloned voices.
+  contains_synthetic_media: false
   upload_captions: true
 
 # Publish slots that `python -m fyt fill` keeps filled ahead of time. Times are UTC;

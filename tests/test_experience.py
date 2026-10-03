@@ -189,3 +189,16 @@ def test_free_music_library_is_used_when_there_are_no_own_tracks(tmp_path, monke
     assert len(fetched) == 1  # downloaded once, then reused
     media.pick_music(cfg, public, category="prayer", seconds=30)
     assert fetched[-1].endswith("/Calm.mp3")
+
+
+def test_an_online_voice_that_keeps_failing_falls_back(tmp_path, monkeypatch):
+    cfg = Config()
+    cfg.voice.provider, cfg.voice.fallback_provider = "edge", "silent"
+
+    def down(cfg, text, out, speed=1.0):
+        raise ConnectionError("edge is down")
+
+    monkeypatch.setitem(tts.PROVIDERS, "edge", down)
+    monkeypatch.setattr(tts.time, "sleep", lambda s: None)
+    clip = tts.synthesize(cfg, "Still voiced.", tmp_path / "a.wav")
+    assert clip.duration > 0 and [w.word for w in clip.words] == ["Still", "voiced."]

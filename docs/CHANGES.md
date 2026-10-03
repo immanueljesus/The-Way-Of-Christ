@@ -127,3 +127,13 @@ Following the creative direction "don't just tell them about faith, make them fe
 - Seasons lean the evergreen picks (Lent, Eastertide, Advent, new beginnings, summer stories...).
 - Solemn days (Good Friday, Holy Saturday, All Souls) get calm music; Easter and Pentecost cinematic.
 - `python -m fyt calendar` lists what's coming. Tests in `tests/test_liturgy.py`.
+
+## Voice and AI label
+
+- The narrator is now Microsoft's free neural voice Andrew (Edge TTS), more natural than Kokoro, with exact
+  word timings. A scene whose online voice fails falls back to Kokoro.
+- YouTube's "altered or synthetic content" label is off (`contains_synthetic_media: false`) and the
+  "Narration is AI-generated" line is gone from descriptions. YouTube requires the label for realistic
+  synthetic content (real people saying things they didn't, realistic AI footage of real places or events,
+  AI music); these videos use stock footage, artwork, licensed music and a narrator voice that imitates no
+  one. Turn it back on if realistic AI imagery or cloned voices are ever added.

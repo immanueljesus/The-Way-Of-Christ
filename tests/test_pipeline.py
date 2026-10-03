@@ -88,7 +88,9 @@ def test_scheduled_upload_forces_private_and_shorts_tag():
     body = build_body(cfg, script(), now=datetime(2026, 1, 1, 10, tzinfo=timezone.utc))
     assert body["status"]["privacyStatus"] == "private"
     assert body["status"]["publishAt"] == "2026-01-01T12:00:00Z"
-    assert body["status"]["containsSyntheticMedia"] is True
+    assert body["status"]["containsSyntheticMedia"] is False  # only for realistic synthetic content
+    cfg.youtube.contains_synthetic_media = True
+    assert build_body(cfg, script(), now=datetime(2026, 1, 1, 10, tzinfo=timezone.utc))["status"]["containsSyntheticMedia"] is True
     assert "#Shorts" in body["snippet"]["description"]
     assert "https://example.com" in body["snippet"]["description"]
 

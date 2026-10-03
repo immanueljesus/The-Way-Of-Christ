@@ -162,8 +162,9 @@ def upload_sheet(cfg: Config, script: Script) -> str:
         f"TITLE\n{body['title']}\n\n"
         f"DESCRIPTION\n{body['description']}\n\n"
         f"TAGS\n{', '.join(body['tags'])}\n\n"
-        "Also: upload thumbnail.png as the thumbnail and captions.srt as subtitles, and under\n"
-        "\"Altered or synthetic content\" answer Yes (the voice is AI-generated).\n"
+        "Also: upload thumbnail.png as the thumbnail and captions.srt as subtitles. Under\n"
+        "\"Altered or synthetic content\" answer No unless the video shows realistic AI-generated\n"
+        "people, places or events (see youtube.contains_synthetic_media in channel.yaml).\n"
     )
 
 

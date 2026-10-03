@@ -137,3 +137,9 @@ Following the creative direction "don't just tell them about faith, make them fe
   synthetic content (real people saying things they didn't, realistic AI footage of real places or events,
   AI music); these videos use stock footage, artwork, licensed music and a narrator voice that imitates no
   one. Turn it back on if realistic AI imagery or cloned voices are ever added.
+
+## Western publish times
+
+- Slots are now set in New York time and follow daylight saving (`schedule.timezone`): morning Shorts at
+  8 am (UK/EU lunchtime), long videos at 3 pm (UK/EU evening, US afternoon), evening Shorts at 7 pm (US
+  prime time), campaign Shorts at noon and 5 pm. Each goes live within the hour after its slot.

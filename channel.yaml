@@ -64,8 +64,8 @@ liturgy:
   traditions: [ecumenical, western, world, saints]   # add catholic for Marian feasts, Corpus Christi...
   easter: western                                    # or orthodox
   lead_days: 7
-  long_time: "15:00"
-  short_times: ["17:00", "19:00"]
+  long_time: "15:00"                   # New York time (see schedule.timezone)
+  short_times: ["12:00", "17:00"]      # New York time: lunchtime, and 10 pm in the UK
   season_bias: true
 
 # Exact Bible text for every reference, from bible-api.com (public-domain translations).
@@ -136,7 +136,7 @@ theme:                          # warm candlelight on deep umber; see "Visual id
 
 youtube:
   privacy: public
-  publish_jitter_minutes: 180   # each video goes live at a random minute up to 3 hours after its slot
+  publish_jitter_minutes: 60    # each video goes live at a random minute up to an hour after its slot
   category_id: "22"             # People & Blogs (27 Education also fits)
   made_for_kids: false
   # YouTube's "altered or synthetic content" label is for REALISTIC synthetic content (real people
@@ -146,29 +146,31 @@ youtube:
   contains_synthetic_media: false
   upload_captions: true
 
-# Publish slots that `python -m fyt fill` keeps filled ahead of time. Times are UTC;
-# 12:00 UTC is 8 am in New York, 01:00 UTC is 9 pm the evening before.
+# Publish slots that `python -m fyt fill` keeps filled ahead of time, timed for Western viewers.
+# Times are New York time and follow daylight saving; each video goes live within the hour after.
+#   08:00  morning Short   = 1 pm UK / 2 pm Central Europe / 5:30 pm India (6:30 pm in winter)
+#   15:00  long video      = 8 pm UK / 9 pm Central Europe / 12 noon US Pacific
+#   19:00  evening Short   = 7 pm US East / 4 pm US Pacific (US evening prime time)
 # A month on the free GitHub Actions allowance (2,000 minutes a month for a private repo):
-#   ~60 Shorts (two a day) and ~9 long videos (Tuesday and Friday), every one going live at a
-#   random time inside its window (publish_jitter_minutes). Roughly 1,300 runner minutes a month.
-# Times are UTC: 11:00 is 7 am New York / 4:30 pm India; 23:00 is 7 pm New York.
+#   ~60 Shorts (two a day) and ~9 long videos (Tuesday and Friday). Roughly 1,300 runner minutes.
 schedule:
-  short_slots: ["23:00"]        # an evening Short every day: Shorts cut from the long videos first, then the mix
+  timezone: America/New_York
+  short_slots: ["19:00"]        # an evening Short every day: Shorts cut from the long videos first, then the mix
   long_weekday: null            # long videos come from the weekly plan below
   buffer_days: 2
   long_lead_days: 3
   max_uploads_per_day: 4        # YouTube API quota
   max_run_minutes: 200
   plan:                         # a different pillar every morning, two long videos a week
-    - {weekday: 0, time: "11:00", kind: short, category: jesus, label: "Mon: Jesus"}
-    - {weekday: 1, time: "11:00", kind: short, category: motivation, label: "Tue: motivation"}
+    - {weekday: 0, time: "08:00", kind: short, category: jesus, label: "Mon: Jesus"}
+    - {weekday: 1, time: "08:00", kind: short, category: motivation, label: "Tue: motivation"}
     - {weekday: 1, time: "15:00", kind: long, category: bible_story, minutes: 6, label: "Tue: Bible story (6 min)"}
-    - {weekday: 2, time: "11:00", kind: short, category: prayer, label: "Wed: prayer"}
-    - {weekday: 3, time: "11:00", kind: short, category: bible_story, label: "Thu: Bible story"}
-    - {weekday: 4, time: "11:00", kind: short, category: wisdom, label: "Fri: Biblical wisdom"}
+    - {weekday: 2, time: "08:00", kind: short, category: prayer, label: "Wed: prayer"}
+    - {weekday: 3, time: "08:00", kind: short, category: bible_story, label: "Thu: Bible story"}
+    - {weekday: 4, time: "08:00", kind: short, category: wisdom, label: "Fri: Biblical wisdom"}
     - {weekday: 4, time: "15:00", kind: long, minutes: 10, label: "Fri: long video, any pillar (10 min)"}
-    - {weekday: 5, time: "11:00", kind: short, category: history, label: "Sat: Bible & history"}
-    - {weekday: 6, time: "11:00", kind: short, category: peace, label: "Sun: peace"}
+    - {weekday: 5, time: "08:00", kind: short, category: history, label: "Sat: Bible & history"}
+    - {weekday: 6, time: "08:00", kind: short, category: peace, label: "Sun: peace"}
     # Evening Shorts (short_slots) and Friday's long video follow the content mix, so relationships,
     # purpose, spiritual battles and everyday life come round too.
 

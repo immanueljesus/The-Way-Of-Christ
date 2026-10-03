@@ -106,7 +106,7 @@ one that doesn't repeat the last videos' person, feeling or story shape.
 Everything runs on GitHub Actions' free allowance, the free Groq and Pexels tiers, the free Kokoro voice,
 free Creative Commons music and the free YouTube API quota.
 
-| | Morning Short (11:00 UTC) | Long video (15:00 UTC) | Evening Short (23:00 UTC) |
+| | Morning Short (8 am New York) | Long video (3 pm New York) | Evening Short (7 pm New York) |
 |---|---|---|---|
 | Monday | Jesus | | cut from a long video, else the content mix |
 | Tuesday | Motivation | Bible story, 6 min | same |
@@ -314,7 +314,7 @@ Easter alone yields a dozen or more Shorts.
 
 **Made in advance.** Campaign videos are scripted, voiced, rendered and scheduled up to a week ahead
 (`liturgy.lead_days`), so Good Friday's video is ready days before. A campaign long video takes that
-day's long slot or gets its own at 15:00 UTC; campaign Shorts get their own slots at 17:00 and 19:00 UTC
+day's long slot or gets its own at 3 pm New York time; campaign Shorts get their own slots at noon and 5 pm New York time
 on top of the day's regular Shorts. If a campaign video fails, the slot still gets an evergreen video.
 
 **Seasons.** Between events the evergreen picks lean towards the season (`seasons` in calendar.yaml): Lent

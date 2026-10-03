@@ -166,6 +166,9 @@ class ScheduleConfig(BaseModel):
 
     # Shorts go live at these UTC times, each at a random minute up to
     # youtube.publish_jitter_minutes later.
+    # The time zone the slot times below are in (and the weekdays of the plan), e.g.
+    # "America/New_York": slots then follow daylight saving. Default UTC.
+    timezone: str = "UTC"
     short_slots: list[str] = Field(default_factory=lambda: ["14:00", "22:00"])
     long_weekday: int | None = 5  # the long video's day (Monday = 0); None for no long videos
     long_slot: str = "16:00"  # UTC

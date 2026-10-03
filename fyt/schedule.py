@@ -49,9 +49,10 @@ class Slot:
         return self.at.isoformat()
 
 
-def _at(day: date, hhmm: str) -> datetime:
+def _at(day: date, hhmm: str, tz: str = "UTC") -> datetime:
+    """A publish time on a day, in the schedule's time zone (so daylight saving is followed), as UTC."""
     h, m = (int(x) for x in hhmm.split(":"))
-    return datetime.combine(day, dtime(h, m), tzinfo=timezone.utc)
+    return datetime.combine(day, dtime(h, m), tzinfo=ZoneInfo(tz)).astimezone(timezone.utc)
 
 
 def upcoming_slots(cfg: Config, now: datetime) -> list[Slot]:
@@ -61,18 +62,19 @@ def upcoming_slots(cfg: Config, now: datetime) -> list[Slot]:
     short_end = now + timedelta(days=sc.buffer_days)
     long_end = now + timedelta(days=sc.long_lead_days)
     slots = []
-    day = now.date()
-    while day <= max(short_end, long_end).date():
+    tz = sc.timezone
+    day = now.astimezone(ZoneInfo(tz)).date() - timedelta(days=1)  # days in the schedule's own time zone
+    while day <= max(short_end, long_end).date() + timedelta(days=1):
         for hhmm in sc.short_slots:
-            at = _at(day, hhmm)
+            at = _at(day, hhmm, tz)
             if start <= at <= short_end:
                 slots.append(Slot(at, "short"))
         if sc.long_weekday is not None and day.weekday() == sc.long_weekday:
-            at = _at(day, sc.long_slot)
+            at = _at(day, sc.long_slot, tz)
             if start <= at <= long_end:
                 slots.append(Slot(at, "long"))
         for p in sc.plan:
-            at = _at(day, p.time)
+            at = _at(day, p.time, tz)
             end = short_end if p.kind == "short" else long_end
             if p.weekday == day.weekday() and start <= at <= end:
                 slots.append(Slot(at, p.kind, p.category, p.minutes, p.label))
@@ -101,13 +103,13 @@ def calendar_slots(cfg: Config, now: datetime, regular: dict[str, Slot]) -> list
     for e in liturgy.entries(cfg, start.date(), end.date()):
         if e.kind == "long":
             same_day = [s for s in regular.values() if s.kind == "long" and s.at.date() == e.on and not s.topic]
-            at = same_day[0].at if same_day else _at(e.on, lt.long_time)
+            at = same_day[0].at if same_day else _at(e.on, lt.long_time, cfg.schedule.timezone)
         else:
             k = used_times.get((e.on, "short"), 0)
             used_times[(e.on, "short")] = k + 1
             if k >= len(lt.short_times):
                 continue  # more campaign Shorts on one day than slots for them
-            at = _at(e.on, lt.short_times[k])
+            at = _at(e.on, lt.short_times[k], cfg.schedule.timezone)
         if start <= at <= end:
             out.append(Slot(at, e.kind, None, e.minutes or (cfg.target_minutes if e.kind == "long" else None),
                             f"{e.event}: {e.title}", e.topic))

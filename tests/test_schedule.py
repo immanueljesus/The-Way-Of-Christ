@@ -150,3 +150,13 @@ def test_a_lost_state_is_recovered_from_the_channel(cfg, monkeypatch):
 
     assert ("wiki:Vril", "done") in [(t, s) for _, t, s, _ in Topics(cfg).all()]
     assert schedule.uploads_left_today(cfg, MONDAY) == 0  # the two made Monday count toward the quota, plus two now
+
+
+def test_slots_in_a_time_zone_follow_daylight_saving(cfg):
+    cfg.schedule.timezone = "America/New_York"
+    cfg.schedule.short_slots = ["19:00"]
+    cfg.schedule.long_weekday = None
+    summer = schedule.upcoming_slots(cfg, datetime(2026, 7, 1, 12, 0, tzinfo=timezone.utc))
+    winter = schedule.upcoming_slots(cfg, datetime(2026, 12, 1, 12, 0, tzinfo=timezone.utc))
+    assert summer[0].at.hour == 23  # 7 pm EDT
+    assert winter[0].at.hour == 0  # 7 pm EST is midnight UTC

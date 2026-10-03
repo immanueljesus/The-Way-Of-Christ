@@ -62,9 +62,10 @@ def test_campaign_videos_get_slots_a_week_ahead():
     slots = schedule.upcoming_slots(cfg, now)
     by_topic = {s.topic: s for s in slots if s.topic}
     gf = by_topic["idea:easter-good-friday-it-is-finished@2027"]
-    assert gf.kind == "long" and gf.minutes == 8 and gf.at == datetime(2027, 3, 26, 15, 0, tzinfo=timezone.utc)
+    tz = cfg.schedule.timezone
+    assert gf.kind == "long" and gf.minutes == 8 and gf.at == schedule._at(date(2027, 3, 26), cfg.liturgy.long_time, tz)
     palm = by_topic["idea:easter-palm-sunday@2027"]
-    assert palm.kind == "short" and palm.at.hour == 17
+    assert palm.kind == "short" and palm.at == schedule._at(date(2027, 3, 21), cfg.liturgy.short_times[0], tz)
     assert [s for s in slots if not s.topic and s.at.date() == date(2027, 3, 20)]  # evergreen keeps running
 
 

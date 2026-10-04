@@ -47,6 +47,47 @@ def repair_script(script: Script) -> Script:
     return script.model_copy(update={"scenes": scenes})
 
 
+def pick_title_style(cfg: Config, idea: "catalog.Idea | None", cut: bool = False) -> str:
+    """The title style for the next video: suits its story shape, differs from the last few videos."""
+    recent = json.loads(Uploads(cfg).note("title-styles") or "[]")
+    if idea is None:
+        return llm.choose_title_style("story" if cut else "journey", "", recent)
+    return llm.choose_title_style(idea.shape, idea.category, recent, seasonal="@" in idea.id)
+
+
+def remember_title_style(cfg: Config, style: str) -> None:
+    uploads = Uploads(cfg)
+    recent = json.loads(uploads.note("title-styles") or "[]")
+    uploads.set_note("title-styles", json.dumps((recent + [style])[-12:]))
+
+
+def keep_faithful(cfg, job, script, study, verses, subject, notes, menu, from_wikipedia, prayer, shape, style, about="") -> Script:
+    """Check the script against the Bible study; rewrite once with the reviewer's notes if it bends
+    the passage. A script that is still unfaithful fails QA, so it is never uploaded."""
+    for attempt in range(2):
+        try:
+            verdict = llm.check_faithfulness(cfg, script, study, verses, about)
+        except Exception as e:  # the reviewer being down shouldn't stop the channel
+            log(job, f"warning: faithfulness check skipped: {e}")
+            return script
+        if verdict.faithful or not verdict.problems:
+            log(job, "faithful to the passage")
+            return script
+        log(job, "not faithful yet: " + "; ".join(verdict.problems)[:400])
+        if attempt == 1:
+            job.update(faithfulness=verdict.problems)
+            raise RuntimeError("script bends the passage: " + "; ".join(verdict.problems)[:400])
+        feedback = (
+            "A reviewer checked your draft against the Bible study and found these problems. Rewrite the script "
+            "so it stays faithful to the passage's central truth:\n- " + "\n- ".join(verdict.problems)
+        )
+        script = repair_script(llm.write_script(
+            cfg, subject, notes, from_wikipedia=from_wikipedia, images=menu, feedback=feedback, prayer=prayer,
+            shape=shape, title_style=style,
+        ))
+    return script
+
+
 def research_notes(cfg: Config, job: Job, topic: str) -> tuple[str, str, "wiki.Article | None", list, "catalog.Idea | None", dict]:
     """Scripture research for a topic: (subject, notes, Wikipedia article, article images, catalog idea, passages).
     Notes start with the exact text of every Bible passage involved (see fyt/scripture.py)."""
@@ -106,15 +147,28 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
     images: list[wiki.WikiImage] = []
     idea = None
     passages: dict = {}
+    style = pick_title_style(cfg, None, cut=topic.startswith(CUT))
     if script is None:
         subject, notes, article, images, idea, passages = research_notes(cfg, job, topic)
-        job.file("research.md").write_text(notes, encoding="utf-8")
-        log(job, "writing script")
-        menu = wiki.image_menu(images)
         prayer = bool(idea and idea.category == "prayer")
         shape = idea.shape if idea else "journey"
+        style = pick_title_style(cfg, idea)
+        # Bible first: study the passage (context, meaning, central truth) before anything is written.
+        study = ""
+        if cfg.bible_first:
+            log(job, "studying the passage")
+            try:
+                st = llm.study_passage(cfg, subject, idea.angle if idea else "", notes, about=idea.character if idea else "")
+                study = llm.study_markdown(st)
+                notes = study + "\n\n" + notes
+            except Exception as e:
+                log(job, f"warning: no Bible study step: {e}")
+        job.file("research.md").write_text(notes, encoding="utf-8")
+        log(job, f"writing script ({shape}, title style: {style})")
+        menu = wiki.image_menu(images)
         script = llm.write_script(
-            cfg, subject, notes, from_wikipedia=article is not None, images=menu, prayer=prayer, shape=shape
+            cfg, subject, notes, from_wikipedia=article is not None, images=menu, prayer=prayer, shape=shape,
+            title_style=style,
         )
         limit = llm.short_words(cfg) * 1.25 if cfg.format == "short" else None
         if limit and narration_words(script) > limit:
@@ -125,15 +179,18 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
             )
             script = llm.write_script(
                 cfg, subject, notes, from_wikipedia=article is not None, images=menu, feedback=feedback, prayer=prayer,
-                shape=shape,
+                shape=shape, title_style=style,
             )
         script = repair_script(script)
+        if cfg.bible_first and study:
+            script = keep_faithful(cfg, job, script, study, scripture.notes(passages), subject, notes, menu,
+                                   article is not None, prayer, shape, style, about=idea.character if idea else "")
         if article:
             script = wiki_attribute(script, article)
     if polish and cfg.growth.polish:
         log(job, "sharpening title, hook and thumbnail text")
         try:
-            script = growth.polish(cfg, script)
+            script = growth.polish(cfg, script, style)
         except Exception as e:  # the unpolished script is still fine
             log(job, f"warning: polish failed: {e}")
     if idea and idea.series:
@@ -141,8 +198,11 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
     script, verse_problems = scripture.check_quotes(cfg, script, passages)
     if passages and "Scripture quotations" not in script.description:
         script = script.model_copy(update={"description": script.description.rstrip() + "\n\n" + scripture.credit(cfg, passages)})
+    if llm.title_banned(script.title):
+        script = script.model_copy(update={"title": idea.title if idea and not llm.title_banned(idea.title) else script.title})
     job.file("script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
-    job.update(status="scripted", title=script.title)
+    job.update(status="scripted", title=script.title, title_style=style)
+    remember_title_style(cfg, style)
 
     extras = None
     if cfg.repurpose and not topic.startswith(CUT):

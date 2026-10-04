@@ -293,3 +293,63 @@ def test_empty_narration_is_repaired():
     )
     fixed = repair_script(s)
     assert [x.narration for x in fixed.scenes] == ["A line.", "A gentle answer turns away wrath."]
+
+
+# --- Bible first, emotion second ---
+
+
+def test_no_formula_titles_in_the_idea_bank():
+    from fyt import llm
+
+    cfg = load_config()
+    ideas = catalog.load(cfg)
+    assert not [i.title for i in ideas if llm.title_banned(i.title)]
+    starts = [" ".join(i.title.lower().strip("'\"").split()[:2]) for i in ideas]
+    assert max(starts.count(w) for w in set(starts)) < len(ideas) / 10  # no opening dominates
+    mustard = [i for i in ideas if "mustard" in i.title.lower()]
+    assert all(len({r.split(":")[0] for r in i.scriptures}) == 1 for i in mustard)  # 13 and 17 stay apart
+
+
+def test_formula_titles_are_banned():
+    from fyt import llm
+
+    assert llm.title_banned("When Doubt Feels Heavy, Remember the Mustard Seed")
+    assert llm.title_banned("When the Night Whispers, Rise")
+    assert not llm.title_banned("Moses Didn't Think He Was Ready")
+    assert not llm.title_banned("Remember What God Has Already Done")
+
+
+def test_title_styles_rotate():
+    from fyt import llm
+
+    assert llm.choose_title_style("story", "", []) == "cinematic"
+    assert llm.choose_title_style("story", "", ["cinematic"]) == "character"
+    assert llm.choose_title_style("curiosity", "history", []) == "history"
+    assert llm.choose_title_style("story", "", [], seasonal=True) == "seasonal"
+    assert "Remember" in llm.title_rule("verse")  # the rule names the banned formula
+
+
+def test_the_editors_truth_reaches_the_script_notes():
+    idea = catalog.get(load_config(), "idea:moses-burning-bush")
+    assert "I will be with you" in idea.truth
+    assert "Central truth" in catalog.brief(idea, load_config())
+
+
+def test_an_unfaithful_script_is_rewritten_then_rejected(monkeypatch, tmp_path):
+    import pytest
+
+    from fyt import llm, pipeline
+    from fyt.store import Job
+
+    cfg = Config(jobs_dir=str(tmp_path))
+    job = Job.create(cfg, "t")
+    verdicts = [llm.Faithfulness(faithful=False, problems=["merges Matthew 13 and 17"]),
+                llm.Faithfulness(faithful=True, problems=[])]
+    monkeypatch.setattr(llm, "check_faithfulness", lambda *a: verdicts.pop(0))
+    asked = []
+    monkeypatch.setattr(llm, "write_script", lambda *a, **k: asked.append(k["feedback"]) or script())
+    out = pipeline.keep_faithful(cfg, job, script(), "study", "verses", "s", "n", "", False, False, "story", "cinematic")
+    assert out.title and "merges Matthew 13 and 17" in asked[0]
+    verdicts[:] = [llm.Faithfulness(faithful=False, problems=["promises a breakthrough"])] * 2
+    with pytest.raises(RuntimeError, match="bends the passage"):
+        pipeline.keep_faithful(cfg, job, script(), "study", "verses", "s", "n", "", False, False, "story", "cinematic")

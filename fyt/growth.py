@@ -39,12 +39,10 @@ Audience: {audience}
 Format: {format}
 
 Titles:
-- max 70 characters, honest and specific: a cinematic story line, a feeling, or a question anyone would
-  click, even someone who never watches Christian videos ("Don't Quit in the Middle of the Story",
-  "He Was Forgotten for Years", "Why Did Jesus Write in the Sand?", "God Has Not Forgotten You")
-- let the video reveal the Bible connection; don't open the title with "Biblical", "Bible Verse" or
-  "Christian". The video must really deliver what the title promises. Never sound like a lesson or a
-  documentary ("Explained", "The History of", "Facts About")
+- max 70 characters, honest and specific, and true to the passage the video is about
+- {title_rule}
+- don't open the title with "Biblical", "Bible Verse" or "Christian". The video must really deliver what
+  the title promises.
 - no fear-mongering, no "God is warning you", no "skip this and...", no ALL CAPS words except one short one
   at most, no emoji
 Thumbnail text: 2-4 words that add emotion to the title rather than repeat it (e.g. "NOT FORGOTTEN").
@@ -55,8 +53,9 @@ short and deliberate. No "welcome back", no "in this video", no
 {loop_rule}{series_rule}"""
 
 
-def polish(cfg: Config, script: Script) -> Script:
-    """Rewrite the title, thumbnail text and opening line for clicks and retention."""
+def polish(cfg: Config, script: Script, title_style: str = "cinematic") -> Script:
+    """Rewrite the title, thumbnail text and opening line for clicks and retention, in the given
+    title style; a title in the banned "When X, Remember Y" shape is never kept."""
     short = cfg.format == "short"
     narration = " ".join(s.narration for s in script.scenes)
     series = cfg.growth.series
@@ -71,6 +70,7 @@ def polish(cfg: Config, script: Script) -> Script:
             else "Leave loop_line empty.\n"
         ),
         series_rule=f"Series: pick the one that fits best: {', '.join(series)}.\n" if series else "Leave series empty.\n",
+        title_rule=llm.title_rule(title_style),
     )
     user = (
         f"Current title: {script.title}\nCurrent thumbnail text: {script.thumbnail_text}\n"
@@ -85,9 +85,10 @@ def polish(cfg: Config, script: Script) -> Script:
     loop = p.loop_line.strip()
     if short and cfg.growth.loop_shorts and scenes and loop and len(loop.split()) <= 16:
         scenes[-1] = scenes[-1].model_copy(update={"narration": scenes[-1].narration.rstrip() + " " + loop})
-    title = p.best_title.strip()
+    options = [p.best_title.strip(), *[t.strip() for t in p.titles]]
+    title = next((t for t in options if 10 <= len(t) <= 100 and not llm.title_banned(t)), "")
     update = {"scenes": scenes}
-    if 10 <= len(title) <= 100:
+    if title:
         update["title"] = title
     if p.thumbnail_text.strip():
         update["thumbnail_text"] = p.thumbnail_text.strip()

@@ -143,3 +143,18 @@ Following the creative direction "don't just tell them about faith, make them fe
 - Slots are now set in New York time and follow daylight saving (`schedule.timezone`): morning Shorts at
   8 am (UK/EU lunchtime), long videos at 3 pm (UK/EU evening, US afternoon), evening Shorts at 7 pm (US
   prime time), campaign Shorts at noon and 5 pm. Each goes live within the hour after its slot.
+
+## Bible first, emotion second
+
+- New editorial rule in every script: a study of the passage (context, original meaning, one-sentence
+  central truth, what the video must not say) comes first; the script is built on it; a faithfulness
+  review afterwards rejects bent meanings, merged teachings, invented events and overpromises (one
+  rewrite, then the video is rejected). `bible_first: true` in channel.yaml.
+- Ten title styles rotate; "When [feeling], Remember [person or thing]" is banned (and never kept by the
+  polish step). Shorts cut from long videos get proper titles too.
+- The idea bank: 49 formula titles rewritten to passage-led titles, ideas narrowed to one passage per
+  teaching (the mustard-seed faith of Matthew 17 and the mustard-seed parable of Matthew 13 are now
+  separate videos), editor's central truths on the sensitive ones (Moses, Philippians 4, Elijah,
+  2 Corinthians 12, Isaiah 55...), and 25 new ideas: parables, miracles, Bible questions and
+  verse-centred videos. The "When You Feel..." series is now "Hard Seasons".
+- Saints' videos stay about the saint (St Francis no longer drifts into a generic money message).

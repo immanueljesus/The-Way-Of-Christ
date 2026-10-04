@@ -180,7 +180,7 @@ growth:
   rank_topics: false            # topics come from the curated catalog
   cuts_per_long: 6              # each master video becomes up to 6 Shorts that link back to it
   series:                       # a playlist each; catalog ideas name their own series
-    - When You Feel...
+    - Hard Seasons
     - Lessons From...
     - One Minute With Jesus
     - Before You Sleep
@@ -197,6 +197,11 @@ growth:
     - Saints & Heroes of Faith
   bonus_shorts_per_day: 0       # evergreen channel: no videos chasing trending topics
   bonus_longs_per_week: 0
+
+# Bible first, emotion second: every script starts from a study of its passage (context, original
+# meaning, one-sentence central truth) and is checked against it afterwards. A script that bends the
+# passage, merges teachings or overpromises is rewritten once, then rejected.
+bible_first: true
 
 # Each video also gets extras.md: storyboard, 3 quote cards (rendered as quote-N.png),
 # a prayer, a community post, a pinned comment and 6 Short ideas.

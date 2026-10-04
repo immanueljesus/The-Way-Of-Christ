@@ -293,6 +293,9 @@ class Config(BaseModel):
     youtube: YouTubeConfig = Field(default_factory=YouTubeConfig)
     schedule: ScheduleConfig = Field(default_factory=ScheduleConfig)
     growth: GrowthConfig = Field(default_factory=GrowthConfig)
+    # Bible first, emotion second: study each passage before writing and check the script against it
+    # afterwards (fyt/llm.py study_passage, check_faithfulness). A script that bends the passage fails.
+    bible_first: bool = False
     # Per video: a storyboard, quote cards, a prayer and a community post (see growth.repurpose).
     repurpose: bool = True
     # Upload only after `fyt approve <job>`; strongly recommended (see README).

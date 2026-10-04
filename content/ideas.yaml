@@ -31,134 +31,139 @@
 ideas:
   # ---------------------------------------------------------------- hurting seasons (motivation, peace, purpose, relationships...)
   - id: when-you-feel-forgotten
-    title: "When You Feel Forgotten"
+    title: "The Cupbearer Forgot Joseph"
+    truth: "People forgot Joseph for two full years, but God had not forgotten him; God says he does not forget his own (Isaiah 49:15)."
     category: motivation
     emotion: hope
     character: "Joseph"
     arc: journey
     pillar: Hope
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Genesis 40:23, Genesis 41:1, Isaiah 49:15-16]
     wiki: Joseph (Genesis)
     angle: "Joseph helped the cupbearer, then sat in prison two more years, forgotten. God had not forgotten him, and he has not forgotten you."
 
   - id: when-you-feel-like-giving-up
-    title: "When You Feel Like Giving Up"
+    title: "Elijah Was Exhausted. Then God Met Him."
+    truth: "When Elijah, exhausted and afraid, asked to die, God did not rebuke him: he gave him food and rest, met him at Horeb and gave him renewed direction."
     category: motivation
     emotion: strength
     character: "Elijah"
     arc: journey
     pillar: Motivation
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [1 Kings 19:4-8, Galatians 6:9, 2 Corinthians 4:8-9]
+    scriptures: [1 Kings 19:4-8, 1 Kings 19:11-12]
     wiki: Elijah
     angle: "Elijah asked to die under a broom tree. God's answer was not a lecture but bread, water and sleep. Rest is not quitting."
 
   - id: when-you-feel-alone
-    title: "When You Feel Alone"
+    title: "'I Will Never Leave You': The Promise Behind Hebrews 13:5"
+    truth: "God's promise to Israel, 'I will not leave you or forsake you', is applied in Hebrews to every believer, as the reason to be content and unafraid."
     category: peace
     emotion: hope
     arc: journey
     pillar: Hope
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [Deuteronomy 31:6, Psalm 139:7-10, Hebrews 13:5]
-    angle: "Loneliness says nobody is there. Psalm 139 says there is nowhere you can go where God is not already waiting."
+    scriptures: [Hebrews 13:5, Deuteronomy 31:6]
+    angle: "Loneliness says nobody is there. The writer of Hebrews takes God's promise to Israel and gives it to every believer: I will never leave you."
 
   - id: when-youre-afraid
-    title: "When You're Afraid"
+    title: "Do Not Be Afraid, For I Am With You"
+    truth: "God tells his people not to fear because he is with them and will strengthen and uphold them; the reason is his presence, not the absence of danger."
     category: spiritual_battles
     emotion: fear
     arc: journey
     pillar: Faith
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [Isaiah 41:10, Joshua 1:9, Psalm 56:3]
+    scriptures: [Isaiah 41:10]
     angle: "\"Do not be afraid\" was never said to people with nothing to fear. It came with a promise: I am with you."
 
   - id: when-you-dont-know-what-to-do
-    title: "When You Don't Know What To Do"
+    title: "'Our Eyes Are on You': Jehoshaphat's Prayer"
     category: wisdom
     emotion: wisdom
     character: "Jehoshaphat"
     arc: wisdom
     pillar: Wisdom
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium]
-    scriptures: [2 Chronicles 20:12, Proverbs 3:5-6, James 1:5]
+    scriptures: [2 Chronicles 20:12, 2 Chronicles 20:15]
     angle: "King Jehoshaphat, surrounded by armies, prayed \"we don't know what to do, but our eyes are on you.\" That is a real prayer."
 
   - id: when-youve-failed
-    title: "When You've Failed"
+    title: "The Night Peter Realized What He Had Done"
     category: motivation
     emotion: forgiveness
     character: "Peter"
     arc: journey
     pillar: Transformation
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [Luke 22:61-62, John 21:15-17, Micah 7:8]
+    scriptures: [Luke 22:61-62, John 21:15-17]
     wiki: Denial of Peter
     angle: "Peter's worst failure was not the end of his calling. Jesus restored him with three questions, one for each denial."
 
   - id: when-someone-betrays-you
-    title: "When Someone Betrays You"
+    title: "Betrayed With a Kiss"
     category: relationships
     emotion: forgiveness
     character: "Joseph"
     arc: journey
     pillar: Spiritual struggle
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [Psalm 41:9, Luke 22:48, Genesis 50:20]
+    scriptures: [Luke 22:47-48, Psalm 41:9]
     angle: "Jesus knew the sting of a friend's kiss. Joseph knew the pit his brothers dug. Both show betrayal does not get the last word."
 
   - id: when-youre-waiting-for-an-answer
-    title: "When You're Waiting for an Answer"
+    title: "'Wait for the Lord': What Psalm 27 Means by Waiting"
     category: purpose
     emotion: hope
     arc: journey
     pillar: Faith
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [Psalm 27:14, Habakkuk 2:3, Isaiah 40:31]
+    scriptures: [Psalm 27:13-14]
     angle: "Waiting feels like nothing is happening. In Scripture, waiting is where God does his deepest work in people."
 
   - id: when-you-feel-unworthy
-    title: "When You Feel Unworthy"
+    title: "The Speech the Prodigal Never Finished"
     category: motivation
     emotion: love
     character: "The prodigal son"
     arc: journey
     pillar: Transformation
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [Luke 15:20-24, Romans 5:8, 2 Corinthians 5:17]
+    scriptures: [Luke 15:18-24]
     angle: "The prodigal rehearsed a speech about being unworthy. The father ran to him before he could finish it."
 
   - id: when-life-doesnt-make-sense
-    title: "When Life Doesn't Make Sense"
+    title: "'My Thoughts Are Not Your Thoughts': What Isaiah 55 Actually Says"
+    truth: "In context, God's ways being higher than ours is about his abundant mercy: he freely pardons those who return to him."
     category: purpose
     emotion: hope
     arc: journey
     pillar: Faith
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [Isaiah 55:8-9, Romans 8:28, Proverbs 16:9]
-    angle: "You don't need to understand the whole story to trust the one writing it."
+    scriptures: [Isaiah 55:6-9]
+    angle: "The famous line about God's higher ways, read in its setting: an invitation to return to a God who pardons abundantly."
 
   - id: when-god-seems-silent
-    title: "When God Seems Silent"
+    title: "'How Long, Lord?': The Psalm That Complains to God"
     category: spiritual_battles
     emotion: hope
     character: "David"
     arc: journey
     pillar: Faith
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long, sleep]
-    scriptures: [Psalm 13:1-2, Psalm 22:1-2, Lamentations 3:25-26]
+    scriptures: [Psalm 13:1-6]
     angle: "David asked \"how long, Lord?\" and it made it into the Bible. Silence is not absence, and honest prayer is still prayer."
 
   - id: why-god-makes-you-wait
@@ -175,14 +180,14 @@ ideas:
     angle: "Abraham was 75 when the promise came and 100 when Isaac was born. Twenty-five years of waiting shaped the man who received it."
 
   - id: when-you-didnt-get-the-job
-    title: "When You Didn't Get the Job"
+    title: "What Proverbs Says About Our Plans"
     category: everyday_life
     emotion: hope
     arc: journey
     pillar: Wisdom
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium]
-    scriptures: [Proverbs 16:9, Colossians 3:23, Jeremiah 29:11]
+    scriptures: [Proverbs 16:9, Proverbs 16:3]
     angle: "A closed door is painful and real. It is also not the end of your story or the measure of your worth."
 
   - id: gods-timing-vs-your-timeline
@@ -219,14 +224,14 @@ ideas:
     angle: "David wasn't even invited in when Samuel came. He was out with the sheep. God sees the unseen faithful work."
 
   - id: when-someone-walks-away
-    title: "When Someone Walks Away"
+    title: "'Though My Father and Mother Forsake Me'"
     category: relationships
     emotion: grief
     arc: journey
     pillar: Hope
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium]
-    scriptures: [Psalm 27:10, Psalm 34:18, Deuteronomy 31:8]
+    scriptures: [Psalm 27:10]
     angle: "People leave, sometimes the ones we trusted most. The Lord promises he will never leave or forsake you."
 
   - id: learning-to-forgive
@@ -241,14 +246,14 @@ ideas:
     angle: "Forgiveness is not pretending it didn't hurt. It is releasing the debt to God, often again and again."
 
   - id: when-your-heart-is-broken
-    title: "When Your Heart Is Broken"
+    title: "He Heals the Brokenhearted"
     category: relationships
     emotion: grief
     arc: journey
     pillar: Hope
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [Psalm 147:3, Psalm 34:18, Revelation 21:4]
+    scriptures: [Psalm 147:3, Psalm 34:18]
     angle: "God draws near to the brokenhearted. Not after you heal. Now, in the middle of it."
 
   - id: loving-people-who-hurt-you
@@ -262,95 +267,97 @@ ideas:
     angle: "Jesus' hardest command, and the one that sets you free from the person who hurt you."
 
   - id: ashamed-of-your-past
-    title: "When You're Ashamed of Your Past"
+    title: "Paul Called Himself the Worst of Sinners"
     category: spiritual_battles
     emotion: forgiveness
     character: "Paul"
     arc: journey
     pillar: Transformation
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [1 Timothy 1:15-16, 2 Corinthians 5:17, Psalm 103:12]
+    scriptures: [1 Timothy 1:15-16]
     wiki: Paul the Apostle
     angle: "Paul once hunted Christians. He called himself the worst of sinners, and God still wrote half the New Testament through him."
 
   - id: afraid-of-the-future
-    title: "When You're Afraid of the Future"
+    title: "Why Does Jesus Say Not to Worry About Tomorrow?"
     category: peace
     emotion: fear
     arc: journey
     pillar: Peace
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium]
-    scriptures: [Matthew 6:34, Jeremiah 29:11, Isaiah 41:10]
+    scriptures: [Matthew 6:31-34]
     angle: "You were given grace for today, not for every imagined tomorrow."
 
   - id: when-you-cant-stop-overthinking
-    title: "When You Can't Stop Overthinking"
+    title: "What Paul Tells Us to Do With Anxiety"
+    truth: "Paul does not tell anxious believers to pretend all is well; he tells them to bring every concern to God in prayer and petition with thanksgiving, and God's peace will guard their hearts and minds in Christ."
     category: peace
     emotion: peace
     character: "Paul"
     arc: peace
     pillar: Peace
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium]
-    scriptures: [Philippians 4:6-8, Isaiah 26:3, 2 Corinthians 10:5]
-    angle: "Paul wrote \"think about these things\" from prison. A practical, Biblical way to quiet a racing mind."
+    scriptures: [Philippians 4:6-7]
+    angle: "Paul doesn't tell us to pretend everything is fine. He tells us what to do with what is troubling us: pray, ask, give thanks, and God's peace will guard us."
 
   - id: when-you-feel-lost
-    title: "When You Feel Lost"
+    title: "The Shepherd Who Went Looking"
     category: purpose
     emotion: hope
     arc: journey
     pillar: Hope
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium]
-    scriptures: [Luke 15:4-7, Psalm 119:105, John 14:6]
+    scriptures: [Luke 15:4-7]
     angle: "In Jesus' story, the lost sheep doesn't find its way home. The shepherd comes looking."
 
   - id: when-anxiety-wont-leave
-    title: "When Anxiety Won't Leave You Alone"
+    title: "'Cast All Your Anxiety on Him': Why Peter Wrote It"
     category: peace
     emotion: peace
     arc: peace
     pillar: Peace
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [Philippians 4:6-7, 1 Peter 5:7, Matthew 6:26-27]
+    scriptures: [1 Peter 5:6-7]
     angle: "Casting your cares is a daily practice, not a one-time fix, and God invites it. (Encouragement, not a substitute for professional help.)"
 
   - id: when-grief-is-heavy
-    title: "When Grief Is Heavy"
+    title: "Why Did Jesus Weep at Lazarus' Tomb?"
     category: relationships
     emotion: grief
     character: "Lazarus"
     arc: journey
     pillar: Hope
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [John 11:35, Psalm 34:18, 1 Thessalonians 4:13-14]
+    scriptures: [John 11:33-36]
     angle: "Jesus knew Lazarus would rise, and he still wept. Your tears are not a lack of faith."
 
   - id: when-youre-exhausted
-    title: "When You're Exhausted"
+    title: "'Come to Me, All Who Are Weary'"
     category: peace
     emotion: peace
     arc: peace
     pillar: Peace
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [Matthew 11:28-30, Isaiah 40:29-31, Psalm 23:1-3]
+    scriptures: [Matthew 11:28-30]
     angle: "Jesus did not say \"try harder.\" He said \"come to me, and I will give you rest.\""
 
   - id: when-youre-tempted
-    title: "When You're Tempted"
+    title: "What 1 Corinthians 10:13 Really Promises"
+    truth: "Paul promises that God is faithful: no temptation is beyond what is common, and with it God provides a way to endure it, not that life will never be hard."
     category: spiritual_battles
     emotion: temptation
     character: "Jesus"
     arc: journey
     pillar: Spiritual struggle
     formats: [short, medium, long]
-    scriptures: [1 Corinthians 10:13, James 1:12-14, Matthew 4:1-4]
+    scriptures: [1 Corinthians 10:13]
     angle: "Temptation is not sin, and you are not alone in it. Jesus faced it hungry in the desert and answered with Scripture."
 
   - id: when-anger-rises
@@ -364,15 +371,15 @@ ideas:
     angle: "\"Be angry and don't sin.\" Anger is a signal, not a master."
 
   - id: when-you-doubt
-    title: "When You Doubt"
+    title: "'I Believe; Help My Unbelief'"
     category: spiritual_battles
     emotion: hope
     character: "Thomas"
     arc: journey
     pillar: Faith
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [Mark 9:23-24, John 20:27-29, Jude 1:22]
+    scriptures: [Mark 9:23-24]
     angle: "\"I believe; help my unbelief.\" Jesus did not turn that father away. Doubt brought honestly to God can grow into faith."
 
   - id: discipline-when-motivation-fades
@@ -397,14 +404,14 @@ ideas:
     angle: "His mercies are new every morning, written by a man sitting in the ruins of Jerusalem."
 
   - id: when-you-feel-small
-    title: "When You Feel Too Small for the Battle"
+    title: "David: Before the Crown"
     category: motivation
     emotion: courage
     character: "David"
     arc: story
     pillar: Motivation
     formats: [short, medium, long]
-    scriptures: [1 Samuel 17:45-47, 1 Samuel 16:7, Zechariah 4:10]
+    scriptures: [1 Samuel 17:45-47]
     wiki: Goliath
     angle: "David did not win because he was big enough. He won because the battle was the Lord's."
 
@@ -420,59 +427,60 @@ ideas:
     angle: "Joseph didn't understand the pit. Job didn't understand his suffering. But the story wasn't over."
 
   - id: when-money-is-tight
-    title: "When Money Is Tight"
+    title: "What Jesus Said About Worrying Over Food and Clothes"
     category: everyday_life
     emotion: peace
     arc: wisdom
     pillar: Wisdom
     formats: [short, medium]
-    scriptures: [Matthew 6:31-33, Philippians 4:19, Hebrews 13:5]
+    scriptures: [Matthew 6:31-33]
     angle: "Worry about provision is ancient. Jesus pointed to the birds and the lilies, and to seeking God first. (No prosperity promises.)"
 
   - id: when-you-feel-rejected
-    title: "When You Feel Rejected"
+    title: "The Stone the Builders Rejected"
     category: relationships
     emotion: love
     character: "Jesus"
     arc: journey
     pillar: Hope
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium]
-    scriptures: [Isaiah 53:3, Psalm 118:22, 1 Peter 2:4]
+    scriptures: [Psalm 118:22, 1 Peter 2:4]
     angle: "Jesus was the stone the builders rejected. He knows exactly what rejection feels like."
 
   - id: when-your-family-is-hurting
-    title: "When Your Family Is Falling Apart"
+    title: "Joseph Wept When He Saw His Brothers"
     category: relationships
     emotion: forgiveness
     character: "Joseph"
     arc: story
     pillar: Hope
     formats: [medium, long]
-    scriptures: [Genesis 45:4-5, Psalm 68:6, Colossians 3:13]
+    scriptures: [Genesis 45:1-5]
     wiki: Joseph (Genesis)
     angle: "Joseph's family was a mess of favouritism, jealousy and betrayal. God still brought them back together."
 
   - id: when-youre-waiting-for-healing
-    title: "When You're Waiting for Healing"
+    title: "'My Grace Is Sufficient for You': What Paul Learned About Weakness"
+    truth: "Paul asked three times for his thorn to be removed; God answered with sufficient grace and power made perfect in weakness, not with removal."
     category: peace
     emotion: hope
     character: "Paul"
     arc: journey
     pillar: Faith
     formats: [short, medium]
-    scriptures: [2 Corinthians 12:9, Psalm 41:3, Mark 5:34]
+    scriptures: [2 Corinthians 12:7-10]
     angle: "Paul prayed three times and heard \"my grace is sufficient.\" Faith for the waiting room. (Encouragement only; no medical claims.)"
 
   - id: does-your-life-matter
-    title: "When You Wonder If Your Life Matters"
+    title: "Created for Good Works: What Ephesians 2:10 Means"
     category: purpose
     emotion: purpose
     character: "Esther"
     arc: journey
     pillar: Transformation
     formats: [short, medium, long]
-    scriptures: [Ephesians 2:10, Jeremiah 1:5, Esther 4:14]
+    scriptures: [Ephesians 2:8-10]
     angle: "You were made on purpose, for a purpose. Esther's \"for such a time as this\" moment came in ordinary life."
 
   - id: why-god-uses-ordinary-people
@@ -486,15 +494,15 @@ ideas:
     angle: "Fishermen, a shepherd, a farmer of figs. The leaders noticed the apostles were ordinary men who had been with Jesus."
 
   - id: when-you-feel-behind
-    title: "When You Feel Behind in Life"
+    title: "Moses Was Eighty"
     category: purpose
     emotion: hope
     character: "Moses"
     arc: journey
     pillar: Hope
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium]
-    scriptures: [Exodus 7:7, Joel 2:25, Ecclesiastes 3:11]
+    scriptures: [Exodus 7:7, Acts 7:30]
     angle: "Moses was 80 when he stood before Pharaoh. It is not too late for you."
 
   - id: start-your-day-with-courage
@@ -521,14 +529,14 @@ ideas:
     angle: "Plan well, hold loosely. Commit today's work to the Lord before you begin it."
 
   - id: when-you-cant-forgive-yourself
-    title: "When You Can't Forgive Yourself"
+    title: "'If We Confess Our Sins'"
     category: spiritual_battles
     emotion: forgiveness
     arc: journey
     pillar: Transformation
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [1 John 1:9, Psalm 32:5, Romans 8:1]
+    scriptures: [1 John 1:8-9]
     angle: "If God has forgiven you, holding on to the guilt is not humility. There is no condemnation."
 
   - id: strength-for-today
@@ -544,37 +552,37 @@ ideas:
     angle: "\"I can do all things\" was written about contentment in need and in plenty. Strength for whatever today holds."
 
   - id: when-you-feel-stuck
-    title: "When You Feel Stuck in the Wilderness"
+    title: "Why God Led Israel Through the Wilderness"
     category: purpose
     emotion: hope
     arc: journey
     pillar: Faith
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [Deuteronomy 8:2-4, Isaiah 43:19, Hosea 2:14]
+    scriptures: [Deuteronomy 8:2-4]
     angle: "Israel's forty years were hard, yet their clothes did not wear out. God provides in the wilderness and speaks there too."
 
   - id: when-others-succeed
-    title: "When Everyone Else Seems to Succeed"
+    title: "Asaph Almost Slipped"
     category: wisdom
     emotion: wisdom
     character: "Asaph"
     arc: wisdom
     pillar: Wisdom
     formats: [short, medium]
-    scriptures: [Psalm 73:2-3, Psalm 73:16-17, Psalm 73:26]
+    scriptures: [Psalm 73:2-3, Psalm 73:16-17]
     angle: "Asaph nearly slipped watching others prosper, until he went into God's sanctuary and saw differently."
 
   - id: when-you-are-overwhelmed
-    title: "When You Are Overwhelmed"
+    title: "'Lead Me to the Rock That Is Higher Than I'"
     category: peace
     emotion: peace
     character: "David"
     arc: peace
     pillar: Peace
-    series: When You Feel...
+    series: Hard Seasons
     formats: [short, medium, long]
-    scriptures: [Psalm 61:1-2, Isaiah 43:2, 2 Corinthians 4:16-18]
+    scriptures: [Psalm 61:1-2]
     angle: "\"Lead me to the rock that is higher than I.\" A prayer for when life rises above your head."
 
   # ---------------------------------------------------------------- bible stories (25%)
@@ -631,7 +639,8 @@ ideas:
     angle: "Not a story about being brave enough. A shepherd who had seen God's faithfulness with lions and bears."
 
   - id: moses-burning-bush
-    title: "Moses Had Every Excuse"
+    title: "Moses Didn't Think He Was Ready"
+    truth: "Moses raised objection after objection; God did not answer by praising Moses' ability but with his presence and help: 'I will be with you.'"
     category: bible_story
     emotion: courage
     character: "Moses"
@@ -644,7 +653,7 @@ ideas:
     angle: "\"Who am I?\" \"I am not eloquent.\" God's answer to every excuse: \"I will be with you.\""
 
   - id: moses-red-sea
-    title: "When There's No Way Forward (The Red Sea)"
+    title: "The Sea in Front, the Army Behind"
     category: bible_story
     emotion: fear
     character: "Moses"
@@ -748,7 +757,7 @@ ideas:
     angle: "A widow gleaning leftovers became the great-grandmother of King David."
 
   - id: job-why-good-people-suffer
-    title: "When Good People Suffer: The Story of Job"
+    title: "Job Never Got an Explanation"
     category: bible_story
     emotion: grief
     character: "Job"
@@ -787,7 +796,7 @@ ideas:
     angle: "Faith that trusts God whether or not he rescues you the way you want, and a fourth man in the fire."
 
   - id: elijah-broom-tree
-    title: "The Prophet Who Wanted to Quit"
+    title: "The Gentle Whisper at Horeb"
     category: bible_story
     emotion: strength
     character: "Elijah"
@@ -795,7 +804,7 @@ ideas:
     pillar: Bible stories
     series: Lessons From...
     formats: [short, medium, long]
-    scriptures: [1 Kings 19:4-8, 1 Kings 19:11-12]
+    scriptures: [1 Kings 19:11-13, 1 Kings 19:15]
     wiki: Elijah
     angle: "After his greatest victory, Elijah collapsed. God came in a gentle whisper."
 
@@ -1545,15 +1554,15 @@ ideas:
     angle: "What rod, staff and green pastures meant to someone who had actually done the job."
 
   - id: the-mustard-seed
-    title: "How Small Is a Mustard Seed?"
-    category: history
+    title: "How Small Can Faith Be?"
+    truth: "When the disciples could not drive out the demon, Jesus pointed them to faith in God, even faith as small as a mustard seed; the power is God's, not the size of their faith. (Not the parable of Matthew 13.)"
+    category: jesus
     emotion: curiosity
-    arc: curiosity
-    pillar: Did you know
-    series: Did You Know?
+    arc: story
+    pillar: Jesus
     formats: [short]
-    scriptures: [Matthew 13:31-32, Matthew 17:20]
-    angle: "Why Jesus picked the tiniest seed his listeners knew."
+    scriptures: [Matthew 17:19-20]
+    angle: "The disciples failed and asked Jesus why. His answer about faith like a mustard seed, in its real setting."
 
   - id: jesus-the-builder
     title: "Jesus Worked With His Hands"
@@ -1822,7 +1831,7 @@ ideas:
     angle: "An outsider, a Roman officer, and the only person the Gospels say made Jesus marvel at his faith."
 
   - id: jeremiah-fire-in-my-bones
-    title: "When You Feel Like Your Words Change Nothing"
+    title: "Jeremiah Tried to Stop Speaking"
     category: purpose
     emotion: purpose
     character: "Jeremiah"
@@ -1830,7 +1839,7 @@ ideas:
     pillar: Purpose
     series: Untold Stories
     formats: [short, medium, long]
-    scriptures: [Jeremiah 20:9, Jeremiah 1:5]
+    scriptures: [Jeremiah 20:7-9]
     wiki: Jeremiah
     angle: "Mocked for forty years, he tried to stop speaking, and couldn't: a fire shut up in his bones."
 
@@ -1861,7 +1870,7 @@ ideas:
     angle: "Forty-five years of waiting, and Caleb still asked for the mountain. It's never too late to take your hill."
 
   - id: naomi-call-me-bitter
-    title: "When Grief Changes Your Name"
+    title: "Naomi: 'Call Me Bitter'"
     category: relationships
     emotion: grief
     character: "Naomi"
@@ -1960,7 +1969,7 @@ ideas:
     angle: "A lame man hiding from the king expected punishment and was given a place at his table for life."
 
   - id: widow-of-zarephath
-    title: "When You Have Nothing Left"
+    title: "The Widow's Last Handful of Flour"
     category: motivation
     emotion: strength
     character: "The widow of Zarephath"
@@ -1968,7 +1977,7 @@ ideas:
     pillar: Motivation
     series: Untold Stories
     formats: [short, medium]
-    scriptures: [1 Kings 17:12-16, 2 Corinthians 12:9]
+    scriptures: [1 Kings 17:12-16]
     angle: "A handful of flour and a little oil, enough for one last meal. The jar did not run out."
 
   - id: elijah-and-the-ravens
@@ -2251,26 +2260,26 @@ ideas:
     angle: "The proudest king in the world, a sudden fall, and the humbled man who looked up to heaven."
 
   - id: jethro-advice-to-moses
-    title: "When You Carry Everyone's Problems"
+    title: "Moses Was Wearing Himself Out"
     category: wisdom
     emotion: wisdom
     character: "Jethro"
     arc: story
     pillar: Wisdom
     formats: [short, medium]
-    scriptures: [Exodus 18:17-18, Galatians 6:2]
+    scriptures: [Exodus 18:17-18]
     angle: "Moses judged every dispute from morning to evening, until his father-in-law said: you will wear yourself out."
 
   # ---------------------------------------------------------------- Faith in everyday life
   - id: phone-makes-you-feel-behind
-    title: "When Scrolling Makes You Feel Behind"
+    title: "What Paul Meant by 'I Have Learned to Be Content'"
     category: everyday_life
     emotion: peace
     arc: wisdom
     pillar: Faith in Everyday Life
     series: Faith in Everyday Life
     formats: [short, medium]
-    scriptures: [Galatians 1:10, Philippians 4:11-12, Psalm 139:14]
+    scriptures: [Philippians 4:11-13]
     angle: "Everyone's highlight reel against your ordinary Tuesday. The secret of contentment Paul learned."
 
   - id: dont-quit-in-the-middle
@@ -2285,7 +2294,7 @@ ideas:
     angle: "The middle is where every story looks hopeless. It's also where most people stop reading."
 
   - id: when-nobody-believes-in-you
-    title: "When Nobody Believes in You"
+    title: "'You Are Only a Boy'"
     category: motivation
     emotion: courage
     character: "David"
@@ -2296,14 +2305,14 @@ ideas:
     angle: "The king said he was only a boy. His brothers mocked him. David remembered what God had already done."
 
   - id: when-the-door-doesnt-open
-    title: "When the Door Doesn't Open"
+    title: "Why Was Paul Kept Out of Asia?"
     category: purpose
     emotion: hope
     character: "Paul"
     arc: story
     pillar: Purpose
     formats: [short, medium]
-    scriptures: [Acts 16:6-10, Revelation 3:8]
+    scriptures: [Acts 16:6-10]
     angle: "Paul tried to go one way and was stopped twice. The closed doors led him to Europe."
 
   - id: success-without-losing-your-soul
@@ -2341,14 +2350,14 @@ ideas:
     angle: "Even to your old age and grey hairs, I will carry you. Aging without fear."
 
   - id: when-work-feels-meaningless
-    title: "When Your Work Feels Meaningless"
+    title: "'Work Heartily, as for the Lord'"
     category: everyday_life
     emotion: purpose
     arc: wisdom
     pillar: Faith in Everyday Life
     series: Faith in Everyday Life
     formats: [short, medium]
-    scriptures: [Colossians 3:23-24, Ecclesiastes 2:24]
+    scriptures: [Colossians 3:23-24]
     angle: "Spreadsheets, shifts and dishes. Ordinary work done for the Lord is never wasted."
 
   - id: lonely-in-a-crowd
@@ -2374,15 +2383,15 @@ ideas:
     angle: "Do justly, love mercy, walk humbly. Meaning lives in the small, faithful days."
 
   - id: when-you-carry-responsibility
-    title: "When Everyone Depends on You"
+    title: "Bear One Another's Burdens"
     category: everyday_life
     emotion: strength
     arc: journey
     pillar: Faith in Everyday Life
     series: Faith in Everyday Life
     formats: [short, medium]
-    scriptures: [Matthew 11:28-30, Isaiah 40:29]
-    angle: "Parents, providers, caregivers: the strong ones need rest too."
+    scriptures: [Galatians 6:2, Galatians 6:5]
+    angle: "Carry each other's burdens, and each will carry their own load: Paul's balance for the ones everyone leans on."
 
   # ---------------------------------------------------------------- range of emotions
   - id: be-still
@@ -2450,13 +2459,13 @@ ideas:
     angle: "The hardest sentence Jesus ever spoke, and why it sets you free."
 
   - id: when-someone-you-love-is-gone
-    title: "When Someone You Love Is Gone"
+    title: "'I Am the Resurrection and the Life'"
     category: relationships
     emotion: grief
     arc: journey
     pillar: Relationships
     formats: [short, medium, long]
-    scriptures: [John 11:25-26, Revelation 21:4, Psalm 34:18]
+    scriptures: [John 11:25-26]
     angle: "Grief is love with nowhere to go. A gentle word for the empty chair."
 
   - id: do-not-be-afraid-command
@@ -2597,3 +2606,313 @@ ideas:
     formats: [short, medium]
     scriptures: [Ephesians 4:15, James 1:19]
     angle: "Truth spoken in love, quick to listen, slow to anger."
+
+  # ---------------------------------------------------------------- parables
+  - id: parable-mustard-seed-kingdom
+    title: "Why Did Jesus Compare God's Kingdom to a Mustard Seed?"
+    category: jesus
+    content_type: parable
+    emotion: hope
+    arc: curiosity
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Matthew 13:31-32]
+    truth: "Jesus compares the kingdom of heaven to the smallest seed that grows into a great plant: God's kingdom begins small and hidden and grows beyond all expectation. (A different teaching from mustard-seed faith in Matthew 17.)"
+    angle: "A seed so small you can barely see it, a tree birds nest in: how the kingdom grows."
+
+  - id: parable-sower
+    title: "Four Kinds of Soil"
+    category: jesus
+    content_type: parable
+    emotion: wisdom
+    arc: story
+    pillar: Jesus
+    formats: [short, medium, long]
+    scriptures: [Matthew 13:3-8, Matthew 13:18-23]
+    truth: "The same word of the kingdom falls on different hearts; Jesus explains what keeps it from taking root (not understanding, trouble, worries, wealth) and what bears fruit."
+    angle: "A farmer scattering seed on a Galilean hillside, and Jesus' own explanation of what happened to each handful."
+
+  - id: parable-lost-coin
+    title: "The Woman Who Swept the Whole House"
+    category: jesus
+    content_type: parable
+    emotion: joy
+    arc: story
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Luke 15:8-10]
+    truth: "God searches for the lost like a woman who sweeps the house for one coin, and heaven rejoices over one sinner who repents."
+    angle: "One silver coin in a dark house, a lamp, a broom, and a party when it's found."
+
+  - id: parable-talents
+    title: "Why Did the Third Servant Bury His Talent?"
+    category: jesus
+    content_type: parable
+    emotion: purpose
+    arc: curiosity
+    pillar: Jesus
+    formats: [short, medium, long]
+    scriptures: [Matthew 25:24-28]
+    truth: "The servant who buried his master's money out of fear failed to use what he was entrusted with; faithfulness means using what God has given, not hiding it."
+    angle: "Fear made him dig a hole. What the parable says about what we do with what we've been given."
+
+  - id: parable-unforgiving-servant
+    title: "The Servant Who Was Forgiven Everything"
+    category: relationships
+    content_type: parable
+    emotion: forgiveness
+    arc: story
+    pillar: Relationships
+    formats: [short, medium]
+    scriptures: [Matthew 18:23-27, Matthew 18:32-33]
+    truth: "Having been forgiven an unpayable debt, the servant refused to forgive a small one; those who have received mercy are called to show it."
+    angle: "Ten thousand talents forgiven in a moment, and a hundred denarii he wouldn't let go."
+
+  - id: parable-ten-virgins
+    title: "Keep Watch"
+    category: jesus
+    content_type: parable
+    emotion: wisdom
+    arc: story
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Matthew 25:1-13]
+    truth: "Jesus calls his followers to be ready for his return at an hour no one knows."
+    angle: "Ten lamps at midnight, a delayed bridegroom, and a door that closed."
+
+  - id: parable-hidden-treasure
+    title: "The Man Who Sold Everything for One Field"
+    category: jesus
+    content_type: parable
+    emotion: joy
+    arc: story
+    pillar: Jesus
+    formats: [short]
+    scriptures: [Matthew 13:44-46]
+    truth: "The kingdom of heaven is worth more than everything else; finding it, a person gives all with joy."
+    angle: "A treasure in a field and a pearl of great price: giving everything, gladly."
+
+  - id: parable-workers-in-vineyard
+    title: "Why Does Jesus Say the Last Will Be First?"
+    category: jesus
+    content_type: parable
+    emotion: love
+    arc: curiosity
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Matthew 20:9-16]
+    truth: "The landowner pays the latecomers the same as those who worked all day: God's grace is generous and not earned by hours."
+    angle: "Workers hired at the eleventh hour got a full day's pay. Why the early ones grumbled."
+
+  - id: parable-rich-fool
+    title: "The Man Who Built Bigger Barns"
+    category: wisdom
+    content_type: parable
+    emotion: wisdom
+    arc: story
+    pillar: Wisdom
+    formats: [short, medium]
+    scriptures: [Luke 12:16-21]
+    truth: "A man stored up wealth for himself and died that night; Jesus warns against being rich in possessions but not rich toward God."
+    angle: "A record harvest, new barns, plans for years of ease, and one night."
+
+  # ---------------------------------------------------------------- miracles
+  - id: miracle-feeding-five-thousand
+    title: "Five Loaves, Two Fish, Five Thousand People"
+    category: jesus
+    content_type: miracle
+    emotion: gratitude
+    arc: story
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [John 6:8-13]
+    truth: "Jesus took a boy's small lunch, gave thanks and fed the crowd with more left over; what is given to him he multiplies."
+    angle: "A boy's lunch, a disciple's doubt, a hillside full of hungry people."
+
+  - id: miracle-jairus-daughter
+    title: "'Talitha Koum': The Girl Jesus Woke Up"
+    category: jesus
+    content_type: miracle
+    emotion: hope
+    arc: story
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Mark 5:35-36, Mark 5:41-42]
+    truth: "Told his daughter had died, Jairus heard Jesus say 'Don't be afraid, only believe', and Jesus raised her."
+    angle: "A father on the road, bad news from home, and Jesus' words to him."
+
+  - id: miracle-widow-of-nain
+    title: "He Stopped the Funeral"
+    category: jesus
+    content_type: miracle
+    emotion: love
+    arc: story
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Luke 7:12-15]
+    truth: "Jesus saw a widow burying her only son, had compassion on her, and gave her son back to her."
+    angle: "A widow, her only son, a funeral procession at the town gate, and Jesus' compassion."
+
+  - id: miracle-peter-freed-from-prison
+    title: "The Night an Angel Opened Peter's Prison"
+    category: bible_story
+    content_type: miracle
+    emotion: joy
+    arc: story
+    pillar: Bible stories
+    formats: [short, medium]
+    scriptures: [Acts 12:5-10, Acts 12:16]
+    truth: "While the church prayed for Peter, God freed him from prison, and the praying church could hardly believe it."
+    angle: "Chains, sixteen soldiers, a church praying, and a knock at the door they didn't believe."
+
+  - id: balaams-donkey
+    title: "The Strange Story of Balaam's Donkey"
+    category: bible_story
+    content_type: story
+    emotion: curiosity
+    character: "Balaam"
+    arc: story
+    pillar: Bible stories
+    formats: [short, medium]
+    scriptures: [Numbers 22:28-31]
+    truth: "A prophet set on his own course was stopped by God through his donkey, until his eyes were opened to see the angel in the road."
+    angle: "A prophet, a stubborn donkey that saw what he couldn't, and a road he shouldn't have taken."
+
+  - id: why-paul-sang-in-prison
+    title: "Why Did Paul Sing in Prison?"
+    category: bible_story
+    content_type: question
+    emotion: joy
+    character: "Paul"
+    arc: curiosity
+    pillar: Bible stories
+    formats: [short, medium]
+    scriptures: [Acts 16:22-26]
+    truth: "Beaten and chained in Philippi, Paul and Silas prayed and sang hymns at midnight, and God shook the prison."
+    angle: "Midnight, stocks, bleeding backs, and the other prisoners listening."
+
+  - id: what-happened-after-lazarus
+    title: "What Happened After Lazarus Walked Out?"
+    category: jesus
+    content_type: question
+    emotion: curiosity
+    character: "Lazarus"
+    arc: curiosity
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [John 12:9-11]
+    truth: "After Jesus raised Lazarus, many believed because of him, and the chief priests planned to kill Lazarus too."
+    angle: "The miracle drew crowds, and made Lazarus a target."
+
+  - id: why-peter-denied-three-times
+    title: "Why Did Peter Deny Him Three Times?"
+    category: jesus
+    content_type: question
+    emotion: forgiveness
+    character: "Peter"
+    arc: curiosity
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Luke 22:31-34, Luke 22:61-62]
+    truth: "Jesus foretold Peter's denial and prayed for him, that his faith would not fail and that, once he turned back, he would strengthen his brothers."
+    angle: "A courtyard fire, a servant girl, a rooster, and a prayer Jesus had already prayed."
+
+  # ---------------------------------------------------------------- Bible questions
+  - id: take-up-your-cross
+    title: "What Does Jesus Mean by 'Take Up Your Cross'?"
+    category: jesus
+    content_type: question
+    emotion: purpose
+    arc: wisdom
+    pillar: Jesus
+    formats: [short, medium, long]
+    scriptures: [Luke 9:23-24]
+    truth: "Following Jesus means denying yourself and following him daily, losing your life for his sake to find it; it is a call to discipleship, not to bear any hardship as 'my cross'."
+    angle: "In Rome's world, a cross meant one thing. Why Jesus used it to describe following him."
+
+  - id: renew-your-mind
+    title: "What Does Paul Mean by 'Renew Your Mind'?"
+    category: wisdom
+    content_type: question
+    emotion: purpose
+    arc: wisdom
+    pillar: Wisdom
+    formats: [short, medium]
+    scriptures: [Romans 12:1-2]
+    truth: "In view of God's mercies, believers offer their whole lives to God and are transformed, not conformed to this age, by the renewing of their minds."
+    angle: "Not a self-help slogan: Paul's call, built on God's mercy, to be changed from the inside."
+
+  - id: why-born-again
+    title: "What Did Jesus Mean by 'Born Again'?"
+    category: jesus
+    content_type: question
+    emotion: curiosity
+    character: "Nicodemus"
+    arc: curiosity
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [John 3:3-8]
+    truth: "Jesus told Nicodemus that no one can see God's kingdom without being born from above, of water and the Spirit: new life is God's work."
+    angle: "A teacher of Israel, a question at night, and an answer about the wind."
+
+  - id: first-will-be-last
+    title: "'The First Will Be Last': What Jesus Meant"
+    category: jesus
+    content_type: question
+    emotion: wisdom
+    arc: wisdom
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Mark 10:42-45]
+    truth: "In God's kingdom greatness is service: Jesus came not to be served but to serve and give his life as a ransom."
+    angle: "Two brothers asking for the best seats, and Jesus redefining greatness."
+
+  # ---------------------------------------------------------------- verse-centred
+  - id: i-am-with-you-always
+    title: "'I Am With You Always': Jesus' Final Promise"
+    category: jesus
+    content_type: verse
+    emotion: hope
+    arc: peace
+    pillar: Jesus
+    formats: [short, medium]
+    scriptures: [Matthew 28:18-20]
+    truth: "Sending his disciples to make disciples of all nations, the risen Jesus promises his presence with them always, to the end of the age."
+    angle: "The last words of Matthew's Gospel: a mission, and a promise attached to it."
+
+  - id: be-strong-and-courageous
+    title: "'Be Strong and Courageous': What God Told Joshua"
+    category: motivation
+    content_type: verse
+    emotion: courage
+    character: "Joshua"
+    arc: story
+    pillar: Motivation
+    formats: [short, medium]
+    scriptures: [Joshua 1:7-9]
+    truth: "God commands Joshua to be strong and courageous, keep his law, and not fear, because the Lord his God is with him wherever he goes."
+    angle: "Moses is dead, a river is in front of him, a nation behind him. What God told the new leader."
+
+  - id: what-does-the-lord-require
+    title: "'Do Justice, Love Mercy, Walk Humbly'"
+    category: wisdom
+    content_type: verse
+    emotion: wisdom
+    arc: wisdom
+    pillar: Wisdom
+    formats: [short, medium]
+    scriptures: [Micah 6:6-8]
+    truth: "Asked what offering would please God, Micah answers that the Lord requires justice, faithful love and humble walking with God, not grand sacrifices."
+    angle: "Thousands of rams, rivers of oil? Micah's answer to what God really wants."
+
+  - id: be-still-psalm-46
+    title: "'Be Still and Know': What Psalm 46 Actually Means"
+    category: peace
+    content_type: verse
+    emotion: peace
+    arc: peace
+    pillar: Peace
+    formats: [short, medium]
+    scriptures: [Psalm 46:1-3, Psalm 46:10-11]
+    truth: "In a psalm of mountains falling and nations raging, God says 'be still and know that I am God': stop striving and trust the God who is our refuge."
+    angle: "Not a quiet morning by a lake: the psalm is set in earthquakes and war."

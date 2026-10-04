@@ -99,7 +99,7 @@ events:
       - id: advent-zechariah-elizabeth
         offset: -5
         kind: short
-        title: "When God Answers After Years of Waiting"
+        title: "Zechariah and Elizabeth: The Prayer Answered Late"
         angle: "Elizabeth and Zechariah had prayed for a child for decades. Advent is about God keeping promises late."
         scriptures: [Luke 1:13, Luke 1:24-25]
         arc: story
@@ -370,7 +370,7 @@ events:
       - id: easter-holy-saturday-silent
         offset: -1
         kind: short
-        title: "When God Seems Silent"
+        title: "Why Holy Saturday Feels So Silent"
         angle: "Holy Saturday. Don't jump to celebration. The disciples didn't know what Sunday would bring. What do you do when you prayed, and nothing seems to have changed?"
         scriptures: [Luke 23:55-56, Psalm 13:1]
         arc: journey
@@ -532,7 +532,7 @@ events:
       - id: graduation-what-comes-next
         offset: 0
         kind: short
-        title: "When You Don't Know What Comes Next"
+        title: "Trust in the Lord With All Your Heart"
         angle: "Graduation, a new job, an empty calendar. Trusting God with the next step, not the whole map."
         scriptures: [Proverbs 3:5-6, Jeremiah 29:11]
         arc: journey
@@ -589,7 +589,7 @@ events:
       - id: all-souls-missing-someone
         offset: 0
         kind: short
-        title: "When You Miss Someone Who Is Gone"
+        title: "We Do Not Grieve Without Hope"
         angle: "A day of remembrance. We grieve, but not without hope."
         scriptures: [1 Thessalonians 4:13-14, John 11:25]
         arc: prayer
@@ -739,8 +739,9 @@ events:
         offset: 0
         kind: short
         title: "The Man Who Gave Everything Away"
-        angle: "A rich merchant's son who handed back even his clothes, and found a joy money never gave him."
-        scriptures: [Matthew 19:21, Matthew 6:19-21]
+        angle: "This video is about St Francis of Assisi himself: a rich merchant's son who handed back even his clothes and lived in poverty to follow Christ. Tell his life, and the Gospel words he took literally. Don't turn it into a generic message about money."
+        truth: "Jesus told a rich young man to sell what he had, give to the poor and follow him, and the man went away sad; Francis heard that call as addressed to him, and followed."
+        scriptures: [Matthew 19:21-22]
         arc: story
         emotion: joy
         character: "St Francis of Assisi"

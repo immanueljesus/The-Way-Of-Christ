@@ -80,7 +80,7 @@ Ideas list the formats they suit (`short`, `medium`, `long`, `sleep`).
 
 ## 5. Series (playlists)
 
-- **When You Feel...** Alone, Like Giving Up, Forgotten, Afraid, Unworthy, Betrayed, Waiting...
+- **Hard Seasons** Alone, Like Giving Up, Forgotten, Afraid, Unworthy, Betrayed, Waiting...
 - **Lessons From...** Joseph, David, Moses, Peter, Paul, Esther, Ruth, Job, Daniel, Jesus...
 - **One Minute With Jesus** one saying of Jesus, explained in modern language (Shorts)
 - **Before You Sleep** night prayers, verses and calm stories (Shorts and 20-40 min videos)
@@ -326,3 +326,37 @@ world and saints by default; add `catholic` for Marian feasts, Corpus Christi an
 set `liturgy.easter: orthodox` to follow the Orthodox Easter date.
 
 `python -m fyt calendar --days 120` lists the coming campaign videos.
+
+## 18. Bible first, emotion second (editorial rule)
+
+**Never bend Scripture to fit the content idea. Find the truth in Scripture first, then build the video
+around it.** Every script goes through these steps:
+
+1. **Biblical source:** the one passage the video rests on (book, chapter, verses).
+2. **Context:** what happens immediately before and after (story and curiosity videos get the whole chapter).
+3. **Original meaning:** what the passage actually says.
+4. **Central truth:** one sentence (written by the editor in `truth` where it matters, otherwise by the
+   study step).
+5. **Modern connection:** the human experience that connects naturally.
+6. **Story:** made cinematic.
+7. **Application:** offered as application, never as the passage's meaning.
+8. **No overpromising:** never "God will fix everything", "this verse guarantees your breakthrough" or
+   "enough faith gets you what you want"; instead "you can bring your fear to God", "God's presence does
+   not depend on your circumstances", "faith does not mean knowing how the story ends".
+
+In the pipeline: `study_passage` writes steps 1-5 before anything else; the script is written on that
+study; `check_faithfulness` then reviews the script against the study and the exact verses (bent meaning,
+merged teachings such as Matthew 13 vs 17, invented events, overpromises, a saint's video drifting away
+from the saint). A failed script is rewritten once with the reviewer's notes, then rejected; a rejected
+script is never uploaded.
+
+**A title language, not a title template.** Ten styles rotate so neighbouring videos never share a shape:
+cinematic (*The Night Peter Realized What He Had Done*), direct (*Stand Firm*), curiosity (*Why Did Jesus
+Sleep During the Storm?*), biblical question (*What Does Jesus Mean by "Take Up Your Cross"?*), character
+(*Moses: The Man Who Didn't Think He Was Ready*), verse-centred (*"My Grace Is Sufficient for You": What Paul
+Learned About Weakness*), practical wisdom (*What Proverbs Actually Says About Money*), prayer, history and
+seasonal. The formula "When [feeling], Remember [person or thing]" is banned outright.
+
+**Not every video is motivational.** Some are beautiful, thought-provoking, educational, mysterious,
+challenging, peaceful or joyful, as the passage calls for, and all of them point to Christ. The idea bank
+includes parables, miracles, Bible questions and verse-centred videos alongside stories and wisdom.

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 
 import anthropic
@@ -205,6 +206,10 @@ Each idea:
 - a title that would make anyone curious, not only church-goers; no news, politics or controversy
 - 1-3 Scripture references that really contain what the idea rests on (they are checked against the Bible text)
 - only people who are actually named in the Bible; never invent a character, a trade or an event
+- Bible first: start from one passage and what it actually means in its context; never bend a passage to
+  fit a feeling, and never stack different teachings into one idea
+- titles in varied styles (cinematic, a question, a character's name, the verse's own words, a prayer...);
+  never the formula 'When [feeling], Remember [person or thing]'
 - no prosperity promises ("God will make you rich"), no medical claims
 - this pillar is: {PILLAR_NOTES.get(category, category)}
 
@@ -403,6 +408,160 @@ def structure_for(shape: str, short: bool, prayer: bool = False) -> str:
     return full + ("\n" + SHORT_SHAPES[shape] if short else "")
 
 
+
+# --- Bible first, emotion second ---------------------------------------------------------------
+# Editorial rule for The Way of Christ: never bend Scripture to fit the idea. Every script starts
+# from a study of its passage (study_passage), is written on that passage's central truth, and is
+# checked afterwards (check_faithfulness) for bent meanings, merged passages and overpromises.
+
+BIBLE_FIRST = """BIBLE FIRST, EMOTION SECOND. The research notes open with a Bible study of the passage this
+video rests on: its text, context, original meaning and one-sentence central truth. Build the whole video
+on that central truth.
+- The passage leads; the modern feeling is only the doorway. Never bend Scripture to fit the idea: if the
+  passage doesn't say it, the video doesn't say it.
+- One passage, one teaching. Never merge different passages or teachings into one point (the mustard-seed
+  faith of Matthew 17:20 and the mustard-seed parable of the kingdom in Matthew 13:31-32 are different
+  teachings).
+- Show what is actually happening in the passage (who, where, what is said and why) before applying it.
+- Offer application as application ("perhaps that's what you need to hear"), never as the passage's meaning.
+- Don't overpromise. Never say God will fix everything, a verse guarantees a breakthrough, or enough faith
+  gets you what you want. Say what Scripture does say: you can bring your fear to God; God's presence
+  doesn't depend on your circumstances; faith doesn't mean knowing how the story ends.
+- If the idea names a person (a saint, a Bible character), the video is about that person.
+- Not every video is motivational. Let it be beautiful, thought-provoking, educational, mysterious,
+  challenging, peaceful or joyful as the passage calls for, always pointing to Christ."""
+
+# Ten title styles in rotation: a title LANGUAGE, not a title template.
+TITLE_STYLES = {
+    "cinematic": ("a moment from the story, like a film title",
+                  ["The Night Peter Realized What He Had Done", "The Prison Was Not Joseph's Ending", "The Morning the Stone Was Gone"]),
+    "direct": ("a short command or truth from the passage, 1-4 words",
+               ["Do Not Be Afraid", "Stand Firm", "Be Still", "Forgive"]),
+    "curiosity": ("a 'why' or 'what happened' question about the story",
+                  ["Why Did Jesus Sleep During the Storm?", "What Happened After Lazarus Walked Out?"]),
+    "question": ("what a saying or teaching of Scripture means",
+                 ["What Does Jesus Mean by 'Take Up Your Cross'?", "Why Does Jesus Say the First Will Be Last?"]),
+    "character": ("the person's name, then who they were or became",
+                  ["Moses: The Man Who Didn't Think He Was Ready", "Esther: Courage When Silence Wasn't an Option"]),
+    "verse": ("the verse's own words in quotes, then what they mean",
+              ["'My Grace Is Sufficient for You': What Paul Learned About Weakness", "'Be Still and Know': What Psalm 46 Actually Means"]),
+    "wisdom": ("what Scripture says or teaches about a life topic",
+               ["What Proverbs Actually Says About Money", "What Jesus Taught About Ambition"]),
+    "prayer": ("an invitation to pray",
+               ["A Prayer for the Road Ahead", "Pray This Before You Sleep"]),
+    "history": ("the world behind the Bible",
+                ["What Was Jerusalem Like in the Time of Jesus?", "What Did Crucifixion Mean in the Roman World?"]),
+    "seasonal": ("the moment in the Christian year",
+                 ["The Night Before the Cross", "The Long Wait for the Messiah"]),
+}
+STYLES_FOR_SHAPE = {
+    "story": ["cinematic", "character", "curiosity"],
+    "curiosity": ["curiosity", "question", "history"],
+    "wisdom": ["wisdom", "question", "verse"],
+    "prayer": ["prayer"],
+    "peace": ["direct", "verse", "prayer"],
+    "joy": ["verse", "direct", "cinematic"],
+    "journey": ["verse", "direct", "character", "question", "cinematic"],
+}
+BANNED_TITLE = re.compile(r"^\s*when\b[^,:]*[,:]|[,:]\s*remember\b", re.I)
+
+
+def title_banned(title: str) -> bool:
+    """The worn formula "When [feeling], Remember [character]" (or any "When X, Y" title)."""
+    return bool(BANNED_TITLE.search(title or ""))
+
+
+def choose_title_style(shape: str, category: str = "", recent: list[str] | None = None, seasonal: bool = False) -> str:
+    """The title style for the next video: one that suits its shape, not used in the last few videos."""
+    allowed = list(STYLES_FOR_SHAPE.get(shape, STYLES_FOR_SHAPE["journey"]))
+    if category == "history":
+        allowed = ["history", "curiosity"]
+    if seasonal:
+        allowed = ["seasonal", *allowed]
+    recent = (recent or [])[-4:]
+    fresh = [s for s in allowed if s not in recent]
+    if fresh:
+        return fresh[0]
+    return min(allowed, key=lambda s: len(recent) - 1 - recent[::-1].index(s) if s in recent else -1)
+
+
+def title_rule(style: str) -> str:
+    what, examples = TITLE_STYLES.get(style, TITLE_STYLES["cinematic"])
+    return (
+        f"Title style for this video: {style.upper()}, {what}. Examples of the style (don't copy them): "
+        + "; ".join(f'"{e}"' for e in examples)
+        + ". Name the actual story, person, passage or question, and keep every word true to the passage: no "
+        "event that didn't happen, no promise it doesn't make. Never use the formula 'When [feeling], "
+        "Remember [person or thing]' or any title shaped 'When X, Y'."
+    )
+
+
+class Study(BaseModel):
+    passage: str = Field(description="The one passage the video rests on, e.g. 'Exodus 3:10-12'.")
+    context: str = Field(description="What is happening immediately before and after (2-3 sentences).")
+    meaning: str = Field(description="What the passage actually says in its context (2-4 sentences).")
+    truth: str = Field(description="The central truth in one sentence, faithful to the text.")
+    not_saying: list[str] = Field(description="2-4 misreadings, merges or overpromises this video must avoid.")
+    connection: str = Field(description="A modern human experience that connects naturally with the truth.")
+
+
+def _careful(cfg: Config) -> Config:
+    """The same model thinking harder: for the study and the faithfulness review."""
+    return cfg.model_copy(update={"llm": cfg.llm.model_copy(update={"reasoning_effort": "medium"})})
+
+
+def study_passage(cfg: Config, title: str, angle: str, notes: str, about: str = "") -> Study:
+    """Step 1-5 of the editorial process: passage, context, original meaning, central truth, connection."""
+    system = (
+        "You are a careful Bible teacher preparing a short video. Study the passage the idea rests on, "
+        "faithfully and in its context, within mainstream Christian teaching. Base everything on the exact "
+        "Bible text and chapter given in the notes, and on the editor's central truth when the notes give one. "
+        "If the idea's angle stretches the passage, say so in not_saying. Keep different passages' teachings "
+        "apart. Never let the central truth promise outcomes Scripture doesn't promise."
+    )
+    if about:
+        system += (
+            f" The video is about {about}. If {about} is not in the passage (a saint or later Christian), "
+            f"the study covers {about}'s life from the notes and how this passage shaped it; the truth stays "
+            "faithful to the passage."
+        )
+    user = f"Idea: {title}\nAngle: {angle}\n\n<notes>\n{notes[: cfg.llm.max_note_chars]}\n</notes>"
+    return structured(_careful(cfg), system, user, Study, max_tokens=2500)
+
+
+def study_markdown(study: Study) -> str:
+    return (
+        f"## Bible study (the video is built on this)\n"
+        f"Passage: {study.passage}\nContext: {study.context}\nWhat it says: {study.meaning}\n"
+        f"Central truth: {study.truth}\nThe video must NOT: " + "; ".join(study.not_saying) + "\n"
+        f"Modern connection: {study.connection}"
+    )
+
+
+class Faithfulness(BaseModel):
+    faithful: bool = Field(description="True only if the script is faithful to the passage and the study.")
+    problems: list[str] = Field(default_factory=list, description="Each place it bends, merges, invents or overpromises.")
+
+
+def check_faithfulness(cfg: Config, script: Script, study: str, verses: str, about: str = "") -> Faithfulness:
+    """Steps 6-8 checked: does the script stay true to the passage, keep teachings apart, label
+    application as application and avoid overpromising?"""
+    system = (
+        "You review scripts for a Christian channel whose rule is: never bend Scripture to fit the idea. "
+        "Compare the script with the Bible study and the exact verses. Mark it unfaithful if it changes what a "
+        "passage means, merges different passages or teachings into one point, invents events, presents "
+        "application as the passage's meaning, promises outcomes Scripture doesn't promise (fixes, breakthroughs, "
+        "rewards for enough faith), or drifts away from the person the video is about. Check every point in "
+        "the study's 'must NOT' list. Imagined sensory scene-setting (light, sounds, feelings) is fine. Be "
+        "specific and brief."
+    )
+    if about:
+        system += f" This video must be about {about}; it is unfaithful if {about} is missing or incidental."
+    narration = "\n".join(f"- {s.narration}" + (f" [on screen: {s.text} ({s.author})]" if s.type == "quote" else "") for s in script.scenes)
+    user = f"Title: {script.title}\n\n{study}\n\n{verses[:3000]}\n\nScript:\n{narration[:5000]}"
+    return structured(_careful(cfg), system, user, Faithfulness, max_tokens=2500)
+
+
 SCRIPT_GUIDE = """Write the complete script for a faceless Christian YouTube video on {name}.
 
 Channel: {name} -- {niche}
@@ -418,6 +577,8 @@ thinking "I needed to hear this", "God has not forgotten me", "I am not alone", 
 "there is still hope", or simply moved, curious, grateful or at peace. The channel has emotional range:
 courage, love, grief, peace, joy, curiosity, wisdom, gratitude, hope. Follow the story shape below, never
 fact -> explanation -> conclusion.
+
+{bible_first}
 
 {structure}
 
@@ -464,11 +625,9 @@ Rules:
   events. Mainstream Christian teaching; no politics, prosperity promises, guilt, fear tactics or medical advice.
 - End on strength: the line they carry, then (only in long videos) one gentle invitation to subscribe
   or pray along.
-- Title max 70 characters, like a cinematic story or a question people would click even if they never
-  watch Christian videos: "Don't Quit in the Middle of the Story", "He Was Forgotten for Years",
-  "The Man Who Couldn't Forgive Himself", "Why Did Jesus Write in the Sand?". The Bible connection is
-  revealed inside the video. Never "Biblical Motivation for..." or "Bible Verse About...". The description
-  is 2 short, warm paragraphs, then the key Scriptures (references), then a one-line prayer. No hashtag spam.
+- Title max 70 characters. {title_rule} Never "Biblical Motivation for..." or "Bible Verse About...".
+- The description is 2 short, warm paragraphs that say plainly what the passage is about, then the key
+  Scriptures (references), then a one-line prayer. No hashtag spam, no promises the passage doesn't make.
 - List the sources you relied on (the Bible references count as sources).
 """
 
@@ -497,6 +656,7 @@ def write_script(
     feedback: str = "",
     prayer: bool = False,
     shape: str = "journey",
+    title_style: str = "cinematic",
 ) -> Script:
     ch = cfg.channel
     if cfg.format == "short":
@@ -515,6 +675,8 @@ def write_script(
         format_line=format_line,
         words=words,
         structure=structure,
+        bible_first=BIBLE_FIRST,
+        title_rule=title_rule(title_style),
     )
     tail = f"\n\nAvailable images:\n{images}" if images else ""
     tail += f"\n\n{feedback}" if feedback else ""

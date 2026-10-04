@@ -40,6 +40,8 @@ class Idea(BaseModel):
     scriptures: list[str] = Field(default_factory=list)
     wiki: str | None = None  # Wikipedia article for background and artwork
     angle: str = ""  # the pain point or hook, and what the viewer should leave with
+    truth: str = ""  # the passage's central truth in one sentence, as the editor reads it (optional)
+    content_type: str = ""  # story, parable, miracle, verse, question, character, wisdom, prayer, history...
     generated: bool = False  # written by the model when the list ran low (stored in jobs/state.db)
     music: str = ""  # calm | cinematic: overrides the music the category would get (calendar videos)
 
@@ -168,6 +170,7 @@ def pick(
             score += w * (bool(i.character) and i.character == r.character)
             score += w * (bool(i.emotion) and i.emotion == r.emotion)
             score += (k < 2) * (i.shape == r.shape)
+            score += (k < 2) * (bool(i.content_type) and i.content_type == r.content_type)
         return score
 
     bucket = length_bucket(cfg.format, minutes or cfg.target_minutes)
@@ -257,6 +260,8 @@ def brief(idea: Idea, cfg: Config) -> str:
         lines.append(f"Series: {idea.series}")
     if idea.angle:
         lines.append(f"Angle: {idea.angle}")
+    if idea.truth:
+        lines.append(f"Central truth (the editor's reading; build on it): {idea.truth}")
     if idea.scriptures:
         lines.append("Key Scriptures: " + "; ".join(idea.scriptures))
     return "\n".join(lines)

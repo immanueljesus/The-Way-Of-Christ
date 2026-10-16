@@ -214,3 +214,8 @@ Following the creative direction "don't just tell them about faith, make them fe
 - **Backup voice made visible**: the Microsoft voice was refusing requests with an older `edge-tts`
   (now `>=7.3.1`), which silently switched scenes to Kokoro. A run now warns when that happens, the job
   records how many scenes it affected, and Ava/Emma fall back to a female Kokoro voice.
+
+- **More languages** (`localize.languages: [es, pt, fr, fil, ko]`): titles and descriptions in Spanish,
+  Brazilian Portuguese, French, Filipino and Korean, all from one request (the English is sent once);
+  a language that comes back missing, untranslated or with a lost reference is retried on its own, then
+  dropped. The smaller free model was tried and mistranslated titles, so translations use the main one.

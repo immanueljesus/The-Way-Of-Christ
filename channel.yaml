@@ -279,10 +279,14 @@ sleep:
 thumbnails:
   variants: 3
 
-# Spanish title and description on every video (YouTube shows them to viewers whose YouTube is in
-# Spanish). The video and voice stay English; a full Spanish channel is a later step.
+# Translated title and description on every video: YouTube shows them to viewers whose YouTube is set to
+# that language, and they're found by searches in it. Spanish (US and Latin America), Brazilian
+# Portuguese, French (France and Africa), Filipino (already ~4% of viewers) and Korean. Bible verses are
+# never re-translated (a quoted verse becomes its reference). The video and voice stay English; dubbed
+# channels are a later step.
 localize:
-  languages: [es]
+  languages: [es, pt, fr, fil, ko]
+  model: ""                     # the main model: the smaller one mistranslated Filipino and French titles
 
 # Bible first, emotion second: every script starts from a study of its passage (context, original
 # meaning, one-sentence central truth) and is checked against it afterwards. A script that bends the

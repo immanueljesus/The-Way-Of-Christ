@@ -182,7 +182,7 @@ def test_localize_skips_the_channel_language_and_failures(monkeypatch):
     cfg.localize.languages = ["en", "es", "fr"]
 
     def structured(cfg, system, user, schema, max_tokens=0):
-        if "French" in system or "fr" in system.split("into ")[1][:3]:
+        if not system.split("into ")[1].startswith("Spanish"):  # French, and the all-in-one request, fail
             raise RuntimeError("rate limited")
         return localize.Localized(**SPANISH)
 
@@ -218,3 +218,23 @@ def test_upload_job_sends_localizations_records_the_video_and_skips_cuts_for_sle
         "topic": "idea:fall-asleep-psalm-23", "title": script().title, "format": "long", "category": "peace",
         "shape": "peace", "emotion": None, "title_style": "verse", "minutes": 30, "voice": None, "series": None,
     }
+
+
+def test_all_languages_in_one_request_and_untranslated_ones_retried(monkeypatch):
+    cfg = Config()
+    cfg.localize.languages = ["es", "fil", "ko"]
+    english = {"title": script().title, "description": script().description, "footer": ""}
+    calls = []
+
+    def structured(cfg, system, user, schema, max_tokens=0):
+        calls.append(schema.__name__)
+        if schema is localize.Translations:
+            return schema(translations=[dict(SPANISH, language="es"), dict(english, language="fil")])  # ko missing
+        return localize.Localized(**dict(SPANISH, title="Hindi Ka Nakalimutan ng Diyos" if "Filipino" in system else "하나님은 잊지 않으십니다"))
+
+    monkeypatch.setattr(llm, "structured", structured)
+    out = localize.localize(cfg, script())
+    assert list(out) == ["es", "fil", "ko"] and calls == ["Translations", "Localized", "Localized"]
+    assert out["fil"]["title"] == "Hindi Ka Nakalimutan ng Diyos"
+    assert localize.untranslated("God has not forgotten you, Joseph", "God has not forgotten you, Joseph")
+    assert not localize.untranslated("God has not forgotten you, Joseph", "Hindi ka nakalimutan ng Diyos, Joseph")

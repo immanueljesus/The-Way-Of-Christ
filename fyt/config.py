@@ -312,6 +312,9 @@ class LocalizeConfig(BaseModel):
     whose YouTube is set to one of these languages see the title and description in it."""
 
     languages: list[str] = Field(default_factory=list)  # e.g. ["es"]
+    # Model for the translations (openai provider), e.g. a smaller one with its own free daily tokens, so
+    # translating never eats the script writer's allowance. Empty: the main model.
+    model: str = ""
 
 
 class Config(BaseModel):

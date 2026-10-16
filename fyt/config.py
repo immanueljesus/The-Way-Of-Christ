@@ -98,6 +98,12 @@ class VoiceConfig(BaseModel):
     loudness: float | None = None
     # Narration pace, used to size scripts to their target length. A deliberate narrator with pauses reads ~120.
     words_per_minute: int = 150
+    # The voice cast (edge): which voice reads which videos, so each series always sounds the same.
+    # Keys, most specific first: "sleep" (sleep videos), a series name, a category; each may end in
+    # ":short" or ":long" to apply to one format only. Anything else uses edge_voice.
+    cast: dict[str, str] = Field(default_factory=dict)
+    # Kokoro voices used when an Edge voice fails mid-video, matched to the cast voice's gender.
+    kokoro_female: str = "af_heart"
 
 
 class YouTubeConfig(BaseModel):
@@ -253,6 +259,33 @@ class InsightsConfig(BaseModel):
     min_weight: float = 0.8
 
 
+class BonusConfig(BaseModel):
+    """Extra videos on top of the schedule (fyt/bonus.py), only from what's left of the day's upload quota
+    and the month's free GitHub Actions minutes."""
+
+    # Follow-ups to winners: a Short that held viewers far better than the channel's usual (insights lift)
+    # gets a follow-up Short on the same passage, and a long version when the minutes allow.
+    winners: bool = False
+    min_lift: float = 1.25
+    # Rising topics: Bible and faith Wikipedia articles whose readership jumps, and new YouTube search
+    # suggestions for faith searches, matched to an unused idea or turned into one (Scripture checked).
+    trends: bool = False
+    watch_articles: list[str] = Field(default_factory=list)  # besides every Wikipedia article the ideas name
+    spike_ratio: float = 2.0  # last 2 days vs the month's median daily readers
+    min_daily_views: int = 1500
+    suggest_seeds: list[str] = Field(default_factory=list)  # YouTube search suggestion seeds, e.g. "prayer for"
+    min_fit: int = 8  # 0-10, how well a rising topic must fit the channel
+    # Caps.
+    shorts_per_week: int = 4
+    longs_per_month: int = 1
+    long_minutes: float = 8
+    follow_up_days: int = 4  # a winner's follow-ups go out within this many days, or are dropped
+    # The free Actions allowance for a private repo; bonuses only run while the month's projected use
+    # (measured run minutes + the rest of the month at the same pace) stays under this.
+    monthly_minutes: int = 2000
+    run_overhead_minutes: float = 5  # setup minutes per workflow run that the pipeline doesn't see
+
+
 class SleepConfig(BaseModel):
     """Long calm videos to fall asleep to ("Fall asleep in God's Word"). A video of 18 minutes or more is
     made this way: slower voice, longer pauses, calm music, no on-screen captions, and a low frame rate
@@ -337,6 +370,7 @@ class Config(BaseModel):
     schedule: ScheduleConfig = Field(default_factory=ScheduleConfig)
     growth: GrowthConfig = Field(default_factory=GrowthConfig)
     insights: InsightsConfig = Field(default_factory=InsightsConfig)
+    bonus: BonusConfig = Field(default_factory=BonusConfig)
     sleep: SleepConfig = Field(default_factory=SleepConfig)
     thumbnails: ThumbnailConfig = Field(default_factory=ThumbnailConfig)
     localize: LocalizeConfig = Field(default_factory=LocalizeConfig)

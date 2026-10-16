@@ -104,6 +104,29 @@ voice:
   edge_voice: en-US-AndrewMultilingualNeural
   edge_rate: "-10%"             # unhurried; mood pacing slows the heavy moments further
   edge_pitch: "-2Hz"            # a touch deeper
+  # The voice cast: each series always has the same narrator (free Microsoft voices). Series names
+  # win over pillars; ":short" applies to Shorts only. Anything not listed is read by Andrew (edge_voice).
+  # Samples of each voice: run `python -m fyt voices` (or see "Way of Christ voice samples" on the Desktop).
+  cast:
+    sleep: en-US-AvaMultilingualNeural                        # Ava: prayer and sleep (warm, female)
+    prayer: en-US-AvaMultilingualNeural
+    Prayers: en-US-AvaMultilingualNeural
+    Before You Sleep: en-US-AvaMultilingualNeural
+    Fall Asleep in God's Word: en-US-AvaMultilingualNeural
+    bible_story: en-US-BrianMultilingualNeural                # Brian: Bible stories
+    history: en-US-BrianMultilingualNeural
+    Lessons From...: en-US-BrianMultilingualNeural
+    Untold Stories: en-US-BrianMultilingualNeural
+    Did You Know?: en-US-BrianMultilingualNeural
+    Hard Seasons:short: en-US-EmmaMultilingualNeural          # Emma: encouragement Shorts
+    motivation:short: en-US-EmmaMultilingualNeural
+    purpose:short: en-US-EmmaMultilingualNeural
+    relationships:short: en-US-EmmaMultilingualNeural
+    spiritual_battles:short: en-US-EmmaMultilingualNeural
+    everyday_life:short: en-US-EmmaMultilingualNeural
+    # Andrew (edge_voice above): Jesus, teaching and wisdom, the Christian calendar, and every long video
+    # not listed here.
+  kokoro_female: af_heart        # backup voice for Ava and Emma if the Microsoft voice ever fails
   elevenlabs_stability: 0.35    # lower = more expressive
   elevenlabs_style: 0.35
 
@@ -213,9 +236,35 @@ growth:
 # permission: run `python -m fyt auth` again and update the YOUTUBE_TOKEN_JSON secret (SETUP.md).
 insights:
   enabled: true
-  refresh_days: 7
+  refresh_days: 2               # often enough to catch a winning Short while it's still rising (free)
   min_views: 30                 # ignore videos with fewer views
   min_videos: 3                 # a pillar or title style needs this many videos before it's judged
+
+# Bonus videos (fyt/bonus.py, `python -m fyt bonus`), on top of the schedule, checked once a day:
+# - winners: a Short that held viewers 25%+ better than the channel's usual gets a follow-up Short on the
+#   same passage from a new angle, and a long version if the month's minutes allow, within 4 days;
+# - trends: a Bible or faith Wikipedia article whose readers suddenly double, or a faith search YouTube
+#   has just started suggesting, that fits the channel (8/10+), becomes a bonus Short.
+# Only from what's left: the day's upload quota (4 a day in all) and the month's free GitHub Actions
+# minutes (2,000 for a private repo; the schedule uses ~1,850, so expect a handful of bonuses a month).
+bonus:
+  winners: true
+  min_lift: 1.25
+  trends: true
+  min_fit: 8
+  spike_ratio: 2.0
+  min_daily_views: 1500
+  shorts_per_week: 3
+  longs_per_month: 1
+  long_minutes: 8
+  follow_up_days: 4
+  monthly_minutes: 2000         # raise (or remove the limit's effect) if the repo becomes public
+  watch_articles: [Jesus, Bible, Book of Psalms, Lord's Prayer, Sermon on the Mount, Book of Revelation,
+    Ten Commandments, Noah's Ark, Book of Job, Book of Proverbs, Gospel of John, Parables of Jesus,
+    Crucifixion of Jesus, Resurrection of Jesus, Nativity of Jesus, Holy Spirit, Prayer, Armor of God,
+    Dead Sea Scrolls, Garden of Eden, Tower of Babel, Exodus, "Mary, mother of Jesus"]
+  suggest_seeds: ["prayer for", "bible verse for", "bible story", "what does the bible say about",
+    "jesus", "psalm", "god is", "christian motivation", "prayer before sleep"]
 
 # Sleep videos (18+ minutes, e.g. the Sunday-night slot above): slow voice, long pauses, calm music,
 # no burned-in captions, 12 frames a second so they render in about the time an 8-10 minute video takes.

@@ -216,5 +216,5 @@ def test_upload_job_sends_localizations_records_the_video_and_skips_cuts_for_sle
     assert sent["loc"] == {"es": SPANISH}
     assert Uploads(cfg).described()["VID1"] == {
         "topic": "idea:fall-asleep-psalm-23", "title": script().title, "format": "long", "category": "peace",
-        "shape": "peace", "emotion": None, "title_style": "verse", "minutes": 30,
+        "shape": "peace", "emotion": None, "title_style": "verse", "minutes": 30, "voice": None, "series": None,
     }

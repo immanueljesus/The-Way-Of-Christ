@@ -195,3 +195,22 @@ Following the creative direction "don't just tell them about faith, make them fe
   YouTube localizations. Bible verses are never re-translated by the model (a quoted verse becomes its
   reference); a translation that drops a reference, link or chapter timestamp is not used. The video
   itself stays English; a full Spanish channel is a later step.
+
+## Bonus videos and the voice cast
+
+- **Follow-ups to winners** (`fyt/bonus.py`): a Short that holds viewers 25%+ better than the channel's
+  usual gets a follow-up Short on the same passage from a new angle, and a long version when the month's
+  minutes allow, within 4 days. Insights now refresh every 2 days so winners are caught while rising.
+- **Rising topics**: once a day, Bible and faith Wikipedia articles whose readers double (free pageviews)
+  and faith searches YouTube has newly started suggesting (free, no API quota) become a bonus Short when
+  they fit the channel (8/10+), using an unused catalog idea when one matches. New ideas must name
+  passages that exist; every bonus goes through the same study, faithfulness review and Scripture check.
+- **Budget**: bonuses only use what's left: the day's upload quota (4 in all), 3 bonus Shorts a week and
+  1 long a month, and the month's free Actions minutes, measured run by run (projected use must stay
+  under 2,000 for a private repo). `python -m fyt bonus` shows the queue and the minutes used.
+- **Voice cast** (`voice.cast`): Andrew for Jesus, teaching and the calendar; Ava for prayer and sleep;
+  Brian for Bible stories; Emma for encouragement Shorts; each series always keeps its narrator. The
+  analytics loop also compares voices. `python -m fyt voices` renders a sample of each.
+- **Backup voice made visible**: the Microsoft voice was refusing requests with an older `edge-tts`
+  (now `>=7.3.1`), which silently switched scenes to Kokoro. A run now warns when that happens, the job
+  records how many scenes it affected, and Ava/Emma fall back to a female Kokoro voice.

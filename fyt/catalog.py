@@ -178,7 +178,7 @@ def pick(
         return score
 
     bucket = length_bucket(cfg.format, minutes or cfg.target_minutes)
-    fresh = [i for i in ideas if i.topic not in used]
+    fresh = [i for i in ideas if i.topic not in used and not i.id.startswith("bonus-")]  # bonus ideas wait for fyt/bonus.py
     fits = [i for i in fresh if bucket in i.formats]
     if not fits and bucket != "short":  # any long-form idea can stretch or shrink a little
         fits = [i for i in fresh if set(i.formats) & {"medium", "long", "sleep"}]

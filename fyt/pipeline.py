@@ -240,13 +240,21 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
         raise RuntimeError("script failed QA: " + "; ".join(problems))
 
     provider = voice or cfg.voice.provider
-    log(job, f"voicing {len(script.scenes)} scenes with {provider}")
+    # The voice cast: each series (or pillar, or the sleep videos) always has the same narrator.
+    narrator = tts.cast_voice(cfg, script.series, idea.category if idea else job.meta.get("category"))
+    vcfg = tts.with_voice(cfg, narrator)
+    log(job, f"voicing {len(script.scenes)} scenes with {provider}" + (f" ({narrator})" if provider == "edge" else ""))
     clips_dir = job.file("clips")
     clips_dir.mkdir(exist_ok=True)
+    tts.FALLBACKS.clear()
     clips = [
-        tts.synthesize(cfg, s.narration, clips_dir / f"{i:03}.wav", provider, speed=tts.scene_speed(cfg, s.mood))
+        tts.synthesize(vcfg, s.narration, clips_dir / f"{i:03}.wav", provider, speed=tts.scene_speed(cfg, s.mood))
         for i, s in enumerate(script.scenes)
     ]
+    job.update(voice=narrator if provider == "edge" else provider, voice_fallback_scenes=len(tts.FALLBACKS))
+    if tts.FALLBACKS:  # the backup voice sounds different: make it visible in the run's log
+        print(f"::warning::{len(tts.FALLBACKS)} of {len(clips)} scenes used the backup voice ({cfg.voice.fallback_provider}) "
+              f"because {provider} failed")
     gaps = tts.scene_gaps(cfg, script.scenes, short=cfg.format == "short")
     spans = tts.join_clips(clips, gaps, job.public / "voice.wav")
     voice_src = None if provider == "silent" else "voice.wav"
@@ -501,6 +509,7 @@ def upload_job(cfg: Config, job: Job, force: bool = False, publish_at: datetime 
     Uploads(cfg).describe(  # for the analytics feedback loop (fyt/insights.py)
         video_id, topic=m.get("topic"), title=script.title, format=cfg.format, category=m.get("category"),
         shape=m.get("shape"), emotion=m.get("emotion"), title_style=m.get("title_style"), minutes=m.get("minutes"),
+        voice=m.get("voice"), series=script.series,
     )
     if script.series and youtube.can_manage():
         try:

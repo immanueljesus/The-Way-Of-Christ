@@ -75,6 +75,17 @@ jobs:
           key: fyt-state-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: fyt-state-
 
+      # Once a day: follow-ups to Shorts that held viewers far better than usual, and rising faith
+      # topics (bonus in channel.yaml). Queued here; `fill` makes them if quota and free minutes allow.
+      - name: Look for bonus videos
+        if: env.TASK == 'fill'
+        continue-on-error: true
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
+        run: python -m fyt bonus --scan
+
       - name: Check what the schedule needs
         id: need
         run: |

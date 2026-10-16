@@ -146,6 +146,9 @@ class Uploads:
         """When the last upload of this kind happened (ISO time), or None."""
         return self.db.execute("select max(uploaded) from uploads where kind=?", (kind,)).fetchone()[0]
 
+    def count_kind_since(self, kind: str, since: str) -> int:
+        return self.db.execute("select count(*) from uploads where kind=? and uploaded >= ?", (kind, since)).fetchone()[0]
+
     def count_since(self, since: str) -> int:
         return self.db.execute("select count(*) from uploads where uploaded >= ?", (since,)).fetchone()[0]
 

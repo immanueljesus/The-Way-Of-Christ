@@ -64,6 +64,11 @@ def main(argv: list[str] | None = None) -> None:
     sub.add_parser("stats", help="show views for uploaded videos")
     ins = sub.add_parser("insights", help="what viewers stay with (YouTube Analytics) and how it steers the next videos")
     ins.add_argument("--refresh", action="store_true", help="read YouTube Analytics now instead of weekly")
+    vo = sub.add_parser("voices", help="render a sample of every narrator in the voice cast (jobs/voice-samples)")
+    vo.add_argument("--passage", default="Matthew 11:28-30")
+    bo = sub.add_parser("bonus", help="bonus videos: follow-ups to winners and rising topics (queue and budget)")
+    bo.add_argument("--scan", action="store_true", help="look for winners and rising topics now (once a day)")
+    bo.add_argument("--force", action="store_true", help="with --scan: even if today's scan already ran")
 
     args = p.parse_args(argv)
     cfg = load_config(args.config)
@@ -128,7 +133,12 @@ def main(argv: list[str] | None = None) -> None:
         from fyt import schedule
 
         if args.needed:
-            print("yes" if schedule.needed(cfg) else "no")
+            need = schedule.needed(cfg)
+            if not need:  # a run that stops here still uses a minute or two of the free allowance
+                from fyt import bonus
+
+                bonus.record_minutes(cfg, schedule.utcnow(), 1.5)
+            print("yes" if need else "no")
             return
         table, soon = schedule.report(cfg)
         print(table)
@@ -185,6 +195,25 @@ def main(argv: list[str] | None = None) -> None:
         youtube.auth()
     elif args.cmd == "stats":
         print(pipeline.performance_summary(cfg, limit=100, learned=False) or "no uploaded videos yet")
+    elif args.cmd == "voices":
+        from fyt import scripture
+
+        text = "It's late, and you're still carrying it... Jesus said: " + scripture.fetch(cfg, args.passage).text.strip()
+        out = ROOT / "jobs" / "voice-samples"
+        out.mkdir(parents=True, exist_ok=True)
+        cast: dict[str, list[str]] = {cfg.voice.edge_voice: ["everything else"]}
+        for key, v in cfg.voice.cast.items():
+            cast.setdefault(v, []).append(key)
+        for v, keys in cast.items():
+            name = v.split("-")[-1].removesuffix("Neural").removesuffix("Multilingual").lower()
+            tts.synthesize(tts.with_voice(cfg, v), text, out / f"{name}.wav", "edge")
+            print(f"{out / (name + '.wav')}: {', '.join(keys)}")
+    elif args.cmd == "bonus":
+        from fyt import bonus
+
+        if args.scan:
+            print(f"queued {bonus.scan(cfg, force=args.force)} bonus video(s)")
+        print(bonus.report(cfg))
     elif args.cmd == "insights":
         from fyt import insights
 

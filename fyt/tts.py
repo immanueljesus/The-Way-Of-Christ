@@ -270,7 +270,35 @@ def synthesize(cfg: Config, text: str, out: Path, provider: str | None = None, s
             last = e
             time.sleep(3 * (attempt + 1))
     print(f"warning: {name} voice failed ({last}); using {cfg.voice.fallback_provider} for this scene")
+    FALLBACKS.append(str(out))
+    if is_female(cfg.voice.edge_voice):  # keep the narrator's gender when the backup voice steps in
+        cfg = cfg.model_copy(update={"voice": cfg.voice.model_copy(update={"kokoro_voice": cfg.voice.kokoro_female})})
     return PROVIDERS[cfg.voice.fallback_provider](cfg, text, out, speed)
+
+
+FALLBACKS: list[str] = []  # scenes voiced by the backup voice since the last reset (see pipeline)
+FEMALE = ("Ava", "Emma", "Jenny", "Aria", "Sonia", "Michelle", "Libby", "Natasha", "Clara", "Sara", "Nancy", "Jane", "Ana")
+
+
+def is_female(edge_voice: str) -> bool:
+    name = edge_voice.split("-")[-1].removesuffix("Neural").removesuffix("Multilingual")
+    return name in FEMALE
+
+
+def cast_voice(cfg: Config, series: str | None = None, category: str | None = None) -> str:
+    """The Edge voice for a video (config voice.cast): sleep, then series, then category, each optionally
+    for one format ("prayer:short"); otherwise voice.edge_voice."""
+    cast = cfg.voice.cast
+    keys = (["sleep"] if cfg.is_sleep else []) + [k for k in (series, category) if k]
+    for key in keys:
+        for k in (f"{key}:{cfg.format}", key):
+            if k in cast:
+                return cast[k]
+    return cfg.voice.edge_voice
+
+
+def with_voice(cfg: Config, edge_voice: str) -> Config:
+    return cfg.model_copy(update={"voice": cfg.voice.model_copy(update={"edge_voice": edge_voice})})
 
 
 def scene_speed(cfg: Config, mood: str | None) -> float:

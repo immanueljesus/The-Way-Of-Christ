@@ -301,7 +301,22 @@ def fill(cfg: Config, now: datetime | None = None, rng: random.Random | None = N
 
     # The schedule comes first; bonus videos only use what's left of the quota and the run.
     if budget > 0 and failures < 3:
-        filled += bonus(cfg, now, rng, clock, started, budget, topics)
+        made = bonus(cfg, now, rng, clock, started, budget, topics)
+        filled += made
+        budget -= made
+    if budget > 0 and failures < 3 and (cfg.bonus.winners or cfg.bonus.trends):
+        from fyt import bonus as extra  # follow-ups to winners and rising topics (fyt/bonus.py)
+
+        try:
+            filled += extra.run(cfg, now, rng, clock, started, budget)
+        except Exception as e:
+            print(f"::warning::bonus videos skipped: {e}")
+    try:  # the month's runner minutes, so bonus videos never push past the free allowance
+        from fyt import bonus as extra
+
+        extra.record_minutes(cfg, now, (clock() - started) / 60 + cfg.bonus.run_overhead_minutes)  # all of it, bonuses too
+    except Exception as e:
+        print(f"::warning::run minutes not recorded: {e}")
     return filled
 
 
@@ -386,4 +401,8 @@ def needed(cfg: Config, now: datetime | None = None) -> bool:
     """Whether a fill run has anything to do (so a run can skip installing the renderer)."""
     now = now or utcnow()
     work = bool(empty_slots(cfg, now)) or bonus_due(cfg, "short", now) or bonus_due(cfg, "long", now)
+    if not work and (cfg.bonus.winners or cfg.bonus.trends):
+        from fyt import bonus as extra
+
+        work = any(extra.caps_allow(cfg, i["kind"], now) for i in extra.due(cfg, now))
     return work and uploads_left_today(cfg, now) > 0

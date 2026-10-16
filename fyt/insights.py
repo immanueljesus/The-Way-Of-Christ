@@ -31,6 +31,7 @@ GUARD = (
     "These lessons are about delivery only (the opening, pacing, packaging). They never change what the "
     "passage says or means, which Scripture is used, or what the title may promise."
 )
+WINNER_LIFT = 1.2  # kept as a winner (bonus.min_lift picks which get follow-ups)
 HOOK_POINT = 0.1  # the retention curve is read at 10% of the video: how well the opening holds
 
 
@@ -149,6 +150,7 @@ def lessons(cfg: Config, rows: list[dict], meta: dict[str, dict], now: datetime)
         return {
             "id": r["id"], "title": m.get("title") or r["id"], "format": m["format"], "views": r["views"],
             "view_pct": round(r["view_pct"], 1), "swipe_away": swipe_away(r), "category": m.get("category"),
+            "topic": m.get("topic"), "series": m.get("series"), "lift": round(lifts[r["id"]], 3),
         }
 
     ranked = sorted(rows, key=lambda r: lifts[r["id"]], reverse=True)
@@ -159,6 +161,9 @@ def lessons(cfg: Config, rows: list[dict], meta: dict[str, dict], now: datetime)
         "categories": grouped("category"),
         "shapes": grouped("shape"),
         "title_styles": grouped("title_style"),
+        "voices": grouped("voice"),
+        # Shorts that held viewers far better than usual: fyt/bonus.py makes follow-ups to them.
+        "winners": [card(r) for r in ranked if meta[r["id"]]["format"] == "short" and lifts[r["id"]] >= WINNER_LIFT],
         "best": [card(r) for r in ranked[:3]],
         "worst": [card(r) for r in ranked[-3:][::-1]] if len(ranked) > 3 else [],
     }
@@ -304,7 +309,8 @@ def report(cfg: Config) -> str:
         if f.get("median_hook_hold") is not None:
             extra += f", {f['median_hook_hold']:.0%} still watching at 10%"
         out.append(f"{fmt}: {f['videos']} videos, {f['median_view_pct']}% viewed (median){extra}")
-    for title, key in (("Pillars", "categories"), ("Story shapes", "shapes"), ("Title styles", "title_styles")):
+    for title, key in (("Pillars", "categories"), ("Story shapes", "shapes"), ("Title styles", "title_styles"),
+                       ("Voices", "voices")):
         if lz.get(key):
             out += ["", f"{title} (1.00 = the channel's usual):"]
             out += [f"  {k:<18} {v['lift']:.2f}  ({v['videos']} videos)" for k, v in sorted(lz[key].items(), key=lambda kv: -kv[1]["lift"])]

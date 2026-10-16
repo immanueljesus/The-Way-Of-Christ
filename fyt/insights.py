@@ -52,6 +52,11 @@ def fetch(cfg: Config, now: datetime) -> list[dict]:
     try:
         resp = yt.reports().query(metrics="views,averageViewPercentage,averageViewDuration,engagedViews", **query).execute()
     except Exception as e:  # engaged views are newer than the rest; read the others without them
+        if "accessNotConfigured" in str(e) or "has not been used in project" in str(e):
+            raise RuntimeError(
+                "the YouTube Analytics API is not enabled in your Google Cloud project: enable it at "
+                "https://console.cloud.google.com/apis/library/youtubeanalytics.googleapis.com and retry"
+            ) from None
         print(f"note: engaged views not available ({str(e)[:120]}); swipe-away can't be measured")
         resp = yt.reports().query(metrics="views,averageViewPercentage,averageViewDuration", **query).execute()
     names = [h["name"] for h in resp.get("columnHeaders", [])]

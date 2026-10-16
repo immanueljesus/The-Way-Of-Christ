@@ -189,7 +189,10 @@ def main(argv: list[str] | None = None) -> None:
         from fyt import insights
 
         if args.refresh:
-            insights.refresh(cfg, force=True)
+            try:
+                insights.refresh(cfg, force=True)
+            except Exception as e:
+                raise SystemExit(f"could not read YouTube Analytics: {e}")
         print(insights.report(cfg))
 
 

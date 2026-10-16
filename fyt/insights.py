@@ -239,7 +239,15 @@ def refresh(cfg: Config, now: datetime | None = None, force: bool = False) -> di
     meta = uploads.described()
     for vid, kind in uploads.kinds().items():  # videos from before the loop existed: their format at least
         meta.setdefault(vid, {"format": kind})
-    lz = lessons(cfg, fetch(cfg, now), meta, now)
+    rows = fetch(cfg, now)
+    unknown = [r["id"] for r in rows if meta.get(r["id"], {}).get("format") not in ("short", "long")]
+    if unknown:  # uploaded before videos were recorded here (or on another machine): ask YouTube what they are
+        try:
+            for vid, d in youtube.video_details(unknown).items():
+                meta[vid] = {**meta.get(vid, {}), "title": d["title"], "format": d["format"]}
+        except Exception as e:
+            print(f"note: could not look up {len(unknown)} older videos: {str(e)[:120]}")
+    lz = lessons(cfg, rows, meta, now)
     uploads.set_note(NOTE, json.dumps(lz))
     print(f"insights: learned from {lz['videos']} videos")
     return lz

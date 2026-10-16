@@ -146,3 +146,16 @@ def test_refresh_runs_weekly_and_needs_the_analytics_permission(tmp_path, monkey
     assert insights.refresh(cfg, NOW)["videos"] == 8
     assert insights.refresh(cfg, NOW + timedelta(days=3)) is None  # learned this week already
     assert insights.refresh(cfg, NOW + timedelta(days=7, minutes=1)) is not None
+
+
+def test_videos_not_recorded_here_are_looked_up_on_youtube(tmp_path, monkeypatch):
+    cfg = config(tmp_path)
+    rows, _ = rows_and_meta()
+    monkeypatch.setattr(insights, "fetch", lambda cfg, now: rows)
+    monkeypatch.setattr(youtube, "can_analyze", lambda: True)
+    monkeypatch.setattr(youtube, "video_details", lambda ids: {
+        i: {"title": f"Video {i}", "seconds": 45 if i.startswith("s") else 600, "format": "short" if i.startswith("s") else "long"}
+        for i in ids})
+    lz = insights.refresh(cfg, NOW, force=True)
+    assert lz["videos"] == 8 and set(lz["formats"]) == {"short", "long"}
+    assert youtube._seconds("PT1M5S") == 65 and youtube._seconds("PT1H") == 3600 and youtube._seconds("P0D") == 0

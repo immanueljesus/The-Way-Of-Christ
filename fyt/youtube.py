@@ -303,6 +303,27 @@ def stats(video_ids: list[str]) -> list[dict]:
     return out
 
 
+def _seconds(iso: str) -> int:
+    """ISO 8601 duration (PT1H2M3S) -> seconds."""
+    m = re.fullmatch(r"P(?:(\d+)D)?T?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?", iso or "")
+    if not m:
+        return 0
+    d, h, mi, s = (int(x or 0) for x in m.groups())
+    return ((d * 24 + h) * 60 + mi) * 60 + s
+
+
+def video_details(video_ids: list[str]) -> dict[str, dict]:
+    """id -> {title, seconds, format}: format "short" for videos of 3 minutes or less (1 quota unit per 50)."""
+    yt = _service()
+    out = {}
+    for i in range(0, len(video_ids), 50):
+        resp = yt.videos().list(part="snippet,contentDetails", id=",".join(video_ids[i : i + 50])).execute()
+        for item in resp.get("items", []):
+            secs = _seconds(item["contentDetails"].get("duration", ""))
+            out[item["id"]] = {"title": item["snippet"]["title"], "seconds": secs, "format": "short" if secs <= 180 else "long"}
+    return out
+
+
 def recent_uploads(limit: int = 100) -> list[dict]:
     """The channel's newest uploads, scheduled ones included: id, publish_at (or None), description.
     Costs a few quota units; needs more than the upload-only scope."""

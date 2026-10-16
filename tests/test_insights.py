@@ -159,3 +159,19 @@ def test_videos_not_recorded_here_are_looked_up_on_youtube(tmp_path, monkeypatch
     lz = insights.refresh(cfg, NOW, force=True)
     assert lz["videos"] == 8 and set(lz["formats"]) == {"short", "long"}
     assert youtube._seconds("PT1M5S") == 65 and youtube._seconds("PT1H") == 3600 and youtube._seconds("P0D") == 0
+
+
+def test_country_breakdown_and_language_reach(tmp_path):
+    class Fake(FakeAnalytics):
+        def query(self, **kw):
+            body = {"rows": [["US", 860, 61.0], ["BR", 60, 50.0], ["PH", 40, 65.0], ["MX", 40, 55.0], ["XX", 0, 0.0]]}
+            return type("Req", (), {"execute": lambda self_: body})()
+
+    rows = insights.countries(config(tmp_path), NOW, yt=Fake())
+    assert [r["country"] for r in rows] == ["US", "BR", "PH", "MX"] and rows[0]["share"] == 0.86
+    reach = insights.language_reach(rows)
+    assert reach["pt"] == 0.06 and reach["fil"] == 0.04 and reach["es"] == 0.04 and reach["ko"] == 0
+    cfg = config(tmp_path)
+    Uploads(cfg).set_note(insights.NOTE, json.dumps({**insights.lessons(cfg, *rows_and_meta(), NOW), "countries": rows, "language_reach": reach}))
+    text = insights.report(cfg)
+    assert "Where viewers are" in text and "pt is past 5%" in text

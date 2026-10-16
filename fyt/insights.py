@@ -83,6 +83,38 @@ def fetch(cfg: Config, now: datetime) -> list[dict]:
     return out
 
 
+# Where the translated titles (localize.languages) are spoken, to see which language groups find the channel.
+LANGUAGE_COUNTRIES = {
+    "es": {"MX", "ES", "AR", "CO", "PE", "VE", "CL", "EC", "GT", "CU", "BO", "DO", "HN", "PY", "SV", "NI", "CR", "PA", "UY", "PR"},
+    "pt": {"BR", "PT", "AO", "MZ"},
+    "fr": {"FR", "CI", "CD", "CM", "SN", "BF", "ML", "BJ", "TG", "GA", "CG", "HT", "BE", "CH", "MG", "RW", "BI"},
+    "fil": {"PH"},
+    "ko": {"KR"},
+}
+
+
+def countries(cfg: Config, now: datetime, yt=None) -> list[dict]:
+    """Views by viewer country over the lookback window, most first: country, views, share, view_pct.
+    (YouTube Analytics has no viewer-language dimension; countries stand in for it.)"""
+    from fyt import youtube
+
+    yt = yt or youtube.analytics_service()
+    end = (now - timedelta(days=1)).date()
+    start = end - timedelta(days=cfg.insights.lookback_days)
+    resp = yt.reports().query(
+        ids="channel==MINE", startDate=start.isoformat(), endDate=end.isoformat(),
+        metrics="views,averageViewPercentage", dimensions="country", sort="-views", maxResults=50,
+    ).execute()
+    rows = [(r[0], int(r[1]), float(r[2])) for r in resp.get("rows", []) or [] if int(r[1]) > 0]
+    total = sum(v for _, v, _ in rows) or 1
+    return [{"country": c, "views": v, "share": round(v / total, 4), "view_pct": round(p, 1)} for c, v, p in rows]
+
+
+def language_reach(rows: list[dict]) -> dict[str, float]:
+    """Share of views from countries where each translated language is spoken."""
+    return {lang: round(sum(r["share"] for r in rows if r["country"] in cs), 4) for lang, cs in LANGUAGE_COUNTRIES.items()}
+
+
 def hook_hold(yt, video_id: str, start: str, end: str) -> float | None:
     """Share of viewers still watching at 10% of the video (audienceWatchRatio)."""
     resp = yt.reports().query(
@@ -253,6 +285,11 @@ def refresh(cfg: Config, now: datetime | None = None, force: bool = False) -> di
         except Exception as e:
             print(f"note: could not look up {len(unknown)} older videos: {str(e)[:120]}")
     lz = lessons(cfg, rows, meta, now)
+    try:
+        lz["countries"] = countries(cfg, now)
+        lz["language_reach"] = language_reach(lz["countries"])
+    except Exception as e:  # nice to know; the lessons don't depend on it
+        print(f"note: no country breakdown: {str(e)[:120]}")
     uploads.set_note(NOTE, json.dumps(lz))
     print(f"insights: learned from {lz['videos']} videos")
     return lz
@@ -323,6 +360,15 @@ def report(cfg: Config) -> str:
     for fmt, notes in lz.get("notes", {}).items():
         if notes:
             out += ["", f"Script notes ({fmt}):", notes]
+    if lz.get("countries"):
+        out += ["", "Where viewers are:"]
+        out += [f"  {r['country']}  {r['share']:6.1%}  ({r['views']} views, {r['view_pct']}% viewed)" for r in lz["countries"][:10]]
+        reach = lz.get("language_reach") or {}
+        out.append("Views from countries of the translated titles: "
+                   + ", ".join(f"{k} {v:.1%}" for k, v in reach.items()))
+        top = max(reach.items(), key=lambda kv: kv[1], default=(None, 0))
+        if top[1] >= 0.05:
+            out.append(f"  {top[0]} is past 5%: worth trying a dubbed {top[0]} audio track on the best videos.")
     summ = summary(cfg)
     if summ:
         out += ["", summ]

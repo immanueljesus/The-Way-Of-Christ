@@ -238,6 +238,49 @@ class LiturgyConfig(BaseModel):
     season_bias: bool = True  # evergreen picks lean towards the season's themes (Lent: repentance...)
 
 
+class InsightsConfig(BaseModel):
+    """The analytics feedback loop (fyt/insights.py): what viewers actually watched, read once a week from
+    the free YouTube Analytics API, nudges topic, title and script choices. Never what a passage says."""
+
+    enabled: bool = True
+    refresh_days: float = 7  # how often the lessons are recomputed
+    lookback_days: int = 90  # videos published in this window are compared
+    min_views: int = 30  # videos with fewer views say too little to learn from
+    min_videos: int = 3  # a category or title style needs this many videos before it is judged
+    retention_videos: int = 15  # newest videos whose retention curve (hook hold) is read, one request each
+    # How far a lesson may move a pillar's share of the content mix (x0.8 .. x1.25 by default).
+    max_weight: float = 1.25
+    min_weight: float = 0.8
+
+
+class SleepConfig(BaseModel):
+    """Long calm videos to fall asleep to ("Fall asleep in God's Word"). A video of 18 minutes or more is
+    made this way: slower voice, longer pauses, calm music, no on-screen captions, and a low frame rate
+    so a 30-60 minute video renders on the free runner in about the time an 8-10 minute one takes."""
+
+    fps: int = 12
+    words_per_minute: int = 95  # a slow, restful read with long pauses
+    gap_seconds: float = 2.0
+    edge_rate: str = "-18%"
+    kokoro_speed: float = 0.8
+    music_volume: float = 0.22
+    captions: bool = False  # burned-in captions (the .srt is still uploaded)
+    letterbox: bool = False
+
+
+class ThumbnailConfig(BaseModel):
+    # Long videos get thumbnail-b.png and thumbnail-c.png beside thumbnail.png (which is uploaded):
+    # three versions to load into YouTube Studio's Test & compare by hand.
+    variants: int = 3
+
+
+class LocalizeConfig(BaseModel):
+    """Translated titles and descriptions (fyt/localize.py), uploaded as YouTube localizations: viewers
+    whose YouTube is set to one of these languages see the title and description in it."""
+
+    languages: list[str] = Field(default_factory=list)  # e.g. ["es"]
+
+
 class Config(BaseModel):
     channel: ChannelInfo = Field(default_factory=ChannelInfo)
     format: Literal["long", "short"] = "long"
@@ -293,6 +336,10 @@ class Config(BaseModel):
     youtube: YouTubeConfig = Field(default_factory=YouTubeConfig)
     schedule: ScheduleConfig = Field(default_factory=ScheduleConfig)
     growth: GrowthConfig = Field(default_factory=GrowthConfig)
+    insights: InsightsConfig = Field(default_factory=InsightsConfig)
+    sleep: SleepConfig = Field(default_factory=SleepConfig)
+    thumbnails: ThumbnailConfig = Field(default_factory=ThumbnailConfig)
+    localize: LocalizeConfig = Field(default_factory=LocalizeConfig)
     # Bible first, emotion second: study each passage before writing and check the script against it
     # afterwards (fyt/llm.py study_passage, check_faithfulness). A script that bends the passage fails.
     bible_first: bool = False
@@ -314,6 +361,28 @@ class Config(BaseModel):
     @property
     def target_seconds(self) -> float:
         return 50.0 if self.format == "short" else self.target_minutes * 60
+
+    @property
+    def is_sleep(self) -> bool:
+        """A long calm video to fall asleep to (catalog length bucket "sleep")."""
+        return self.format == "long" and self.target_minutes >= SLEEP_MINUTES
+
+
+SLEEP_MINUTES = 18  # long videos this long or longer are sleep / prayer videos (catalog.length_bucket)
+
+
+def sleep_config(cfg: Config) -> Config:
+    """The channel config adjusted for a sleep video (see SleepConfig); other videos are unchanged."""
+    if not cfg.is_sleep:
+        return cfg
+    s = cfg.sleep
+    voice = cfg.voice.model_copy(update={
+        "words_per_minute": s.words_per_minute, "gap_seconds": s.gap_seconds,
+        "edge_rate": s.edge_rate, "kokoro_speed": s.kokoro_speed,
+    })
+    return cfg.model_copy(update={
+        "voice": voice, "captions": s.captions, "letterbox": s.letterbox, "music_volume": s.music_volume,
+    })
 
 
 def load_config(path: str | Path | None = None) -> Config:

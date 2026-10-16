@@ -18,6 +18,9 @@
 #     kind      short | long (long videos may set minutes)
 #     title, angle, scriptures, arc, emotion, character   as in content/ideas.yaml
 #     music     calm | cinematic (calm tracks for solemn days like Good Friday)
+#     time      optional "HH:MM" (schedule time zone): its own publish time. On a regular slot's time
+#               (e.g. the 08:00 morning Short) the video takes that slot instead of adding one.
+#     title_prefix  optional, e.g. "Advent: Day 3 · ": every title starts with it (a numbered series)
 #
 # seasons: what the evergreen videos lean towards in each part of the year (emotions and pillars).
 # The first season that contains a day wins, so specific seasons come before broad ones.
@@ -115,6 +118,52 @@ events:
         arc: story
         emotion: joy
         music: cinematic
+      - id: christmas-eve-prayer
+        offset: -1
+        kind: long
+        minutes: 10
+        time: "21:00"                 # Christmas Eve night, after the day's long story at 15:00
+        title: "A Christmas Eve Prayer"
+        category: prayer
+        angle: "Christmas Eve night, the house finally quiet. Pray together slowly: thanks for the gift of Jesus, peace for the lonely and the grieving this Christmas, and the angels' song over our homes. A prayer to pray along with, not a talk about prayer."
+        truth: "God gave his Son into the darkness of the world; the angels announced peace among people of good will, and the light still shines in the darkness."
+        scriptures: [Luke 2:14, John 1:4-5, Numbers 6:24-26]
+        arc: prayer
+        emotion: peace
+        music: calm
+      - id: christmas-gabriel-two-announcements
+        offset: -18
+        kind: long
+        minutes: 8
+        title: "Gabriel's Two Announcements"
+        angle: "An old priest in the temple and a young girl in Nazareth. The same angel, two impossible promises, two very different answers: Zechariah's doubt and Mary's 'let it be to me'. The Christmas story begins months before Bethlehem."
+        truth: "God announced the births of John and Jesus through Gabriel; Zechariah asked for a sign and was silenced until it came true, while Mary believed and gave herself to God's word."
+        scriptures: [Luke 1:11-13, Luke 1:18-20, Luke 1:26-33, Luke 1:38]
+        arc: story
+        emotion: hope
+        character: "Gabriel"
+      - id: christmas-story-as-luke-tells-it
+        offset: -6
+        kind: long
+        minutes: 12
+        title: "The Christmas Story, as Luke Tells It"
+        angle: "Tell the whole of Luke 2:1-20 slowly and faithfully, scene by scene: the decree, the road to Bethlehem, the manger, the shepherds, the angels, Mary treasuring it all. Imagine sights and sounds, never new events."
+        truth: "In Luke's account the Saviour, Christ the Lord, is born in humble circumstances and announced first to shepherds, who go, see and return glorifying God."
+        scriptures: [Luke 2:1-7, Luke 2:8-14, Luke 2:15-20]
+        arc: story
+        emotion: joy
+        music: cinematic
+      - id: christmas-simeon-and-anna
+        offset: 3
+        kind: long
+        minutes: 8
+        title: "Simeon and Anna: The Long Wait Ends"
+        angle: "Forty days after Christmas the story goes on: two old people who had waited their whole lives meet the baby in the temple. 'My eyes have seen your salvation.' For everyone still waiting."
+        truth: "Simeon, promised he would see the Lord's Christ, held Jesus and praised God for his salvation, a light for the nations; Anna gave thanks and spoke of him to all who were looking for redemption."
+        scriptures: [Luke 2:25-32, Luke 2:36-38]
+        arc: story
+        emotion: hope
+        character: "Simeon"
       - id: christmas-a-savior-is-born
         offset: 0
         kind: short
@@ -148,6 +197,294 @@ events:
         scriptures: [John 1:14]
         arc: wisdom
         emotion: gratitude
+
+  # ======================================================================= ADVENT CALENDAR
+  # A Short every morning from 1 to 24 December, "Advent: Day 1" to "Advent: Day 24": one promise of
+  # Christmas a day, following the four Advent candles (hope, peace, joy, love) and ending on Christmas
+  # Eve. Each takes the 08:00 morning Short slot (New York time) that day instead of adding a Short, so
+  # the daily uploads stay within the YouTube API quota; the evening Short and the long videos go on.
+  advent_calendar:
+    name: Advent calendar
+    anchor: "12-01"
+    tradition: ecumenical
+    category: jesus
+    series: "Advent: 24 Days to Christmas"
+    videos:
+      # ---- Week of hope: the promise
+      - id: advent-day-01-the-first-promise
+        offset: 0
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 1 · "
+        title: "The First Promise"
+        angle: "Right after the fall, in the garden, God speaks of the woman's offspring who will crush the serpent's head. Advent begins here: the first promise, given on the darkest day."
+        truth: "In the very judgment of the fall God promised that the woman's offspring would crush the serpent's head, which Christians have long read as the first promise of Christ's victory over evil."
+        scriptures: [Genesis 3:15]
+        arc: curiosity
+        emotion: hope
+      - id: advent-day-02-a-blessing-for-every-family
+        offset: 1
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 2 · "
+        title: "A Blessing for Every Family on Earth"
+        angle: "An old man with no child hears that all the families of the earth will be blessed through him. Paul says this was the gospel announced in advance."
+        truth: "God promised Abraham that all the families of the earth would be blessed through him, and Paul calls this the gospel preached beforehand (Galatians 3:8)."
+        scriptures: [Genesis 12:2-3, Galatians 3:8]
+        arc: story
+        emotion: hope
+        character: "Abraham"
+      - id: advent-day-03-comfort-my-people
+        offset: 2
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 3 · "
+        title: "Comfort, Comfort My People"
+        angle: "After the long years of exile, God's first words are tenderness: speak comfortably to Jerusalem. For anyone who feels their hard season has gone on too long."
+        truth: "Isaiah 40 opens with God commanding comfort for his people: their hard service is ended and their iniquity pardoned."
+        scriptures: [Isaiah 40:1-2]
+        arc: peace
+        emotion: hope
+      - id: advent-day-04-a-shoot-from-a-stump
+        offset: 3
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 4 · "
+        title: "A Shoot From a Stump"
+        angle: "David's royal family tree had been cut down to a stump. Isaiah promised a shoot would grow from it, with the Spirit of the LORD resting on him."
+        truth: "Isaiah promised that from the cut-down line of Jesse a new king would come, on whom the Spirit of the LORD would rest."
+        scriptures: [Isaiah 11:1-2]
+        arc: curiosity
+        emotion: hope
+      - id: advent-day-05-the-righteous-branch
+        offset: 4
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 5 · "
+        title: "The Righteous Branch"
+        angle: "After bad shepherds and failed kings, God promises a King from David's line who will reign wisely, and his name will be 'The LORD our righteousness'."
+        truth: "Through Jeremiah God promised a righteous Branch from David who would reign wisely and be called 'The LORD our righteousness'."
+        scriptures: [Jeremiah 23:5-6]
+        arc: wisdom
+        emotion: hope
+      - id: advent-day-06-waiting-for-the-morning
+        offset: 5
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 6 · "
+        title: "More Than Watchmen Wait for the Morning"
+        angle: "Waiting in the dark, like a night watchman watching the horizon for the first light. Advent is permission to wait, and to hope while you wait."
+        truth: "The psalmist waits for the Lord with his whole soul and hopes in his word, more than watchmen wait for the morning."
+        scriptures: [Psalm 130:5-6]
+        arc: peace
+        emotion: hope
+      - id: advent-day-07-how-beautiful-are-the-feet
+        offset: 6
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 7 · "
+        title: "How Beautiful Are the Feet"
+        angle: "A runner comes over the mountains with good news: peace, salvation, 'Your God reigns!' Advent is the season of waiting for good news to arrive."
+        truth: "Isaiah celebrates the messenger who brings good news of peace and salvation and announces that God reigns."
+        scriptures: [Isaiah 52:7]
+        arc: joy
+        emotion: hope
+      # ---- Week of peace
+      - id: advent-day-08-he-will-be-our-peace
+        offset: 7
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 8 · "
+        title: "He Will Be Our Peace"
+        angle: "Micah, who named Bethlehem, also said what the ruler from Bethlehem would be: a shepherd who stands in the LORD's strength, and our peace."
+        truth: "Micah promised the ruler from Bethlehem would shepherd his people in the LORD's strength, and he himself would be their peace."
+        scriptures: [Micah 5:4-5]
+        arc: peace
+        emotion: peace
+      - id: advent-day-09-the-dawn-from-on-high
+        offset: 8
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 9 · "
+        title: "The Dawn From on High"
+        angle: "Zechariah's song: a sunrise visiting those who sit in darkness and the shadow of death, to guide our feet into the way of peace."
+        truth: "Zechariah praised God's tender mercy, which sends the dawn from on high to give light to those in darkness and guide them into the way of peace."
+        scriptures: [Luke 1:78-79]
+        arc: peace
+        emotion: peace
+        character: "Zechariah"
+      - id: advent-day-10-your-god-will-come
+        offset: 9
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 10 · "
+        title: "Be Strong, Do Not Fear: Your God Will Come"
+        angle: "To fearful hearts Isaiah says: your God will come and save you, and the blind will see and the lame will leap. Jesus pointed to these very signs."
+        truth: "Isaiah tells the fearful to be strong because God will come to save, opening blind eyes and healing the lame, signs Jesus pointed to in his ministry (Luke 7:22)."
+        scriptures: [Isaiah 35:4-6, Luke 7:22]
+        arc: wisdom
+        emotion: courage
+      - id: advent-day-11-he-rejoices-over-you
+        offset: 10
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 11 · "
+        title: "He Will Rejoice Over You With Singing"
+        angle: "We picture ourselves singing to God. Zephaniah pictures God singing over his people, quieting them with his love."
+        truth: "Zephaniah tells restored Jerusalem that the LORD is in their midst, mighty to save, and rejoices over his people with singing."
+        scriptures: [Zephaniah 3:17]
+        arc: peace
+        emotion: peace
+      - id: advent-day-12-marys-song
+        offset: 11
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 12 · "
+        title: "Mary's Song"
+        angle: "A young woman from a forgotten village sings that God has looked on her humble state. The Magnificat, for anyone who feels small."
+        truth: "Mary magnifies the Lord because he has looked on the humble state of his servant and done great things for her."
+        scriptures: [Luke 1:46-48]
+        arc: joy
+        emotion: joy
+        character: "Mary"
+      - id: advent-day-13-the-baby-leaped-for-joy
+        offset: 12
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 13 · "
+        title: "The Baby Leaped for Joy"
+        angle: "Two pregnant women, one old and one young, meet in a hill-country house, and the unborn John leaps for joy at Mary's greeting."
+        truth: "When Mary greeted Elizabeth, the baby leaped in Elizabeth's womb and, filled with the Holy Spirit, she blessed Mary and called her 'the mother of my Lord'."
+        scriptures: [Luke 1:41-44]
+        arc: story
+        emotion: joy
+        character: "Elizabeth"
+      # ---- Week of joy
+      - id: advent-day-14-good-news-for-the-brokenhearted
+        offset: 13
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 14 · "
+        title: "Good News for the Brokenhearted"
+        angle: "Isaiah's promise of one anointed to bind up the brokenhearted. Years later in Nazareth, Jesus read it aloud and said: today it is fulfilled."
+        truth: "Isaiah 61 promises one anointed by the Spirit to bring good news and heal the brokenhearted; Jesus read it in Nazareth and said it was fulfilled in their hearing (Luke 4:21)."
+        scriptures: [Isaiah 61:1-2, Luke 4:21]
+        arc: joy
+        emotion: joy
+      - id: advent-day-15-zechariah-speaks-again
+        offset: 14
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 15 · "
+        title: "Zechariah Speaks Again"
+        angle: "Nine months of silence after his doubt. Then his son is born, he writes 'His name is John', and his first words are praise."
+        truth: "When Zechariah confirmed the name John, his mouth was opened and he praised God, blessing him for visiting and redeeming his people."
+        scriptures: [Luke 1:63-64, Luke 1:68]
+        arc: story
+        emotion: joy
+        character: "Zechariah"
+      - id: advent-day-16-prepare-the-way
+        offset: 15
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 16 · "
+        title: "Prepare the Way of the Lord"
+        angle: "A voice in the wilderness: make a straight road for God. Every valley raised, every mountain made low. The Gospels hear John the Baptist in it."
+        truth: "Isaiah heard a voice calling to prepare the way of the LORD in the wilderness, and the Gospels identify John the Baptist as that voice (Mark 1:2-4)."
+        scriptures: [Isaiah 40:3-5, Mark 1:2-4]
+        arc: wisdom
+        emotion: joy
+      - id: advent-day-17-no-word-from-god-is-void
+        offset: 16
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 17 · "
+        title: "Nothing Is Impossible With God"
+        angle: "Gabriel's answer to Mary's 'How can this be?' An old relative is pregnant; God's word does not fail. About God keeping his promises, not about getting what we want."
+        truth: "Gabriel told Mary that nothing spoken by God is impossible: said of God's promise (Elizabeth's son, the virgin birth), not a promise that God grants whatever we ask."
+        scriptures: [Luke 1:34-37]
+        arc: curiosity
+        emotion: joy
+        character: "Mary"
+      - id: advent-day-18-the-unexpected-names
+        offset: 17
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 18 · "
+        title: "The Unexpected Names in Jesus' Family Tree"
+        angle: "Matthew's genealogy should be the boring part. Then you notice the women he names: Rahab of Jericho, Ruth the Moabite. Grace was in the family line."
+        truth: "Matthew names Rahab and Ruth (outsiders to Israel) among Jesus' ancestors, showing God's grace at work in the Messiah's own family line."
+        scriptures: [Matthew 1:5-6]
+        arc: curiosity
+        emotion: gratitude
+      - id: advent-day-19-a-decree-from-caesar
+        offset: 18
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 19 · "
+        title: "A Decree From Caesar"
+        angle: "The most powerful man in the world orders a census for his own reasons, and a carpenter and his pregnant fiancée walk to Bethlehem, the town Micah named."
+        truth: "Luke tells how Augustus' decree brought Joseph and Mary to Bethlehem, the city of David, where the prophet had said the ruler would come from."
+        scriptures: [Luke 2:1-4, Micah 5:2]
+        arc: curiosity
+        emotion: curiosity
+      # ---- Week of love
+      - id: advent-day-20-this-is-love
+        offset: 19
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 20 · "
+        title: "This Is Love"
+        angle: "Not that we loved God, but that he loved us and sent his Son. Christmas is the shape of God's love made visible."
+        truth: "God showed his love by sending his one and only Son into the world so that we might live through him, as the atoning sacrifice for our sins."
+        scriptures: [1 John 4:9-10]
+        arc: wisdom
+        emotion: love
+      - id: advent-day-21-while-we-were-still-sinners
+        offset: 20
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 21 · "
+        title: "While We Were Still Sinners"
+        angle: "God didn't wait for us to clean up before he came. The manger leads to the cross, and both were for people who hadn't earned them."
+        truth: "God demonstrates his own love in that Christ died for us while we were still sinners."
+        scriptures: [Romans 5:8]
+        arc: wisdom
+        emotion: love
+      - id: advent-day-22-though-he-was-rich
+        offset: 21
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 22 · "
+        title: "Though He Was Rich, He Became Poor"
+        angle: "The One who had everything was born in a borrowed feeding trough. Paul says he became poor so that we might become rich, in grace, not in money."
+        truth: "Christ, who was rich, became poor for our sake so that through his poverty we might become rich: the grace of his self-giving, not a promise of material wealth."
+        scriptures: [2 Corinthians 8:9, Luke 2:7]
+        arc: wisdom
+        emotion: love
+      - id: advent-day-23-shepherds-in-the-night
+        offset: 22
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 23 · "
+        title: "Shepherds in the Night"
+        angle: "Night shift on the hills outside Bethlehem, ordinary working men nobody listened to. They were the first to hear."
+        truth: "An angel of the Lord appeared to shepherds keeping watch at night, and the glory of the Lord shone around them: the first announcement went to ordinary, overlooked people."
+        scriptures: [Luke 2:8-9]
+        arc: story
+        emotion: love
+      - id: advent-day-24-let-us-go-to-bethlehem
+        offset: 23
+        kind: short
+        time: "08:00"
+        title_prefix: "Advent: Day 24 · "
+        title: "Let Us Go to Bethlehem"
+        angle: "Christmas Eve. The angels have gone back into heaven and the shepherds say to each other: let's go and see. Tonight, go and see."
+        truth: "After the angels left, the shepherds hurried to Bethlehem and found Mary, Joseph and the baby lying in the manger, just as they had been told."
+        scriptures: [Luke 2:15-16]
+        arc: story
+        emotion: joy
+        music: cinematic
 
   # ======================================================================= NEW YEAR, EPIPHANY, BAPTISM
   new_year:

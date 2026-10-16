@@ -152,7 +152,9 @@ youtube:
 #   15:00  long video      = 8 pm UK / 9 pm Central Europe / 12 noon US Pacific
 #   19:00  evening Short   = 7 pm US East / 4 pm US Pacific (US evening prime time)
 # A month on the free GitHub Actions allowance (2,000 minutes a month for a private repo):
-#   ~60 Shorts (two a day) and ~9 long videos (Tuesday and Friday). Roughly 1,300 runner minutes.
+#   ~60 Shorts (two a day) and ~9 long videos (Tuesday and Friday). Roughly 1,300 runner minutes,
+#   plus ~4 Sunday sleep videos at ~140 minutes each: about 1,850. December's extra Christmas long videos
+#   can pass 2,000; a public repo has unlimited free minutes.
 schedule:
   timezone: America/New_York
   short_slots: ["19:00"]        # an evening Short every day: Shorts cut from the long videos first, then the mix
@@ -171,6 +173,10 @@ schedule:
     - {weekday: 4, time: "15:00", kind: long, minutes: 10, label: "Fri: long video, any pillar (10 min)"}
     - {weekday: 5, time: "08:00", kind: short, category: history, label: "Sat: Bible & history"}
     - {weekday: 6, time: "08:00", kind: short, category: peace, label: "Sun: peace"}
+    # Weekly sleep video ("Fall asleep in God's Word"), Sunday 8 pm New York. 30 minutes renders on the
+    # free runner (sleep videos use a low frame rate, see `sleep` below); 45-60 needs max_run_minutes
+    # raised to ~260 (the job allows 300) or the video made locally: python -m fyt --format long --minutes 60 make idea:<id>
+    - {weekday: 6, time: "20:00", kind: long, category: peace, minutes: 30, label: "Sun: Fall asleep in God's Word (30 min)"}
     # Evening Shorts (short_slots) and Friday's long video follow the content mix, so relationships,
     # purpose, spiritual battles and everyday life come round too.
 
@@ -191,12 +197,43 @@ growth:
     - Faith in Everyday Life
     - Proverbs for Real Life
     - Advent & Christmas
+    - "Advent: 24 Days to Christmas"
+    - Fall Asleep in God's Word
     - Lent
     - Holy Week & Easter
     - Pentecost
     - Saints & Heroes of Faith
   bonus_shorts_per_day: 0       # evergreen channel: no videos chasing trending topics
   bonus_longs_per_week: 0
+
+# The analytics feedback loop (fyt/insights.py): once a week, `fill` reads average % viewed, how well
+# the opening holds and Shorts swipe-away from the free YouTube Analytics API, and nudges which pillars
+# come up, which title styles are tried first and what the script writer is told about the hook and
+# pacing. Never what a passage says. `python -m fyt insights` shows the lessons. Needs the analytics
+# permission: run `python -m fyt auth` again and update the YOUTUBE_TOKEN_JSON secret (SETUP.md).
+insights:
+  enabled: true
+  refresh_days: 7
+  min_views: 30                 # ignore videos with fewer views
+  min_videos: 3                 # a pillar or title style needs this many videos before it's judged
+
+# Sleep videos (18+ minutes, e.g. the Sunday-night slot above): slow voice, long pauses, calm music,
+# no burned-in captions, 12 frames a second so they render in about the time an 8-10 minute video takes.
+sleep:
+  fps: 12
+  words_per_minute: 95
+  gap_seconds: 2.0
+  edge_rate: "-18%"
+
+# Long videos get thumbnail.png (uploaded) plus thumbnail-b.png and thumbnail-c.png: load all three
+# into YouTube Studio > the video > Thumbnail > Test & compare (YouTube has no API for it).
+thumbnails:
+  variants: 3
+
+# Spanish title and description on every video (YouTube shows them to viewers whose YouTube is in
+# Spanish). The video and voice stay English; a full Spanish channel is a later step.
+localize:
+  languages: [es]
 
 # Bible first, emotion second: every script starts from a study of its passage (context, original
 # meaning, one-sentence central truth) and is checked against it afterwards. A script that bends the

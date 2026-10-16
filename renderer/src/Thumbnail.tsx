@@ -4,8 +4,10 @@ import { Background } from "./components/Background";
 import type { ThumbnailProps } from "./types";
 
 // Big, high-contrast text over an optional image: readable at phone size.
-export const Thumbnail: React.FC<ThumbnailProps> = ({ title, kicker, theme, background, format }) => {
+// layout "center" (a variant for YouTube's thumbnail Test & compare) centres the text over a soft vignette.
+export const Thumbnail: React.FC<ThumbnailProps> = ({ title, kicker, theme, background, format, layout }) => {
   const short = format === "short";
+  const center = layout === "center" && !short;
   return (
     <AbsoluteFill>
       <Background theme={theme} energy={0.6} />
@@ -16,7 +18,9 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({ title, kicker, theme, back
             style={{
               background: short
                 ? `linear-gradient(transparent 30%, ${theme.background}f0 75%)`
-                : `linear-gradient(90deg, ${theme.background}f5 0%, ${theme.background}bb 55%, transparent 100%)`,
+                : center
+                  ? `radial-gradient(ellipse at center, ${theme.background}cc 0%, ${theme.background}88 55%, ${theme.background}e6 100%)`
+                  : `linear-gradient(90deg, ${theme.background}f5 0%, ${theme.background}bb 55%, transparent 100%)`,
             }}
           />
         </AbsoluteFill>
@@ -25,13 +29,15 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({ title, kicker, theme, back
         style={{
           padding: short ? "0 70px 260px" : "0 90px",
           justifyContent: short ? "flex-end" : "center",
+          alignItems: center ? "center" : undefined,
+          textAlign: center ? "center" : undefined,
           gap: 26,
-          maxWidth: short ? undefined : 1250,
+          maxWidth: short || center ? undefined : 1250,
         }}
       >
         <div
           style={{
-            alignSelf: "flex-start",
+            alignSelf: center ? "center" : "flex-start",
             padding: "12px 26px",
             borderRadius: 12,
             background: theme.accent,
@@ -48,7 +54,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({ title, kicker, theme, back
           style={{
             fontFamily: theme.font,
             fontWeight: 900,
-            fontSize: short ? 124 : 118,
+            fontSize: short ? 124 : center ? 128 : 118,
             lineHeight: 1.0,
             color: theme.text,
             textTransform: "uppercase",

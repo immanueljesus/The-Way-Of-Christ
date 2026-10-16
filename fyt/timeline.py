@@ -64,6 +64,7 @@ def build_props(
         track = Music(src=music, volume=cfg.music_volume, levels=levels, step=MUSIC_STEP)
     return RenderProps(
         format=cfg.format,
+        fps=cfg.sleep.fps if cfg.is_sleep else 30,  # sleep videos are slow and calm: fewer frames to render
         title=script.title,
         duration=round(duration, 3),
         theme=cfg.theme.model_dump(),

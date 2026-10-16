@@ -158,3 +158,40 @@ Following the creative direction "don't just tell them about faith, make them fe
   2 Corinthians 12, Isaiah 55...), and 25 new ideas: parables, miracles, Bible questions and
   verse-centred videos. The "When You Feel..." series is now "Hard Seasons".
 - Saints' videos stay about the saint (St Francis no longer drifts into a generic money message).
+
+## Analytics loop, Advent, sleep videos, thumbnail tests and Spanish
+
+- **Analytics feedback loop** (`fyt/insights.py`, `python -m fyt insights`): once a week `fill` reads the
+  free YouTube Analytics API (average % viewed, how many are still watching a tenth of the way into long
+  videos, and Shorts swipe-away = 1 − engaged views / views). Each video is compared with its format's
+  median and grouped by pillar, story shape and title style (recorded at upload). The lessons nudge the
+  content mix (×0.8–×1.25 per pillar), try the title styles viewers stayed with first, feed plain notes
+  on the hook and pacing into the script prompt, and replace raw view counts in topic ideation. They never
+  touch what a passage says or how the faithfulness review judges a script. Needs the new read-only
+  analytics permission (run `fyt auth` again, update `YOUTUBE_TOKEN_JSON`); without it everything else
+  runs as before.
+- **Advent calendar** (`content/calendar.yaml`, `advent_calendar`): 24 daily Shorts, "Advent: Day 1 · …"
+  to "Advent: Day 24 · …", 1–24 December, following the four candles (hope, peace, joy, love) through
+  the promises of Christmas, each on its own verified passage, with the editor's central truth on the
+  sensitive ones (Genesis 3:15, Luke 1:37, 2 Corinthians 8:9…). They take the 08:00 morning Short slot,
+  so daily uploads stay within the API quota. Calendar videos can now set their own `time` and a
+  `title_prefix` (kept on the final title and used as the thumbnail kicker). The first-Sunday video
+  (29 November 2026) still opens the season.
+- **Christmas story long videos**: Gabriel's two announcements (7 Dec), the whole of Luke 2:1-20 (19 Dec),
+  Simeon and Anna (28 Dec), beside the existing ones, plus **A Christmas Eve Prayer** (10 min, calm,
+  9 pm New York on 24 December, after the 3 pm Christmas Eve story).
+- **Weekly sleep video**: Sunday 8 pm New York, 30 minutes, "Fall asleep in God's Word". Videos of 18+
+  minutes are made as sleep videos (`sleep` in channel.yaml): a slower voice with long pauses, calm
+  music, no burned-in captions, no Shorts cut from them, and 12 frames a second so they render on the
+  free runner in about the time a 9-minute video takes. 12 new sleep ideas (Psalms 23, 91, 121, 139,
+  John 14, the Beatitudes, Romans 8, Isaiah 40, Matthew 6, Ruth, the calming of the storm…).
+- **Shorts cut from long videos** end on a calm line pointing to the full video (three wordings in
+  rotation, with a pause before the closing card); the link stays the first line of the description,
+  the Scripture credit is kept, and `youtube.txt` reminds you to set the Short's *Related video*.
+- **Three thumbnails per long video**: `thumbnail.png` (uploaded), `thumbnail-b.png` (another picture
+  and a second text) and `thumbnail-c.png` (centred layout and a third text), for YouTube Studio's
+  Test & compare. The polish step now writes the two extra texts.
+- **Spanish titles and descriptions** (`fyt/localize.py`, `localize.languages: [es]`): uploaded as
+  YouTube localizations. Bible verses are never re-translated by the model (a quoted verse becomes its
+  reference); a translation that drops a reference, link or chapter timestamp is not used. The video
+  itself stays English; a full Spanish channel is a later step.

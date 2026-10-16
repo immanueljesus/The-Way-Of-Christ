@@ -152,6 +152,9 @@ jobs:
           path: |
             jobs/*/video.mp4
             jobs/*/thumbnail.png
+            jobs/*/thumbnail-b.png
+            jobs/*/thumbnail-c.png
+            jobs/*/localizations.json
             jobs/*/captions.srt
             jobs/*/youtube.txt
             jobs/*/script.json

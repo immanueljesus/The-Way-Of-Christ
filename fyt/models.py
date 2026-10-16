@@ -88,6 +88,8 @@ class Script(BaseModel):
     # Set by the pipeline for long videos written chapter by chapter; not asked of the model.
     chapters: SkipJsonSchema[list[Chapter] | None] = None
     series: SkipJsonSchema[str | None] = None  # playlist the video is filed under
+    # Other thumbnail texts for YouTube Studio's Test & compare (set by the polish step).
+    thumbnail_variants: SkipJsonSchema[list[str] | None] = None
 
 
 class Word(BaseModel):
@@ -170,3 +172,4 @@ class ThumbnailProps(BaseModel):
     kicker: str
     theme: dict
     background: Media | None
+    layout: Literal["side", "center"] = "side"  # text on the left over a side fade, or centred

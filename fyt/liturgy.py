@@ -106,6 +106,7 @@ class Entry:
     topic: str  # "idea:<id>@<year>"
     title: str
     event: str
+    time: str | None = None  # "HH:MM" in the schedule's time zone; overrides liturgy.long_time / short_times
 
 
 def _load(cfg: Config) -> dict:
@@ -134,9 +135,10 @@ def entries(cfg: Config, start: date, end: date) -> list[Entry]:
             for e in event.get("videos") or []:
                 on = base + timedelta(days=int(e.get("offset", 0)))
                 if start <= on <= end:
-                    out.append(
-                        Entry(on, e.get("kind", "short"), e.get("minutes"), f"idea:{e['id']}{SEP}{year}", e["title"], key)
-                    )
+                    out.append(Entry(
+                        on, e.get("kind", "short"), e.get("minutes"), f"idea:{e['id']}{SEP}{year}", e["title"], key,
+                        e.get("time"),
+                    ))
     return sorted(out, key=lambda x: (x.on, x.kind != "long", x.topic))
 
 
@@ -145,7 +147,7 @@ def idea_data(cfg: Config, entry_id: str) -> dict | None:
     for key, event in (_load(cfg).get("events") or {}).items():
         for e in event.get("videos") or []:
             if e["id"] == entry_id:
-                fields = {k: v for k, v in e.items() if k not in ("offset", "kind", "minutes")}
+                fields = {k: v for k, v in e.items() if k not in ("offset", "kind", "minutes", "time")}
                 fields.setdefault("category", event.get("category", "jesus"))
                 fields["series"] = fields.get("series") or event.get("series")
                 fields["pillar"] = event.get("name", key)

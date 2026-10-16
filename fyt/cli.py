@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 from fyt import pipeline, tts
-from fyt.config import ROOT, load_config
+from fyt.config import ROOT, load_config, sleep_config
 from fyt.store import Topics, find_job, list_jobs
 
 
@@ -62,6 +62,8 @@ def main(argv: list[str] | None = None) -> None:
     u.add_argument("--force", action="store_true", help="upload even if not approved")
     sub.add_parser("auth", help="authorise YouTube uploads (opens a browser)")
     sub.add_parser("stats", help="show views for uploaded videos")
+    ins = sub.add_parser("insights", help="what viewers stay with (YouTube Analytics) and how it steers the next videos")
+    ins.add_argument("--refresh", action="store_true", help="read YouTube Analytics now instead of weekly")
 
     args = p.parse_args(argv)
     cfg = load_config(args.config)
@@ -69,6 +71,7 @@ def main(argv: list[str] | None = None) -> None:
         cfg.format = args.format
     if args.minutes:
         cfg.target_minutes = args.minutes
+    cfg = sleep_config(cfg)  # 18+ minute videos are made as calm sleep videos
 
     if args.cmd == "demo":
         cfg.stock_footage = False
@@ -181,7 +184,13 @@ def main(argv: list[str] | None = None) -> None:
 
         youtube.auth()
     elif args.cmd == "stats":
-        print(pipeline.performance_summary(cfg, limit=100) or "no uploaded videos yet")
+        print(pipeline.performance_summary(cfg, limit=100, learned=False) or "no uploaded videos yet")
+    elif args.cmd == "insights":
+        from fyt import insights
+
+        if args.refresh:
+            insights.refresh(cfg, force=True)
+        print(insights.report(cfg))
 
 
 if __name__ == "__main__":

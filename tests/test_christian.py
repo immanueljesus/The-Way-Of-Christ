@@ -157,7 +157,9 @@ def test_shipped_channel_config_loads_with_the_weekly_plan():
     cfg = load_config()
     assert cfg.source == "catalog"
     assert {p.weekday for p in cfg.schedule.plan if p.kind == "short"} == set(range(7))  # a Short every morning
-    assert len([p for p in cfg.schedule.plan if p.kind == "long"]) == 2
+    longs = [p for p in cfg.schedule.plan if p.kind == "long"]
+    assert len(longs) == 3  # Tuesday's Bible story, Friday's long video and Sunday night's sleep video
+    assert [p.minutes for p in longs if (p.minutes or 0) >= 18] == [30]
     assert {p.category for p in cfg.schedule.plan if p.category} <= set(cfg.catalog.mix)
     assert len({p.category for p in cfg.schedule.plan if p.kind == "short"}) == 7  # a different pillar each morning
 

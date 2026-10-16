@@ -90,4 +90,5 @@ export type ThumbnailProps = {
   kicker: string;
   theme: Theme;
   background: Media | null;
+  layout?: "side" | "center"; // text on the left over a side fade (default), or centred
 };

@@ -1080,6 +1080,154 @@ ideas:
     wiki: David
     angle: "Shepherd, wilderness, Goliath, king: the long, gentle telling of a life shaped in hidden places."
 
+  # ---------------------------------------------------------------- Fall Asleep in God's Word (weekly, 30 min)
+  # The Sunday-night sleep video (schedule.plan): Scripture read slowly with long pauses, calm music and
+  # dim, slow pictures. Made as sleep videos (config `sleep`); see SLEEP_NOTE in fyt/llm.py.
+  - id: fall-asleep-psalm-23
+    title: "Fall Asleep in God's Word: Psalm 23"
+    truth: "The LORD is a shepherd who provides, restores, guides and stays with his people even through the darkest valley; Jesus calls himself the good shepherd."
+    category: peace
+    emotion: peace
+    arc: peace
+    pillar: Peace
+    series: Fall Asleep in God's Word
+    formats: [long, sleep]
+    scriptures: [Psalm 23:1-6, John 10:11, John 10:14]
+    angle: "Line by line, slowly: green pastures, still waters, the valley, the table, goodness following you home."
+
+  - id: fall-asleep-psalm-91
+    title: "Under His Wings: Psalm 91 Before Sleep"
+    truth: "Psalm 91 invites trust in God as refuge and shelter; it is a song of trust, not a guarantee that no harm will ever come (Jesus refused to use it to test God, Matthew 4:6-7)."
+    category: peace
+    emotion: peace
+    arc: peace
+    pillar: Peace
+    series: Fall Asleep in God's Word
+    formats: [long, sleep]
+    scriptures: [Psalm 91:1-6, Psalm 91:11, Psalm 91:14-16]
+    angle: "Shelter, shadow, wings, a fortress: rest in the One who is your refuge tonight."
+
+  - id: fall-asleep-psalm-121
+    title: "He Who Keeps You Will Not Sleep: Psalm 121"
+    category: peace
+    emotion: peace
+    arc: peace
+    pillar: Peace
+    series: Fall Asleep in God's Word
+    formats: [long, sleep]
+    scriptures: [Psalm 121:1-8]
+    angle: "A pilgrim song for the road: you can close your eyes, because the One who keeps you does not."
+
+  - id: fall-asleep-psalm-139
+    title: "You Are Fully Known: Psalm 139 Before Sleep"
+    truth: "God knows David completely, is present everywhere, even in the darkness, and David invites God to search him and lead him."
+    category: peace
+    emotion: peace
+    arc: peace
+    pillar: Peace
+    series: Fall Asleep in God's Word
+    formats: [long, sleep]
+    scriptures: [Psalm 139:1-12, Psalm 139:23-24]
+    angle: "Known, searched, surrounded. Even the darkness is not dark to him."
+
+  - id: fall-asleep-john-14
+    title: "Don't Let Your Heart Be Troubled: John 14"
+    truth: "On the night before the cross, Jesus comforts his troubled disciples: trust God and him, he is preparing a place for them and gives them his peace."
+    category: peace
+    emotion: peace
+    character: "Jesus"
+    arc: peace
+    pillar: Peace
+    series: Fall Asleep in God's Word
+    formats: [long, sleep]
+    scriptures: [John 14:1-3, John 14:18, John 14:27]
+    angle: "Jesus' words on his last night with his friends, spoken over your night: peace I leave with you."
+
+  - id: fall-asleep-beatitudes
+    title: "The Beatitudes, Slowly"
+    truth: "Jesus pronounces God's blessing on the poor in spirit, the mourning, the meek and the persecuted: the kingdom belongs to those the world overlooks."
+    category: peace
+    emotion: peace
+    character: "Jesus"
+    arc: peace
+    pillar: Peace
+    series: Fall Asleep in God's Word
+    formats: [long, sleep]
+    scriptures: [Matthew 5:3-10]
+    angle: "A hillside by the lake, and the blessings Jesus spoke, one at a time, with room to breathe between them."
+
+  - id: fall-asleep-romans-8
+    title: "Nothing Can Separate You: Romans 8 Before Sleep"
+    truth: "For those in Christ, God works all things for good for those who love him and are called; nothing in all creation can separate them from his love (not a promise that every event is good)."
+    category: peace
+    emotion: peace
+    arc: peace
+    pillar: Peace
+    series: Fall Asleep in God's Word
+    formats: [long, sleep]
+    scriptures: [Romans 8:28, Romans 8:31-32, Romans 8:38-39]
+    angle: "Paul's great list: death, life, things present, things to come. None of it can separate you from God's love."
+
+  - id: fall-asleep-isaiah-40
+    title: "Those Who Wait for the LORD: Isaiah 40 Before Sleep"
+    category: peace
+    emotion: peace
+    arc: peace
+    pillar: Peace
+    series: Fall Asleep in God's Word
+    formats: [long, sleep]
+    scriptures: [Isaiah 40:11, Isaiah 40:28-31]
+    angle: "The Creator who never grows tired gathers the lambs in his arms. Rest; strength is renewed while you wait."
+
+  - id: fall-asleep-psalms-for-a-restless-night
+    title: "Psalms for a Restless Night"
+    category: peace
+    emotion: peace
+    arc: peace
+    pillar: Peace
+    series: Fall Asleep in God's Word
+    formats: [long, sleep]
+    scriptures: [Psalm 4:8, Psalm 62:1-2, Psalm 63:6-8, Psalm 131:2]
+    angle: "Lying awake, remembering God on your bed. Quiet psalms for when sleep won't come."
+
+  - id: fall-asleep-do-not-worry
+    title: "Do Not Worry About Tomorrow: Matthew 6 Before Sleep"
+    truth: "Jesus tells his followers not to be anxious about food and clothing, because the Father knows their needs; seek his kingdom first and leave tomorrow to tomorrow."
+    category: peace
+    emotion: peace
+    character: "Jesus"
+    arc: peace
+    pillar: Peace
+    series: Fall Asleep in God's Word
+    formats: [long, sleep]
+    scriptures: [Matthew 6:25-27, Matthew 6:33-34]
+    angle: "The birds, the lilies, and a Father who knows. Put tomorrow down for tonight."
+
+  - id: fall-asleep-ruth
+    title: "The Story of Ruth Before Sleep"
+    category: bible_story
+    emotion: peace
+    character: "Ruth"
+    arc: story
+    pillar: Bible stories
+    series: Fall Asleep in God's Word
+    formats: [long, sleep]
+    scriptures: [Ruth 1:16-17, Ruth 2:12, Ruth 4:13-17]
+    wiki: Book of Ruth
+    angle: "Loss, loyalty and harvest fields: a gentle telling of a story where God's kindness works quietly through ordinary days."
+
+  - id: fall-asleep-jesus-calms-the-storm
+    title: "Peace, Be Still: Jesus Calms the Storm"
+    category: jesus
+    emotion: peace
+    character: "Jesus"
+    arc: story
+    pillar: Jesus
+    series: Fall Asleep in God's Word
+    formats: [long, sleep]
+    scriptures: [Mark 4:37-41]
+    angle: "The wind, the waves, a sleeping Jesus and a word: 'Peace, be still.' Told slowly, ending in the great calm."
+
   # ---------------------------------------------------------------- prayer (15%)
   - id: morning-prayer-for-strength
     title: "A Morning Prayer for Strength"

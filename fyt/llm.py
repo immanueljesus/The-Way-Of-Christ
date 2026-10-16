@@ -471,13 +471,21 @@ def title_banned(title: str) -> bool:
     return bool(BANNED_TITLE.search(title or ""))
 
 
-def choose_title_style(shape: str, category: str = "", recent: list[str] | None = None, seasonal: bool = False) -> str:
-    """The title style for the next video: one that suits its shape, not used in the last few videos."""
+def choose_title_style(
+    shape: str, category: str = "", recent: list[str] | None = None, seasonal: bool = False,
+    prefer: list[str] | None = None, avoid: list[str] | None = None,
+) -> str:
+    """The title style for the next video: one that suits its shape, not used in the last few videos.
+    Styles that held viewers (`prefer`, from fyt/insights.py) are tried first and ones that lost them
+    (`avoid`) last; every style that suits the shape stays available."""
     allowed = list(STYLES_FOR_SHAPE.get(shape, STYLES_FOR_SHAPE["journey"]))
     if category == "history":
         allowed = ["history", "curiosity"]
     if seasonal:
         allowed = ["seasonal", *allowed]
+    prefer, avoid = prefer or [], avoid or []
+    rank = lambda s: (prefer.index(s) if s in prefer else len(prefer)) + (100 if s in avoid else 0)  # noqa: E731
+    allowed = sorted(allowed, key=lambda s: (rank(s), allowed.index(s)))
     recent = (recent or [])[-4:]
     fresh = [s for s in allowed if s not in recent]
     if fresh:
@@ -632,6 +640,15 @@ Rules:
 """
 
 
+SLEEP_NOTE = """, made to fall asleep to ("Fall asleep in God's Word").
+This is a sleep video: the listener is lying in the dark with their eyes closed. Read Scripture slowly and
+let it rest on them: the passages themselves, quoted exactly from the notes, with a few gentle words between
+them and a quiet prayer. No tension, no cliffhangers, no questions that wake them up, no call to subscribe;
+moods stay with faith, peace and hope. Long pauses after every verse (pause_after 2-4). Scenes are calm,
+dim, slow pictures: night sky, candlelight, still water, moonlit fields, soft rain on a window. End in a
+whispered blessing"""
+
+
 WIKI_GUIDE = """
 Part of the research notes is a Wikipedia article, for background only:
 - Tell the Bible story itself; use the article for historical and cultural context, not as the storyline.
@@ -657,7 +674,9 @@ def write_script(
     prayer: bool = False,
     shape: str = "journey",
     title_style: str = "cinematic",
+    lessons: str = "",
 ) -> Script:
+    """`lessons`: what the channel's analytics say about delivery (fyt/insights.py), added to the guide."""
     ch = cfg.channel
     if cfg.format == "short":
         format_line = "YouTube Short, vertical 9:16, 45-55 seconds, 5-8 scenes"
@@ -665,6 +684,8 @@ def write_script(
     else:
         format_line = f"horizontal 16:9 video, about {cfg.target_minutes:g} minutes"
         words = cfg.target_words
+    if cfg.is_sleep:
+        format_line += SLEEP_NOTE
     structure = structure_for(shape, cfg.format == "short", prayer)
     guide = (SCRIPT_GUIDE + (WIKI_GUIDE if from_wikipedia else "")).format(
         name=ch.name,
@@ -678,6 +699,8 @@ def write_script(
         bible_first=BIBLE_FIRST,
         title_rule=title_rule(title_style),
     )
+    if lessons:
+        guide += f"\nWhat this channel's viewers have shown so far (from its analytics):\n{lessons}\n"
     tail = f"\n\nAvailable images:\n{images}" if images else ""
     tail += f"\n\n{feedback}" if feedback else ""
 
@@ -819,7 +842,9 @@ def write_long_script(
         else:
             last = scenes[-1].narration if scenes else ""
             position = f"Continue straight on from the previous chapter, which ended: \"{last}\" Don't re-introduce the topic."
-        if i == n:
+        if i == n and cfg.is_sleep:
+            position += " This is the last chapter: let it grow quieter and end in a whispered blessing."
+        elif i == n:
             position += " This is the last chapter: end with a satisfying conclusion and one natural line inviting viewers to subscribe."
         else:
             position += " Don't wrap up or invite viewers to subscribe yet."

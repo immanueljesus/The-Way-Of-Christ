@@ -26,6 +26,11 @@ class Polish(BaseModel):
     titles: list[str] = Field(description="5 different title ideas, each max 70 characters.")
     best_title: str = Field(description="The strongest of the titles (or a better one), max 70 characters.")
     thumbnail_text: str = Field(description="2-5 punchy words for the thumbnail, different from the title.")
+    thumbnail_alternatives: list[str] = Field(
+        default_factory=list,
+        description="2 more thumbnail texts (2-4 words each), each from a different angle (the feeling, the "
+        "promise of the passage, the story's moment), for a thumbnail A/B test.",
+    )
     hook: str = Field(description="New opening narration: 1-2 sentences, max 35 words, facts from the script only.")
     loop_line: str = Field(default="", description="Shorts only: last sentence, max 12 words, that flows back into the hook.")
     series: str = Field(default="", description="The series this video belongs to, exactly as listed, or empty.")
@@ -92,6 +97,10 @@ def polish(cfg: Config, script: Script, title_style: str = "cinematic") -> Scrip
         update["title"] = title
     if p.thumbnail_text.strip():
         update["thumbnail_text"] = p.thumbnail_text.strip()
+    main = update.get("thumbnail_text", script.thumbnail_text)
+    alts = [t.strip() for t in p.thumbnail_alternatives if t.strip() and t.strip().lower() != main.lower()]
+    if alts:
+        update["thumbnail_variants"] = list(dict.fromkeys(alts))[:2]
     if p.series in series:
         update["series"] = p.series
     return script.model_copy(update=update)
@@ -264,6 +273,13 @@ def pick_trending(cfg: Config, used: set[str], min_fit: int, min_chars: int, day
 # --- Shorts cut from a long video -------------------------------------------------
 
 CUT_WORDS = 140
+# The last words of a Short cut from a long video: a calm pointer to the full video (linked at the very top
+# of the description and, set by hand in Studio, as the Short's related video). Never a hard sell.
+CUT_ENDINGS = (
+    "There is more to this story. The full video is linked with this one, whenever you're ready.",
+    "If you'd like to stay with this a little longer, the full video is linked with this Short.",
+    "The whole story is waiting in the full video, linked with this one. Take your time.",
+)
 
 
 class CutChoice(BaseModel):
@@ -302,9 +318,10 @@ def cut_scripts(cfg: Config, script: Script, video_id: str, n: int) -> list[Scri
             words += w
         if kept[0].type != "title":
             kept[0] = kept[0].model_copy(update={"type": "title", "heading": title})
-        kept[-1] = kept[-1].model_copy(
-            update={"narration": kept[-1].narration.rstrip() + " The full story is linked below."}
-        )
+        kept[-1] = kept[-1].model_copy(update={
+            "narration": kept[-1].narration.rstrip() + " " + CUT_ENDINGS[(c - 1) % len(CUT_ENDINGS)],
+            "pause_after": max(kept[-1].pause_after or 0, 1.5),  # let it settle before the closing card
+        })
         out.append(
             script.model_copy(
                 update={
@@ -328,8 +345,11 @@ def _chapter_groups(script: Script) -> list[tuple[str, list[ScriptScene]]]:
 
 
 def _cut_description(description: str, link: str) -> str:
+    """The link to the full video first (the line people see before "more"), then the long video's
+    opening paragraph and the credits a cut still needs."""
     first = description.split("\n\n")[0].strip()
-    credit = [line for line in description.splitlines() if "CC BY-SA" in line]  # Wikipedia's licence needs it
+    # Wikipedia's licence needs its credit; quoted Scripture keeps its translation credit.
+    credit = [line for line in description.splitlines() if "CC BY-SA" in line or "Scripture quotations" in line]
     return "\n\n".join([f"Full video: {link}", first, *credit])
 
 

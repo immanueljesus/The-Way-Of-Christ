@@ -42,12 +42,15 @@ Everything below is done with the channel's **new email**, so nothing touches pe
    look at `thumbnail.png` and `quote-*.png`.
 
 3. **Google Cloud project** (signed in with the new email): create a project, enable
-   **YouTube Data API v3**, set up the OAuth consent screen (External; add the new email as a test
+   **YouTube Data API v3** and **YouTube Analytics API** (both free), set up the OAuth consent screen (External; add the new email as a test
    user), and create an **OAuth client ID** of type *Desktop app*. Download the JSON and save it as
    `secrets/client_secret.json`.
 
 4. **Authorise uploads:** `python -m fyt auth` opens a browser; sign in with the channel's account.
-   It asks for upload and manage permissions (the second one is for captions, playlists and stats).
+   It asks for upload, manage and analytics permissions (manage is for captions, playlists and stats;
+   analytics is read-only and feeds `python -m fyt insights`, the weekly lessons from what viewers
+   watched). A token made before the analytics permission existed still uploads, but the lessons are
+   skipped until you run `python -m fyt auth` again and update the `YOUTUBE_TOKEN_JSON` secret.
    Then review and upload by hand:
    ```bash
    python -m fyt jobs
@@ -71,6 +74,13 @@ Everything below is done with the channel's **new email**, so nothing touches pe
    - Set `require_review: false` in `channel.yaml`, and uncomment the `schedule:` block at the top of
      `.github/workflows/daily-short.yml`. From then on it keeps the weekly plan filled two days ahead.
 
+7. **By hand in YouTube Studio** (YouTube has no API for these; a minute per video):
+   - **Thumbnail Test & compare** for each long video: open the video → Thumbnail → *Test & compare*
+     and add `thumbnail.png`, `thumbnail-b.png` and `thumbnail-c.png` (in the run's artifact).
+   - **Related video** for each Short cut from a long video: open the Short → *Related video* and pick
+     the full video (its link is the first line of the Short's description). `youtube.txt` in each job
+     lists both steps when they apply.
+
 ## Useful commands
 
 ```bash
@@ -79,4 +89,6 @@ python -m fyt topics next -n 5                   # queue the next ideas (keeps t
 python -m fyt topics next -n 3 --category prayer
 python -m fyt --format long --minutes 30 make "idea:bible-verses-and-prayer-before-sleep"
 python -m fyt buffer                             # the coming publish slots and what fills them
+python -m fyt calendar --days 70                 # Advent calendar, Christmas and other campaign videos
+python -m fyt insights --refresh                 # what viewers stay with, and how it steers the next videos
 ```

@@ -13,6 +13,7 @@ from __future__ import annotations
 import json
 import os
 import random
+import re
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -23,7 +24,9 @@ from fyt.models import Script
 SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
     "https://www.googleapis.com/auth/youtube.force-ssl",  # captions + stats
+    "https://www.googleapis.com/auth/yt-analytics.readonly",  # retention and % viewed (fyt/insights.py)
 ]
+ANALYTICS_SCOPE = SCOPES[2]
 SECRETS = ROOT / "secrets"
 CLIENT_SECRET = SECRETS / "client_secret.json"
 TOKEN = SECRETS / "token.json"
@@ -50,19 +53,25 @@ def authorised() -> bool:
 FULL_SCOPE = "https://www.googleapis.com/auth/youtube.force-ssl"
 
 
-def can_manage() -> bool:
-    """Whether the token may do more than upload (caption tracks, playlists, stats).
-    Tokens made with only the upload scope get 403 for those."""
+def _token_scopes() -> list[str]:
     try:
         raw = TOKEN.read_text(encoding="utf-8") if TOKEN.exists() else os.environ.get("YOUTUBE_TOKEN_JSON", "")
         scopes = json.loads(raw).get("scopes")
     except (OSError, ValueError):
-        return False
-    if isinstance(scopes, str):
-        scopes = scopes.split()
-    if not scopes:
-        return False  # unknown: don't spend quota on calls that may be refused
+        return []
+    return scopes.split() if isinstance(scopes, str) else list(scopes or [])
+
+
+def can_manage() -> bool:
+    """Whether the token may do more than upload (caption tracks, playlists, stats).
+    Tokens made with only the upload scope get 403 for those."""
+    scopes = _token_scopes()  # unknown scopes: don't spend quota on calls that may be refused
     return FULL_SCOPE in scopes or "https://www.googleapis.com/auth/youtube" in scopes
+
+
+def can_analyze() -> bool:
+    """Whether the token may read YouTube Analytics (made by `fyt auth` after the analytics scope was added)."""
+    return ANALYTICS_SCOPE in _token_scopes()
 
 
 def add_to_playlist(video_id: str, name: str, privacy: str = "public") -> None:
@@ -84,9 +93,21 @@ def add_to_playlist(video_id: str, name: str, privacy: str = "public") -> None:
 
 
 def _service():
+    from googleapiclient.discovery import build
+
+    return build("youtube", "v3", credentials=_credentials(), cache_discovery=False)
+
+
+def analytics_service():
+    """The YouTube Analytics API (free; its quota is separate from the Data API's upload quota)."""
+    from googleapiclient.discovery import build
+
+    return build("youtubeAnalytics", "v2", credentials=_credentials(), cache_discovery=False)
+
+
+def _credentials():
     from google.auth.transport.requests import Request
     from google.oauth2.credentials import Credentials
-    from googleapiclient.discovery import build
 
     # In CI the token comes from a secret; locally from `fyt auth`.
     if not TOKEN.exists() and os.environ.get("YOUTUBE_TOKEN_JSON", "").strip():
@@ -101,7 +122,7 @@ def _service():
     if not creds.valid and creds.refresh_token:
         creds.refresh(Request())
         TOKEN.write_text(creds.to_json(), encoding="utf-8")
-    return build("youtube", "v3", credentials=creds, cache_discovery=False)
+    return creds
 
 
 def publish_time(cfg: Config, now: datetime | None = None, rng: random.Random | None = None) -> datetime | None:
@@ -123,16 +144,10 @@ def build_body(
     now: datetime | None = None,
     rng: random.Random | None = None,
     publish_at: datetime | None = None,
+    localizations: dict[str, dict] | None = None,
 ) -> dict:
-    description = script.description.strip()
-    if script.sources:
-        description += "\n\nSources:\n" + "\n".join(f"- {s}" for s in script.sources)
-    if script.series:
-        description += f"\n\nSeries: {script.series}"
-    if cfg.channel.description_footer.strip():
-        description += "\n\n" + cfg.channel.description_footer.strip()
-    if cfg.format == "short":
-        description += "\n\n#Shorts"
+    """The videos.insert body. `localizations` ({language: {title, description, footer}}, from
+    fyt/localize.py) become the video's translated titles and descriptions."""
     status = {
         "privacyStatus": cfg.youtube.privacy,
         "selfDeclaredMadeForKids": cfg.youtube.made_for_kids,
@@ -142,10 +157,10 @@ def build_body(
     if publish is not None:
         status["privacyStatus"] = "private"  # required for scheduled publishing
         status["publishAt"] = publish.strftime("%Y-%m-%dT%H:%M:%SZ")
-    return {
+    body = {
         "snippet": {
             "title": script.title[:100],
-            "description": description[:5000],
+            "description": full_description(cfg, script)[:5000],
             "tags": script.tags,
             "categoryId": cfg.youtube.category_id,
             "defaultLanguage": cfg.channel.language,
@@ -153,19 +168,66 @@ def build_body(
         },
         "status": status,
     }
+    if localizations:
+        body["localizations"] = {
+            lang: {
+                "title": loc["title"][:100],
+                "description": full_description(cfg, script, loc["description"], loc.get("footer", ""), lang)[:5000],
+            }
+            for lang, loc in localizations.items()
+        }
+    return body
 
 
-def upload_sheet(cfg: Config, script: Script) -> str:
-    """Title, description and tags to paste into YouTube Studio for a manual upload."""
-    body = build_body(cfg, script)["snippet"]
-    return (
-        f"TITLE\n{body['title']}\n\n"
-        f"DESCRIPTION\n{body['description']}\n\n"
-        f"TAGS\n{', '.join(body['tags'])}\n\n"
+def full_description(
+    cfg: Config, script: Script, description: str | None = None, footer: str | None = None, language: str = "en"
+) -> str:
+    """The description as uploaded: the script's (or a translated) description, sources, series, footer."""
+    from fyt.localize import LABELS
+
+    sources, series = LABELS.get(language, LABELS["en"])
+    out = (script.description if description is None else description).strip()
+    if script.sources:
+        out += f"\n\n{sources}:\n" + "\n".join(f"- {s}" for s in script.sources)
+    if script.series:
+        out += f"\n\n{series}: {script.series}"
+    footer = cfg.channel.description_footer if footer is None else footer
+    if footer.strip():
+        out += "\n\n" + footer.strip()
+    if cfg.format == "short":
+        out += "\n\n#Shorts"
+    return out
+
+
+def upload_sheet(
+    cfg: Config, script: Script, localizations: dict[str, dict] | None = None, thumbnails: list[str] | None = None
+) -> str:
+    """Title, description and tags to paste into YouTube Studio for a manual upload, plus the steps
+    the API can't do (thumbnail Test & compare, a Short's related video)."""
+    body = build_body(cfg, script, localizations=localizations)
+    snippet = body["snippet"]
+    out = (
+        f"TITLE\n{snippet['title']}\n\n"
+        f"DESCRIPTION\n{snippet['description']}\n\n"
+        f"TAGS\n{', '.join(snippet['tags'])}\n\n"
         "Also: upload thumbnail.png as the thumbnail and captions.srt as subtitles. Under\n"
         "\"Altered or synthetic content\" answer No unless the video shows realistic AI-generated\n"
         "people, places or events (see youtube.contains_synthetic_media in channel.yaml).\n"
     )
+    if thumbnails and len(thumbnails) > 1:
+        out += (
+            f"\nTHUMBNAIL TEST: in YouTube Studio open the video > Thumbnail > Test & compare, and add\n"
+            f"{', '.join(thumbnails)}. YouTube shows each to viewers and keeps the one watched most.\n"
+        )
+    link = re.match(r"Full video: (https://youtu\.be/\S+)", script.description)
+    if link and cfg.format == "short":
+        out += (
+            f"\nRELATED VIDEO: in YouTube Studio open this Short > Related video, and pick {link[1]}\n"
+            "so the link to the full video shows on the Short itself.\n"
+        )
+    for lang, loc in (body.get("localizations") or {}).items():
+        out += f"\nTITLE ({lang})\n{loc['title']}\n\nDESCRIPTION ({lang})\n{loc['description']}\n"
+    return out
 
 
 def upload(
@@ -175,14 +237,15 @@ def upload(
     thumbnail: Path | None,
     srt: Path | None,
     publish_at: datetime | None = None,
+    localizations: dict[str, dict] | None = None,
 ) -> str:
     from googleapiclient.errors import HttpError
     from googleapiclient.http import MediaFileUpload
 
     yt = _service()
     request = yt.videos().insert(
-        part="snippet,status",
-        body=build_body(cfg, script, publish_at=publish_at),
+        part="snippet,status" + (",localizations" if localizations else ""),
+        body=build_body(cfg, script, publish_at=publish_at, localizations=localizations),
         media_body=MediaFileUpload(str(video), mimetype="video/mp4", chunksize=8 * 1024 * 1024, resumable=True),
     )
     response, failures = None, 0

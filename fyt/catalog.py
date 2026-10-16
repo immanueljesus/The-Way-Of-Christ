@@ -15,7 +15,7 @@ from pathlib import Path
 import yaml
 from pydantic import BaseModel, Field
 
-from fyt.config import ROOT, Config
+from fyt.config import ROOT, SLEEP_MINUTES, Config
 
 PREFIX = "idea:"
 FORMATS = ("short", "medium", "long", "sleep")
@@ -44,6 +44,8 @@ class Idea(BaseModel):
     content_type: str = ""  # story, parable, miracle, verse, question, character, wisdom, prayer, history...
     generated: bool = False  # written by the model when the list ran low (stored in jobs/state.db)
     music: str = ""  # calm | cinematic: overrides the music the category would get (calendar videos)
+    # Calendar series: every title of the video starts with this, e.g. "Advent: Day 3 · " (also the thumbnail kicker)
+    title_prefix: str = ""
 
     @property
     def topic(self) -> str:
@@ -132,7 +134,7 @@ def length_bucket(fmt: str, minutes: float) -> str:
         return "short"
     if minutes <= 6.5:
         return "medium"
-    if minutes <= 18:
+    if minutes < SLEEP_MINUTES:
         return "long"
     return "sleep"
 
@@ -144,6 +146,7 @@ def pick(
     minutes: float | None = None,
     recent: list[str] | None = None,
     season: dict | None = None,
+    weights: dict[str, float] | None = None,
 ) -> Idea | None:
     """The next unused idea for this format: from `category` if given (falling back to any
     category), otherwise from the category furthest below its share of `catalog.mix`.
@@ -151,7 +154,8 @@ def pick(
     Within a category, ideas that repeat the emotion, Bible character or story shape of the last
     few videos (`recent`, topics newest last) wait their turn, so the channel keeps its variety.
     In a season of the Christian year (`season`, see liturgy.season) ideas with its feelings go first,
-    and its pillars get a little extra weight in the mix."""
+    and its pillars get a little extra weight in the mix. `weights` (fyt/insights.py: pillars viewers
+    stay with, x0.8..x1.25) scale each pillar's share of the mix a little."""
     season = season or {}
     feel = set(season.get("emotions") or [])
     lean = set(season.get("categories") or [])
@@ -187,7 +191,8 @@ def pick(
         print(f"note: no unused {category} ideas for a {bucket} video; picking by the content mix")
     made = Counter(i.category for i in ideas if i.topic in used)
     total = sum(made.values()) or 1
-    mix = cfg.catalog.mix
+    weights = weights or {}
+    mix = {k: v * weights.get(k, 1.0) for k, v in cfg.catalog.mix.items()}
     weight = sum(mix.values()) or 1
 
     def deficit(i: Idea) -> float:

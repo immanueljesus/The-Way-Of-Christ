@@ -20,7 +20,7 @@ from datetime import time as dtime
 from zoneinfo import ZoneInfo
 
 from fyt import pipeline, youtube
-from fyt.config import Config
+from fyt.config import SLEEP_MINUTES, Config, sleep_config
 from fyt.store import Job, Topics, Uploads
 
 # The YouTube Data API quota resets at midnight Pacific time.
@@ -28,7 +28,8 @@ PACIFIC = ZoneInfo("America/Los_Angeles")
 LEAD_MINUTES = 30  # a slot this close is left alone: the upload might not finish in time
 # Rough time to make one video on the free 2-core runner, to avoid starting one the job can't finish.
 MAKE_MINUTES = {"short": 10, "long": 80}
-KEEP = ("video.mp4", "thumbnail.png", "captions.srt", "script.json", "job.json")
+KEEP = ("video.mp4", "thumbnail.png", "thumbnail-b.png", "thumbnail-c.png", "captions.srt", "script.json", "job.json",
+        "localizations.json")
 
 
 def utcnow() -> datetime:
@@ -90,7 +91,9 @@ def calendar_slots(cfg: Config, now: datetime, regular: dict[str, Slot]) -> list
 
     A campaign long video takes that day's long slot from the weekly plan (keeping its time) or gets
     its own at liturgy.long_time; campaign Shorts get their own slots at liturgy.short_times, on top
-    of the day's regular Shorts. So the evergreen engine keeps running while a campaign is on."""
+    of the day's regular Shorts. So the evergreen engine keeps running while a campaign is on. A video with
+    its own `time` gets that time; if a regular slot is at that time (e.g. a daily Advent Short at the
+    morning Short's 08:00), the campaign video takes that slot instead of adding one."""
     from fyt import liturgy
 
     lt = cfg.liturgy
@@ -101,7 +104,9 @@ def calendar_slots(cfg: Config, now: datetime, regular: dict[str, Slot]) -> list
     out: list[Slot] = []
     used_times: dict[tuple, int] = {}
     for e in liturgy.entries(cfg, start.date(), end.date()):
-        if e.kind == "long":
+        if e.time:  # the video names its own time; on a regular slot's time it takes that slot over
+            at = _at(e.on, e.time, cfg.schedule.timezone)
+        elif e.kind == "long":
             same_day = [s for s in regular.values() if s.kind == "long" and s.at.date() == e.on and not s.topic]
             at = same_day[0].at if same_day else _at(e.on, lt.long_time, cfg.schedule.timezone)
         else:
@@ -120,6 +125,8 @@ def make_minutes(slot: Slot, cfg: Config) -> float:
     """Rough time to make this slot's video on the free runner (long videos scale with length)."""
     if slot.kind == "short" or not slot.minutes:
         return MAKE_MINUTES[slot.kind]
+    if slot.minutes >= SLEEP_MINUTES:  # rendered at sleep.fps instead of 30: rendering scales with frames
+        return 20 + MAKE_MINUTES["long"] * slot.minutes / 8 * cfg.sleep.fps / 30
     return max(MAKE_MINUTES["long"] * slot.minutes / 8, 30)  # ~80 minutes for 8 minutes of video
 
 
@@ -128,7 +135,7 @@ def slot_config(cfg: Config, slot: Slot) -> Config:
     update: dict = {"format": slot.kind}
     if slot.minutes:
         update["target_minutes"] = slot.minutes
-    return cfg.model_copy(update=update)
+    return sleep_config(cfg.model_copy(update=update))
 
 
 def empty_slots(cfg: Config, now: datetime) -> list[Slot]:
@@ -237,6 +244,12 @@ def fill(cfg: Config, now: datetime | None = None, rng: random.Random | None = N
     now = now or utcnow()
     started = clock()
     sync(cfg, now)
+    try:  # once a week: learn from what viewers watched (fyt/insights.py)
+        from fyt import insights
+
+        insights.refresh(cfg, now)
+    except Exception as e:  # the schedule never waits on analytics
+        print(f"::warning::insights not refreshed: {e}")
     budget = uploads_left_today(cfg, now)
     free = empty_slots(cfg, now)
     print(f"{len(free)} empty slots in the next {cfg.schedule.buffer_days:g} days; {budget} uploads left today")

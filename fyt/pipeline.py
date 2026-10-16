@@ -7,8 +7,8 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from fyt import catalog, growth, llm, media, qa, render, scripture, tts, wiki, youtube
-from fyt.config import Config
+from fyt import catalog, growth, insights, llm, localize, media, qa, render, scripture, tts, wiki, youtube
+from fyt.config import SLEEP_MINUTES, Config
 from fyt.models import Media, QuoteCardProps, RenderProps, Script, ThumbnailProps
 from fyt.store import Job, Topics, Uploads, list_jobs
 from fyt.timeline import build_props, to_srt
@@ -50,9 +50,22 @@ def repair_script(script: Script) -> Script:
 def pick_title_style(cfg: Config, idea: "catalog.Idea | None", cut: bool = False) -> str:
     """The title style for the next video: suits its story shape, differs from the last few videos."""
     recent = json.loads(Uploads(cfg).note("title-styles") or "[]")
+    prefer, avoid = insights.title_preferences(cfg)  # what viewers have stayed with so far
     if idea is None:
-        return llm.choose_title_style("story" if cut else "journey", "", recent)
-    return llm.choose_title_style(idea.shape, idea.category, recent, seasonal="@" in idea.id)
+        return llm.choose_title_style("story" if cut else "journey", "", recent, prefer=prefer, avoid=avoid)
+    return llm.choose_title_style(idea.shape, idea.category, recent, seasonal="@" in idea.id, prefer=prefer, avoid=avoid)
+
+
+def with_title_prefix(script: Script, prefix: str) -> Script:
+    """A calendar series' title, e.g. "Advent: Day 3 · " + the written title; the series name is the kicker."""
+    label = prefix.strip(" ·:|-–—")
+    base = script.title.strip()
+    if base.lower().startswith(label.lower()):  # the model already wrote it in
+        base = base[len(label):].lstrip(" ·:|-–—")
+    title = prefix + base
+    if len(title) > 100:
+        title = title[:100].rsplit(" ", 1)[0]
+    return script.model_copy(update={"title": title, "thumbnail_kicker": label})
 
 
 def remember_title_style(cfg: Config, style: str) -> None:
@@ -83,7 +96,7 @@ def keep_faithful(cfg, job, script, study, verses, subject, notes, menu, from_wi
         )
         script = repair_script(llm.write_script(
             cfg, subject, notes, from_wikipedia=from_wikipedia, images=menu, feedback=feedback, prayer=prayer,
-            shape=shape, title_style=style,
+            shape=shape, title_style=style, lessons=insights.script_notes(cfg, cfg.format),
         ))
     return script
 
@@ -166,9 +179,10 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
         job.file("research.md").write_text(notes, encoding="utf-8")
         log(job, f"writing script ({shape}, title style: {style})")
         menu = wiki.image_menu(images)
+        lessons = insights.script_notes(cfg, cfg.format)  # delivery lessons from the analytics loop
         script = llm.write_script(
             cfg, subject, notes, from_wikipedia=article is not None, images=menu, prayer=prayer, shape=shape,
-            title_style=style,
+            title_style=style, lessons=lessons,
         )
         limit = llm.short_words(cfg) * 1.25 if cfg.format == "short" else None
         if limit and narration_words(script) > limit:
@@ -179,7 +193,7 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
             )
             script = llm.write_script(
                 cfg, subject, notes, from_wikipedia=article is not None, images=menu, feedback=feedback, prayer=prayer,
-                shape=shape, title_style=style,
+                shape=shape, title_style=style, lessons=lessons,
             )
         script = repair_script(script)
         if cfg.bible_first and study:
@@ -200,8 +214,15 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
         script = script.model_copy(update={"description": script.description.rstrip() + "\n\n" + scripture.credit(cfg, passages)})
     if llm.title_banned(script.title):
         script = script.model_copy(update={"title": idea.title if idea and not llm.title_banned(idea.title) else script.title})
+    if idea and idea.title_prefix:  # a calendar series, e.g. "Advent: Day 3 · ..."
+        script = with_title_prefix(script, idea.title_prefix)
     job.file("script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
-    job.update(status="scripted", title=script.title, title_style=style)
+    # What this video is, so the analytics loop can learn which choices viewers stay with.
+    job.update(
+        status="scripted", title=script.title, title_style=style, minutes=cfg.target_minutes,
+        category=idea.category if idea else None, shape=idea.shape if idea else ("story" if topic.startswith(CUT) else None),
+        emotion=idea.emotion if idea else None,
+    )
     remember_title_style(cfg, style)
 
     extras = None
@@ -246,12 +267,19 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
         job.file("script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
     seconds = (spans[-1][1] if spans else 0) + max(cfg.tail_seconds, 4.0)
     feel = {"calm": "prayer", "cinematic": "motivation"}.get(idea.music, idea.category) if idea else None
+    if cfg.is_sleep:
+        feel = "prayer"  # calm tracks under a sleep video
     music = media.pick_music(cfg, job.public, category=feel, seconds=seconds)
     credit = media.music_credit(job.public) if music else ""
     if credit and credit not in script.description:
         script = script.model_copy(update={"description": script.description.rstrip() + "\n\nMusic: " + credit})
         job.file("script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
-    job.file("youtube.txt").write_text(youtube.upload_sheet(cfg, script), encoding="utf-8")
+    locs = localize.localize(cfg, script) if cfg.localize.languages else {}
+    if locs:
+        job.file("localizations.json").write_text(json.dumps(locs, ensure_ascii=False, indent=2), encoding="utf-8")
+        log(job, f"translated title and description: {', '.join(locs)}")
+    thumb_names = THUMBNAILS[: max(1, cfg.thumbnails.variants)] if cfg.format == "long" else THUMBNAILS[:1]
+    job.file("youtube.txt").write_text(youtube.upload_sheet(cfg, script, locs, thumb_names), encoding="utf-8")
 
     props = build_props(cfg, script, spans, [c.words for c in clips], scene_media, voice_src, music)
     job.file("props.json").write_text(props.model_dump_json(indent=2), encoding="utf-8")
@@ -275,15 +303,26 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
             bg = media.fetch_photo(cfg, script.thumbnail_query, job.public, "thumb-bg", used)
         except Exception as e:
             log(job, f"warning: no stock thumbnail background: {e}")
-    thumb = ThumbnailProps(
-        format=cfg.format,
-        title=script.thumbnail_text,
-        kicker=script.thumbnail_kicker.upper(),
-        theme=cfg.theme.model_dump(),
-        background=bg,
-    )
-    job.file("thumbnail.json").write_text(thumb.model_dump_json(indent=2), encoding="utf-8")
-    render.render(job.file("thumbnail.json"), job.public, job.file("thumbnail.png"), still=True)
+    alt_bg = None
+    if len(thumb_names) > 1:  # a second picture for variant B: another still from the video, else stock
+        alt_bg = next((m for i, m in sorted(scene_media.items()) if m.kind == "image" and m != bg), None)
+        if alt_bg is None and cfg.stock_footage:
+            query = next((s.broll_query for s in script.scenes if s.mood == "hope" and s.broll_query), "light through clouds")
+            try:
+                alt_bg = media.fetch_photo(cfg, query, job.public, "thumb-bg-b", used)
+            except Exception as e:
+                log(job, f"warning: no second thumbnail background: {e}")
+    for name, thumb in zip(thumb_names, thumbnail_variants(cfg, script, bg, alt_bg, len(thumb_names))):
+        props_path = job.file(name.replace(".png", ".json"))
+        props_path.write_text(thumb.model_dump_json(indent=2), encoding="utf-8")
+        try:
+            render.render(props_path, job.public, job.file(name), still=True)
+        except Exception as e:
+            if name == THUMBNAILS[0]:
+                raise
+            log(job, f"warning: {name} not rendered: {e}")
+    if len(thumb_names) > 1:
+        log(job, f"thumbnails for Test & compare: {', '.join(thumb_names)}")
     if extras:
         quote_cards(cfg, job, extras, bg)
 
@@ -291,6 +330,25 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
     status = "qa_failed" if problems else ("ready" if cfg.require_review else "approved")
     job.update(status=status, problems=problems, duration=props.duration)
     log(job, f"done: {status}" + (f" -- {problems}" if problems else ""))
+
+
+THUMBNAILS = ("thumbnail.png", "thumbnail-b.png", "thumbnail-c.png")
+
+
+def thumbnail_variants(
+    cfg: Config, script: Script, bg: Media | None, alt_bg: Media | None = None, n: int = 3
+) -> list[ThumbnailProps]:
+    """Up to three thumbnails for YouTube Studio's Test & compare: A as written (the one uploaded),
+    B with another picture and the polish step's second text, C centred with its third text."""
+    texts = [script.thumbnail_text, *(script.thumbnail_variants or [])]
+    base = dict(format=cfg.format, kicker=script.thumbnail_kicker.upper(), theme=cfg.theme.model_dump())
+    out = [ThumbnailProps(**base, title=texts[0], background=bg)]
+    if n >= 2:
+        out.append(ThumbnailProps(**base, title=texts[1] if len(texts) > 1 else texts[0], background=alt_bg or bg))
+    if n >= 3:
+        title = texts[2] if len(texts) > 2 else texts[1] if len(texts) > 1 else texts[0]
+        out.append(ThumbnailProps(**base, title=title, background=bg or alt_bg, layout="center"))
+    return out
 
 
 def quote_cards(cfg: Config, job: Job, extras: "growth.Extras", background: Media | None) -> None:
@@ -432,16 +490,24 @@ def upload_job(cfg: Config, job: Job, force: bool = False, publish_at: datetime 
         raise SystemExit(f"{job.id} is '{status}'. Review it, then `python -m fyt approve {job.id}` (or --force).")
     script = Script.model_validate_json(job.file("script.json").read_text(encoding="utf-8"))
     cfg = cfg.model_copy(update={"format": job.meta.get("format", cfg.format)})  # e.g. #Shorts in the description
+    locs_path = job.file("localizations.json")
+    locs = json.loads(locs_path.read_text(encoding="utf-8")) if locs_path.exists() else None
     video_id = youtube.upload(
-        cfg, script, job.file("video.mp4"), job.file("thumbnail.png"), job.file("captions.srt"), publish_at=publish_at
+        cfg, script, job.file("video.mp4"), job.file("thumbnail.png"), job.file("captions.srt"), publish_at=publish_at,
+        localizations=locs,
     )
     job.update(status="uploaded", youtube_id=video_id, publish_at=publish_at.isoformat() if publish_at else None)
+    m = job.meta
+    Uploads(cfg).describe(  # for the analytics feedback loop (fyt/insights.py)
+        video_id, topic=m.get("topic"), title=script.title, format=cfg.format, category=m.get("category"),
+        shape=m.get("shape"), emotion=m.get("emotion"), title_style=m.get("title_style"), minutes=m.get("minutes"),
+    )
     if script.series and youtube.can_manage():
         try:
             youtube.add_to_playlist(video_id, script.series)
         except Exception as e:  # the video is up; the playlist is a nice-to-have
             print(f"warning: not added to the {script.series!r} playlist: {e}")
-    if cfg.format == "long":
+    if cfg.format == "long" and (job.meta.get("minutes") or 0) < SLEEP_MINUTES:  # sleep videos aren't cut up
         queue_cuts(cfg, script, video_id)
     return video_id
 
@@ -479,7 +545,9 @@ def catalog_topic(cfg: Config, topics: Topics, category: str | None = None) -> t
     from fyt import liturgy
 
     season = liturgy.season(cfg, datetime.now().date()) if cfg.liturgy.season_bias else {}
-    idea = catalog.pick(cfg, used, category=category, recent=topics.recent(8), season=season)
+    idea = catalog.pick(
+        cfg, used, category=category, recent=topics.recent(8), season=season, weights=insights.category_weights(cfg)
+    )
     if idea is None:
         return None
     topics.add([idea.topic])
@@ -617,8 +685,12 @@ def long_topic(cfg: Config, topics: Topics) -> tuple[int, str] | None:
     return topics.find(wiki.topic_for(titles[0]))
 
 
-def performance_summary(cfg: Config, limit: int = 10) -> str:
-    """Top uploaded videos by views, fed back into topic ideation."""
+def performance_summary(cfg: Config, limit: int = 10, learned: bool = True) -> str:
+    """What has worked, fed back into topic ideation: the analytics loop's best and weakest videos
+    (by how well they held viewers) when it has run, else the top uploaded videos by views."""
+    lessons = insights.summary(cfg) if learned else ""
+    if lessons:
+        return lessons
     uploaded = {j.meta["youtube_id"] for j in list_jobs(cfg) if j.meta.get("youtube_id")}
     uploaded |= set(Uploads(cfg).video_ids())
     if not uploaded or not youtube.can_manage():  # reading stats needs more than the upload scope

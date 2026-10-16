@@ -92,7 +92,30 @@ class Uploads:
             )"""
         )
         self.db.execute("create table if not exists notes (key text primary key, value text)")
+        # What each uploaded video was (pillar, story shape, title style...), so the analytics feedback
+        # loop (fyt/insights.py) can learn which choices viewers stay with.
+        self.db.execute(
+            """create table if not exists videos (
+                youtube_id text primary key,
+                body text not null         -- JSON: topic, title, format, category, shape, emotion, title_style, minutes
+            )"""
+        )
         self.db.commit()
+
+    def describe(self, youtube_id: str, **meta) -> None:
+        self.db.execute(
+            "insert or replace into videos(youtube_id, body) values (?, ?)", (youtube_id, json.dumps(meta))
+        )
+        self.db.commit()
+
+    def described(self) -> dict[str, dict]:
+        """youtube_id -> what the video was (see `describe`)."""
+        return {r[0]: json.loads(r[1]) for r in self.db.execute("select youtube_id, body from videos")}
+
+    def kinds(self) -> dict[str, str]:
+        """youtube_id -> short | long | ... as recorded at upload."""
+        rows = self.db.execute("select youtube_id, kind from uploads where youtube_id is not null")
+        return {r[0]: r[1].removeprefix("bonus-") for r in rows}
 
     def note(self, key: str) -> str | None:
         row = self.db.execute("select value from notes where key=?", (key,)).fetchone()

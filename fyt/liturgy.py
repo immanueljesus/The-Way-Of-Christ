@@ -125,6 +125,20 @@ def entries(cfg: Config, start: date, end: date) -> list[Entry]:
     """Campaign videos dated between start and end (inclusive), earliest first."""
     if not cfg.liturgy.enabled:
         return []
+    out = _campaigns(cfg, start, end)
+    if cfg.liturgy.sunday_gospel:
+        from fyt import lectionary
+
+        lead = timedelta(days=abs(cfg.liturgy.sunday_gospel_offset) + 7)
+        taken = {e.on for e in _campaigns(cfg, start - lead, end + lead)}
+        for on, s in lectionary.entries(cfg, start, end, taken):
+            out.append(Entry(on, "short", None, f"idea:{s.id}{SEP}{s.day.year}", s.name, "sunday_gospel",
+                             cfg.liturgy.sunday_gospel_time))
+    return sorted(out, key=lambda x: (x.on, x.kind != "long", x.topic))
+
+
+def _campaigns(cfg: Config, start: date, end: date) -> list[Entry]:
+    """The calendar.yaml campaign videos dated between start and end."""
     data = _load(cfg)
     out: list[Entry] = []
     for year in range(start.year - 1, end.year + 2):  # Advent campaigns cross the new year
@@ -139,11 +153,15 @@ def entries(cfg: Config, start: date, end: date) -> list[Entry]:
                         on, e.get("kind", "short"), e.get("minutes"), f"idea:{e['id']}{SEP}{year}", e["title"], key,
                         e.get("time"),
                     ))
-    return sorted(out, key=lambda x: (x.on, x.kind != "long", x.topic))
+    return out
 
 
 def idea_data(cfg: Config, entry_id: str) -> dict | None:
     """A campaign video's idea fields, by id (without the year)."""
+    from fyt import lectionary
+
+    if entry_id.startswith(lectionary.PREFIX):
+        return lectionary.idea_data(cfg, entry_id)
     for key, event in (_load(cfg).get("events") or {}).items():
         for e in event.get("videos") or []:
             if e["id"] == entry_id:

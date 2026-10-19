@@ -1,0 +1,100 @@
+# The Sunday Gospels of the Roman Catholic Lectionary for Mass, by Sunday and year of the three-year
+# cycle (A: Matthew, B: Mark, C: Luke; John through Lent and Easter). fyt/lectionary.py works out
+# which Sunday a date is; the Sunday Gospel Shorts (liturgy.sunday_gospel in channel.yaml) are written
+# from these passages, quoted word for word from the public-domain translation in `scripture`.
+# Only the references are kept here (they are not copyrighted); correct any entry by hand.
+#
+# sundays.<key>: {A: [...], B: [...], C: [...]} or {all: [...]}, each a list of references.
+# feasts: Sundays taken over by a feast on a fixed date (MM-DD), same shape.
+
+names:
+  advent: "{n} Sunday of Advent"
+  lent: "{n} Sunday of Lent"
+  easter: "{n} Sunday of Easter"
+  ot: "{n} Sunday in Ordinary Time"
+  holy_family: "The Holy Family"
+  mary_mother_of_god: "Mary, Mother of God"
+  christmas2: "Second Sunday after Christmas"
+  epiphany: "The Epiphany of the Lord"
+  baptism: "The Baptism of the Lord"
+  palm: "Palm Sunday of the Passion of the Lord"
+  easter1: "Easter Sunday"
+  pentecost: "Pentecost Sunday"
+  trinity: "The Most Holy Trinity"
+  corpus_christi: "The Most Holy Body and Blood of Christ"
+  christ_the_king: "Our Lord Jesus Christ, King of the Universe"
+
+sundays:
+  advent1: {A: [Matthew 24:37-44], B: [Mark 13:33-37], C: [Luke 21:25-28, Luke 21:34-36]}
+  advent2: {A: [Matthew 3:1-12], B: [Mark 1:1-8], C: [Luke 3:1-6]}
+  advent3: {A: [Matthew 11:2-11], B: [John 1:6-8, John 1:19-28], C: [Luke 3:10-18]}
+  advent4: {A: [Matthew 1:18-24], B: [Luke 1:26-38], C: [Luke 1:39-45]}
+  holy_family: {A: [Matthew 2:13-15, Matthew 2:19-23], B: [Luke 2:22-40], C: [Luke 2:41-52]}
+  mary_mother_of_god: {all: [Luke 2:16-21]}
+  christmas2: {all: [John 1:1-18]}
+  epiphany: {all: [Matthew 2:1-12]}
+  baptism: {A: [Matthew 3:13-17], B: [Mark 1:7-11], C: [Luke 3:15-16, Luke 3:21-22]}
+
+  lent1: {A: [Matthew 4:1-11], B: [Mark 1:12-15], C: [Luke 4:1-13]}
+  lent2: {A: [Matthew 17:1-9], B: [Mark 9:2-10], C: [Luke 9:28-36]}
+  lent3: {A: [John 4:5-42], B: [John 2:13-25], C: [Luke 13:1-9]}
+  lent4: {A: [John 9:1-41], B: [John 3:14-21], C: [Luke 15:1-3, Luke 15:11-32]}
+  lent5: {A: [John 11:1-45], B: [John 12:20-33], C: [John 8:1-11]}
+  palm: {A: [Matthew 26:14-27:66], B: [Mark 14:1-15:47], C: [Luke 22:14-23:56]}
+
+  easter1: {all: [John 20:1-9]}
+  easter2: {all: [John 20:19-31]}
+  easter3: {A: [Luke 24:13-35], B: [Luke 24:35-48], C: [John 21:1-19]}
+  easter4: {A: [John 10:1-10], B: [John 10:11-18], C: [John 10:27-30]}
+  easter5: {A: [John 14:1-12], B: [John 15:1-8], C: [John 13:31-35]}
+  easter6: {A: [John 14:15-21], B: [John 15:9-17], C: [John 14:23-29]}
+  easter7: {A: [John 17:1-11], B: [John 17:11-19], C: [John 17:20-26]}
+  pentecost: {all: [John 20:19-23]}
+  trinity: {A: [John 3:16-18], B: [Matthew 28:16-20], C: [John 16:12-15]}
+  corpus_christi: {A: [John 6:51-58], B: [Mark 14:12-16, Mark 14:22-26], C: [Luke 9:11-17]}
+
+  ot2: {A: [John 1:29-34], B: [John 1:35-42], C: [John 2:1-11]}
+  ot3: {A: [Matthew 4:12-23], B: [Mark 1:14-20], C: [Luke 1:1-4, Luke 4:14-21]}
+  ot4: {A: [Matthew 5:1-12], B: [Mark 1:21-28], C: [Luke 4:21-30]}
+  ot5: {A: [Matthew 5:13-16], B: [Mark 1:29-39], C: [Luke 5:1-11]}
+  ot6: {A: [Matthew 5:17-37], B: [Mark 1:40-45], C: [Luke 6:17, Luke 6:20-26]}
+  ot7: {A: [Matthew 5:38-48], B: [Mark 2:1-12], C: [Luke 6:27-38]}
+  ot8: {A: [Matthew 6:24-34], B: [Mark 2:18-22], C: [Luke 6:39-45]}
+  ot9: {A: [Matthew 7:21-27], B: [Mark 2:23-3:6], C: [Luke 7:1-10]}
+  ot10: {A: [Matthew 9:9-13], B: [Mark 3:20-35], C: [Luke 7:11-17]}
+  ot11: {A: [Matthew 9:36-10:8], B: [Mark 4:26-34], C: [Luke 7:36-8:3]}
+  ot12: {A: [Matthew 10:26-33], B: [Mark 4:35-41], C: [Luke 9:18-24]}
+  ot13: {A: [Matthew 10:37-42], B: [Mark 5:21-43], C: [Luke 9:51-62]}
+  ot14: {A: [Matthew 11:25-30], B: [Mark 6:1-6], C: [Luke 10:1-12, Luke 10:17-20]}
+  ot15: {A: [Matthew 13:1-23], B: [Mark 6:7-13], C: [Luke 10:25-37]}
+  ot16: {A: [Matthew 13:24-43], B: [Mark 6:30-34], C: [Luke 10:38-42]}
+  ot17: {A: [Matthew 13:44-52], B: [John 6:1-15], C: [Luke 11:1-13]}
+  ot18: {A: [Matthew 14:13-21], B: [John 6:24-35], C: [Luke 12:13-21]}
+  ot19: {A: [Matthew 14:22-33], B: [John 6:41-51], C: [Luke 12:32-48]}
+  ot20: {A: [Matthew 15:21-28], B: [John 6:51-58], C: [Luke 12:49-53]}
+  ot21: {A: [Matthew 16:13-20], B: [John 6:60-69], C: [Luke 13:22-30]}
+  ot22: {A: [Matthew 16:21-27], B: [Mark 7:1-8, Mark 7:14-15, Mark 7:21-23], C: [Luke 14:1, Luke 14:7-14]}
+  ot23: {A: [Matthew 18:15-20], B: [Mark 7:31-37], C: [Luke 14:25-33]}
+  ot24: {A: [Matthew 18:21-35], B: [Mark 8:27-35], C: [Luke 15:1-32]}
+  ot25: {A: [Matthew 20:1-16], B: [Mark 9:30-37], C: [Luke 16:1-13]}
+  ot26: {A: [Matthew 21:28-32], B: [Mark 9:38-48], C: [Luke 16:19-31]}
+  ot27: {A: [Matthew 21:33-43], B: [Mark 10:2-16], C: [Luke 17:5-10]}
+  ot28: {A: [Matthew 22:1-14], B: [Mark 10:17-30], C: [Luke 17:11-19]}
+  ot29: {A: [Matthew 22:15-21], B: [Mark 10:35-45], C: [Luke 18:1-8]}
+  ot30: {A: [Matthew 22:34-40], B: [Mark 10:46-52], C: [Luke 18:9-14]}
+  ot31: {A: [Matthew 23:1-12], B: [Mark 12:28-34], C: [Luke 19:1-10]}
+  ot32: {A: [Matthew 25:1-13], B: [Mark 12:38-44], C: [Luke 20:27-38]}
+  ot33: {A: [Matthew 25:14-30], B: [Mark 13:24-32], C: [Luke 21:5-19]}
+  christ_the_king: {A: [Matthew 25:31-46], B: [John 18:33-37], C: [Luke 23:35-43]}
+
+# Feasts that take the place of an Ordinary Time Sunday when they fall on one.
+feasts:
+  "02-02": {name: "The Presentation of the Lord", all: [Luke 2:22-40]}
+  "06-24": {name: "The Nativity of Saint John the Baptist", all: [Luke 1:57-66, Luke 1:80]}
+  "06-29": {name: "Saints Peter and Paul", all: [Matthew 16:13-19]}
+  "08-06": {name: "The Transfiguration of the Lord", A: [Matthew 17:1-9], B: [Mark 9:2-10], C: [Luke 9:28-36]}
+  "08-15": {name: "The Assumption of the Blessed Virgin Mary", all: [Luke 1:39-56]}
+  "09-14": {name: "The Exaltation of the Holy Cross", all: [John 3:13-17]}
+  "11-01": {name: "All Saints", all: [Matthew 5:1-12]}
+  "11-02": {name: "All Souls", all: [John 6:37-40]}
+  "11-09": {name: "The Dedication of the Lateran Basilica", all: [John 2:13-22]}

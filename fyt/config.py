@@ -242,6 +242,14 @@ class LiturgyConfig(BaseModel):
     long_time: str = "15:00"  # UTC; a campaign long video takes the plan's long slot that day, or this time
     short_times: list[str] = Field(default_factory=lambda: ["17:00", "19:00"])  # UTC, for campaign Shorts
     season_bias: bool = True  # evergreen picks lean towards the season's themes (Lent: repentance...)
+    # A Short on each Sunday's Gospel from the Roman Catholic Lectionary (fyt/lectionary.py), published
+    # sunday_gospel_offset days before the Sunday, at sunday_gospel_time (schedule time zone) or the
+    # first of short_times. Sundays a calendar campaign already covers (Easter...) are skipped.
+    sunday_gospel: bool = False
+    sunday_gospel_offset: int = -2
+    sunday_gospel_time: str | None = None
+    sunday_gospel_series: str = "Sunday Gospel"
+    sunday_gospel_prefix: str = ""  # e.g. "Sunday Gospel · ": every title starts with it
 
 
 class InsightsConfig(BaseModel):

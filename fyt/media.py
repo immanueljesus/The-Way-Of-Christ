@@ -101,10 +101,12 @@ MOOD_QUERIES: dict[str, list[str]] = {
 }
 
 
-def mood_queries(mood: str | None, i: int = 0) -> list[str]:
-    """Fallback searches for a mood, rotated by scene number so neighbouring scenes differ."""
+def mood_queries(mood: str | None, i: int = 0, offset: int = 0) -> list[str]:
+    """Fallback searches for a mood, rotated by scene number so neighbouring scenes differ, and by
+    a per-video offset so each video starts from a different one."""
     qs = MOOD_QUERIES.get(mood or "", [])
-    return qs[i % len(qs):] + qs[: i % len(qs)] if qs else []
+    k = (i + offset) % len(qs) if qs else 0
+    return qs[k:] + qs[:k]
 
 
 def fetch_broll(cfg: Config, query: str | list[str], public: Path, name: str, used: set[str]) -> Media | None:
@@ -131,6 +133,19 @@ def _off_brand(cfg: Config, text: str) -> bool:
     return any(re.search(rf"\b{re.escape(w.lower())}s?\b", t) for w in cfg.stock_skip_words)
 
 
+# How many results to look at per search, and how many of the best unused ones to pick from at
+# random: the same search (moods repeat from video to video) then gives a different shot each time.
+PER_PAGE = 40
+PICK_FROM = 8
+
+
+def _varied(items: list) -> list:
+    """The first PICK_FROM items in random order, then the rest in search order."""
+    head = items[:PICK_FROM]
+    random.shuffle(head)
+    return head + items[PICK_FROM:]
+
+
 def _stock(cfg: Config, query: str, public: Path, name: str, used: set[str]) -> Media | None:
     if not query:
         return None
@@ -138,10 +153,12 @@ def _stock(cfg: Config, query: str, public: Path, name: str, used: set[str]) -> 
     orientation = "portrait" if vertical else "landscape"
     (public / "media").mkdir(parents=True, exist_ok=True)
 
-    data = _get("/videos/search", {"query": query, "orientation": orientation, "per_page": 10, "size": "medium"})
-    for video in (data or {}).get("videos", []):
-        if str(video["id"]) in used or video.get("duration", 0) < 4 or _off_brand(cfg, video.get("url", "")):
-            continue
+    data = _get("/videos/search", {"query": query, "orientation": orientation, "per_page": PER_PAGE, "size": "medium"})
+    fresh = [
+        v for v in (data or {}).get("videos", [])
+        if str(v["id"]) not in used and v.get("duration", 0) >= 4 and not _off_brand(cfg, v.get("url", ""))
+    ]
+    for video in _varied(fresh):
         f = _best_file(video.get("video_files", []), vertical)
         if not f:
             continue
@@ -154,10 +171,12 @@ def _stock(cfg: Config, query: str, public: Path, name: str, used: set[str]) -> 
 
 def fetch_photo(cfg: Config, query: str, public: Path, name: str, used: set[str]) -> Media | None:
     orientation = "portrait" if cfg.format == "short" else "landscape"
-    data = _get("/v1/search", {"query": query, "orientation": orientation, "per_page": 10})
-    for photo in (data or {}).get("photos", []):
-        if f"p{photo['id']}" in used or _off_brand(cfg, f"{photo.get('alt', '')} {photo.get('url', '')}"):
-            continue
+    data = _get("/v1/search", {"query": query, "orientation": orientation, "per_page": PER_PAGE})
+    fresh = [
+        p for p in (data or {}).get("photos", [])
+        if f"p{p['id']}" not in used and not _off_brand(cfg, f"{p.get('alt', '')} {p.get('url', '')}")
+    ]
+    for photo in _varied(fresh):
         rel = f"media/{name}.jpg"
         (public / "media").mkdir(parents=True, exist_ok=True)
         _download(photo["src"]["large2x"], public / rel)

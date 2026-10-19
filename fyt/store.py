@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from fyt.config import Config
@@ -151,6 +151,30 @@ class Uploads:
 
     def count_since(self, since: str) -> int:
         return self.db.execute("select count(*) from uploads where uploaded >= ?", (since,)).fetchone()[0]
+
+
+class MediaHistory:
+    """Stock clips, photos and paintings already shown in a video, so later videos pick others.
+    Keys are what fyt/media.py puts in its `used` set (Pexels ids) and "art:<File title>" for paintings.
+    Lives in state.db, which the workflow keeps between runs."""
+
+    def __init__(self, cfg: Config):
+        cfg.jobs_path.mkdir(parents=True, exist_ok=True)
+        self.db = sqlite3.connect(cfg.jobs_path / "state.db")
+        self.db.execute("create table if not exists media_used (key text primary key, used text not null)")
+        self.db.commit()
+
+    def recent(self, days: int) -> set[str]:
+        if days <= 0:
+            return set()
+        since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat(timespec="seconds")
+        return {r[0] for r in self.db.execute("select key from media_used where used >= ?", (since,))}
+
+    def add(self, keys: set[str] | list[str], at: str | None = None) -> None:
+        self.db.executemany(
+            "insert or replace into media_used(key, used) values (?, ?)", [(k, at or now()) for k in keys if k]
+        )
+        self.db.commit()
 
 
 class Job:

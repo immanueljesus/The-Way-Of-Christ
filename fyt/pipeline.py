@@ -4,13 +4,15 @@ so a failed run can be inspected and individual steps re-run."""
 from __future__ import annotations
 
 import json
+import random
+import re
 from datetime import datetime
 from pathlib import Path
 
 from fyt import catalog, growth, insights, llm, localize, media, qa, render, scripture, tts, wiki, youtube
 from fyt.config import SLEEP_MINUTES, Config
 from fyt.models import Media, QuoteCardProps, RenderProps, Script, ThumbnailProps
-from fyt.store import Job, Topics, Uploads, list_jobs
+from fyt.store import Job, MediaHistory, Topics, Uploads, list_jobs
 from fyt.timeline import build_props, to_srt
 
 
@@ -117,7 +119,7 @@ def research_notes(cfg: Config, job: Job, topic: str) -> tuple[str, str, "wiki.A
         log(job, f"fetching Wikipedia article {wiki_title!r}")
         try:
             article = wiki.fetch_article(cfg, wiki_title)
-            images = wiki.fetch_images(cfg, article.title)
+            images = wiki.fetch_images(cfg, article.title, skip=recent_media(cfg))
             log(job, f"{len(images)} article images available")
         except Exception as e:
             if idea is None:
@@ -126,6 +128,16 @@ def research_notes(cfg: Config, job: Job, topic: str) -> tuple[str, str, "wiki.A
         if article:
             subject = subject if idea else article.title
             notes = (notes + "\n\n" + wiki.notes(article)).strip()
+    if cfg.commons_art and len(images) < cfg.art_images:
+        try:
+            art = wiki.search_art(
+                cfg, art_queries(idea, subject), limit=cfg.art_images - len(images),
+                skip=recent_media(cfg) | {im.title for im in images},
+            )
+            images += art
+            log(job, f"{len(art)} paintings from Wikimedia Commons available")
+        except Exception as e:  # artwork is optional; stock footage covers every scene
+            log(job, f"warning: no Commons artwork: {e}")
     if cfg.research and cfg.llm.provider == "anthropic" and article is None:
         log(job, "researching")
         notes = (notes + "\n\n" + llm.research(cfg, subject)).strip()
@@ -390,13 +402,38 @@ def narration_words(script: Script) -> int:
     return sum(len(s.narration.split()) for s in script.scenes)
 
 
+def recent_media(cfg: Config) -> set[str]:
+    """Stock clips, photos and paintings shown in videos of the last media_repeat_days days."""
+    return MediaHistory(cfg).recent(cfg.media_repeat_days)
+
+
+def art_queries(idea: "catalog.Idea | None", subject: str) -> list[str]:
+    """Commons searches for paintings of the video's story, most specific first: the Bible figure with
+    the words of the title ("Peter walking on water"), then the figure alone, then the subject."""
+    words = lambda t: " ".join(w for w in re.findall(r"[A-Za-z']+", t) if w.lower() not in ART_STOPWORDS)  # noqa: E731
+    who = idea.character.strip() if idea and idea.character else ""
+    title = words(subject)
+    qs = [f"{who} {title}".strip() if who and who.lower() not in title.lower() else title, who]
+    return list(dict.fromkeys(q for q in qs if q))
+
+
+ART_STOPWORDS = {
+    "a", "an", "the", "of", "in", "on", "at", "and", "with", "to", "why", "what", "when", "how", "who", "you",
+    "your", "is", "was", "were", "are", "it", "this", "that", "then", "him", "her", "his", "they", "for",
+    "from", "but", "not", "did", "do", "does", "be", "been", "about", "every", "really", "never", "even",
+}
+
+
 def scene_visuals(
     cfg: Config, job: Job, script: Script, images: list["wiki.WikiImage"], topic: str
 ) -> tuple[dict[int, Media], list[str], set[str]]:
     """Pick a visual for each scene: the article image the script chose, else stock
-    footage for the scene's search query. Returns media per scene, image credits,
-    and the stock ids used."""
-    used: set[str] = set()
+    footage for the scene's search query. Footage and paintings shown in recent videos
+    are skipped, and what this video shows is remembered (see store.MediaHistory).
+    Returns media per scene, image credits, and the stock ids used."""
+    history = MediaHistory(cfg)
+    used: set[str] = history.recent(cfg.media_repeat_days)
+    offset = random.randrange(len(media.MOOD_QUERIES["hope"]))  # each video starts from a different mood search
     scene_media: dict[int, Media] = {}
     credits: list[str] = []
     taken: set[int] = set()
@@ -421,7 +458,7 @@ def scene_visuals(
         wants_stock = s.type not in ("stat", "bars") and (s.broll_query or s.mood or s.type == "broll")
         if wants_stock:
             try:
-                queries = [q for q in [s.broll_query, *media.mood_queries(s.mood, i)] if q] or [s.heading or topic]
+                queries = [q for q in [s.broll_query, *media.mood_queries(s.mood, i, offset)] if q] or [s.heading or topic]
                 m = media.fetch_broll(cfg, queries, job.public, f"s{i + 1}", used)
             except Exception as e:  # stock footage is optional; fall back to the plain background
                 log(job, f"warning: no stock footage for scene {i + 1}: {e}")
@@ -438,8 +475,11 @@ def scene_visuals(
                 wiki.download_image(im, job.public / rel)
                 scene_media[0] = Media(src=rel, kind="image")
                 credits.append(im.credit)
+                taken.add(n)
             except Exception as e:
                 log(job, f"warning: could not download {im.title}: {e}")
+    shown = {f"art:{images[n - 1].title}" for n in taken} | {k for k in used if not k.startswith("local:")}
+    history.add(shown)
     log(job, f"visuals: {sum(1 for m in scene_media.values() if 'wiki' in m.src)} article images, "
         f"{sum(1 for m in scene_media.values() if 'wiki' not in m.src)} stock, "
         f"{len(script.scenes) - len(scene_media)} scenes on plain background")

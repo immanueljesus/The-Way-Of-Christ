@@ -655,12 +655,17 @@ Part of the research notes is a Wikipedia article, for background only:
 - Write every sentence in your own words. Never copy or lightly reword sentences from the article.
 - Don't say "according to Wikipedia" in the narration.
 - Only state historical facts the notes support; label scholarly estimates and traditions as such.
+"""
 
-Visuals: the message ends with a numbered list of "Available images" from the article (often classical
-paintings of the story). For each scene, set `image` to the number of the image that best shows what the
-narration is talking about at that moment, or leave it null if none fits. Use each image at most once.
-For scenes without an image, set `broll_query` to a concrete, cinematic stock-footage search for what is
-being said. The title scene should show the story's key moment whenever an image of it exists.
+IMAGES_GUIDE = """
+Visuals: the message ends with a numbered list of "Available images" (classical paintings of the story
+and its people, from Wikipedia and Wikimedia Commons). For each scene, set `image` to the number of the
+image that best shows what the narration is talking about at that moment, or leave it null if none fits.
+Use each image at most once, and only where it truly shows that moment or person. Mix paintings with
+footage: give about a third to a half of the scenes an image and the rest moving footage, alternating
+where you can. For scenes without an image, set `broll_query` to a concrete, cinematic stock-footage
+search for what is being said. The title scene should show the story's key moment whenever an image of
+it exists.
 """
 
 
@@ -687,7 +692,7 @@ def write_script(
     if cfg.is_sleep:
         format_line += SLEEP_NOTE
     structure = structure_for(shape, cfg.format == "short", prayer)
-    guide = (SCRIPT_GUIDE + (WIKI_GUIDE if from_wikipedia else "")).format(
+    guide = (SCRIPT_GUIDE + (WIKI_GUIDE if from_wikipedia else "") + (IMAGES_GUIDE if images else "")).format(
         name=ch.name,
         niche=ch.niche,
         audience=ch.audience,

@@ -366,6 +366,14 @@ class Config(BaseModel):
     stock_footage: bool = True  # needs PEXELS_API_KEY
     # Stock results whose description contains one of these are skipped (off-brand for the channel).
     stock_skip_words: list[str] = Field(default_factory=list)
+    # A stock clip, photo or painting shown in a video made in the last this-many days isn't used again
+    # (remembered in jobs/state.db), so back-to-back Shorts don't show the same footage. 0 allows repeats.
+    media_repeat_days: int = 60
+    # Classical Bible paintings from Wikimedia Commons (public domain or CC licensed, credited in the
+    # description), offered to the scriptwriter next to stock footage when the idea's Wikipedia
+    # article has fewer than art_images pictures of its own (or there is no article).
+    commons_art: bool = True
+    art_images: int = 6
     captions: bool = True
     visualizer: bool = True
     theme: Theme = Field(default_factory=Theme)

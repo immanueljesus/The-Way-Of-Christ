@@ -117,8 +117,11 @@ you trust the output.
 
 Each slot takes the next unused idea of its category from `content/ideas.yaml`. The idea's
 Scripture is fetched word for word, a Bible story's Wikipedia article adds background and
-classical paintings (credited in the description), and scenes without a painting get your own
-artwork or Pexels footage for a search written for that moment.
+classical paintings (credited in the description), topped up with public-domain Bible paintings
+from Wikimedia Commons when the idea has no article (`commons_art`). Paintings are mixed with
+footage: scenes without one get your own artwork or Pexels footage for a search written for that
+moment, picked at random among the best matches. Footage and paintings shown in the last
+`media_repeat_days` days are skipped (remembered in `jobs/state.db`), so Shorts don't repeat clips.
 
 **The schedule is off until you turn it on** (see [SETUP.md](SETUP.md) step 6). Until then:
 

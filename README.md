@@ -203,6 +203,7 @@ runner, so `schedule.max_run_minutes` is 200.
 
 ```
 content/ideas.yaml   the idea bank: 144 ideas with category, series, formats, Scripture, artwork source
+content/lectionary.yaml  the Sunday Gospel references of the Roman Lectionary (Years A, B, C)
 docs/                CHANNEL_ARCHITECTURE.md: the channel plan
 fyt/                 Python pipeline
   cli.py             commands (python -m fyt --help)
@@ -219,6 +220,7 @@ fyt/                 Python pipeline
   schedule.py        the weekly plan and `fill`
   youtube.py         OAuth, upload (video, thumbnail, captions, playlists), stats
   store.py           topic queue (SQLite) + job folders
+  lectionary.py      which Sunday a date is (Roman Lectionary) and its Gospel, for the Sunday Gospel Shorts
   wiki.py            Wikipedia background and paintings
 renderer/            Remotion (React) video templates
   src/scenes/        scene templates: title, statement, stat, bars, list, quote, timeline, comparison, broll

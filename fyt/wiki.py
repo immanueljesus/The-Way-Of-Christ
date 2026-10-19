@@ -46,10 +46,13 @@ def topic_for(title: str) -> str:
     return PREFIX + title
 
 
-def _api(cfg: Config, **params) -> dict:
+COMMONS = "commons.wikimedia.org"
+
+
+def _api(cfg: Config, host: str | None = None, **params) -> dict:
     for attempt in range(4):  # Wikimedia rate-limits anonymous clients; wait and retry on 429
         r = requests.get(
-            f"https://{cfg.wikipedia.lang}.wikipedia.org/w/api.php",
+            f"https://{host or f'{cfg.wikipedia.lang}.wikipedia.org'}/w/api.php",
             params={"format": "json", "formatversion": 2, **params},
             headers={"User-Agent": user_agent()},
             timeout=30,
@@ -165,26 +168,17 @@ def _plain(html: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html or "")).strip()
 
 
-def fetch_images(cfg: Config, title: str, limit: int = 8) -> list[WikiImage]:
-    """Photos used in the article, largest first, sized for the video."""
-    body = _api(
-        cfg,
-        action="query",
-        generator="images",
-        titles=title,
-        redirects=1,
-        gimlimit=50,
-        prop="imageinfo",
-        iiprop="url|size|mime|extmetadata",
-        iiurlwidth=1280,
-    )
+def _images(cfg: Config, pages: list[dict], skip: set[str], min_side: int = 400) -> list[WikiImage]:
+    """The usable pictures among API result pages: photos and paintings, not diagrams, logos or tiny files."""
     images = []
-    for page in body.get("query", {}).get("pages", []):
+    for page in pages:
         info = (page.get("imageinfo") or [{}])[0]
         name = page.get("title", "")
+        if name in skip or f"art:{name}" in skip:
+            continue
         if info.get("mime") not in ("image/jpeg", "image/png", "image/webp"):
             continue  # skips SVG diagrams, maps-as-SVG, audio, video
-        if min(info.get("width", 0), info.get("height", 0)) < 400:
+        if min(info.get("width", 0), info.get("height", 0)) < min_side:
             continue
         if any(w in name.lower() for w in SKIP_WORDS):
             continue
@@ -203,8 +197,66 @@ def fetch_images(cfg: Config, title: str, limit: int = 8) -> list[WikiImage]:
                 license=_plain(meta.get("LicenseShortName", {}).get("value", "")),
             )
         )
+    return images
+
+
+def fetch_images(cfg: Config, title: str, limit: int = 8, skip: set[str] = frozenset()) -> list[WikiImage]:
+    """Photos used in the article, largest first, sized for the video. `skip`: files shown recently."""
+    body = _api(
+        cfg,
+        action="query",
+        generator="images",
+        titles=title,
+        redirects=1,
+        gimlimit=50,
+        prop="imageinfo",
+        iiprop="url|size|mime|extmetadata",
+        iiurlwidth=1280,
+    )
+    images = _images(cfg, body.get("query", {}).get("pages", []), skip)
     images.sort(key=lambda im: len(im.description), reverse=True)  # described images first
     return images[:limit]
+
+
+# Licenses that allow reuse in a monetised video with a credit line. Commons accepts no
+# non-commercial or no-derivatives files, but the check keeps it that way.
+FREE_LICENSES = ("public domain", "pd", "cc0", "cc by")
+
+
+def _free(license: str) -> bool:
+    lic = license.lower()
+    return lic.startswith(FREE_LICENSES) and not any(w in lic for w in ("-nc", " nc", "-nd", " nd"))
+
+
+def search_art(cfg: Config, queries: list[str], limit: int = 6, skip: set[str] = frozenset()) -> list[WikiImage]:
+    """Classical paintings of a Bible scene from Wikimedia Commons (public domain or CC licensed),
+    for videos whose idea has no Wikipedia article of its own. Each query is searched in turn until
+    `limit` are found; among the best matches the order is shuffled, so the same story gets
+    different art each time. `skip`: files shown recently."""
+    found: list[WikiImage] = []
+    seen = set(skip)
+    for q in queries:
+        if len(found) >= limit or not q:
+            break
+        body = _api(
+            cfg,
+            host=COMMONS,
+            action="query",
+            generator="search",
+            gsrsearch=f"{q} painting filetype:bitmap",
+            gsrnamespace=6,
+            gsrlimit=30,
+            prop="imageinfo",
+            iiprop="url|size|mime|extmetadata",
+            iiurlwidth=1280,
+        )
+        pages = sorted(body.get("query", {}).get("pages", []), key=lambda p: p.get("index", 0))
+        art = [im for im in _images(cfg, pages, seen, min_side=600) if _free(im.license)][:12]
+        random.shuffle(art)
+        for im in art[: limit - len(found)]:
+            found.append(im)
+            seen.add(im.title)
+    return found
 
 
 def image_menu(images: list[WikiImage]) -> str:

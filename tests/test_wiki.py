@@ -159,7 +159,7 @@ def test_scene_visuals_uses_chosen_images_then_stock(monkeypatch, tmp_path):
     )
     job = Job(tmp_path / "job")
     job.public.mkdir(parents=True)
-    scene_media, credits, _ = pipeline.scene_visuals(Config(), job, s, images, "topic")
+    scene_media, credits, _ = pipeline.scene_visuals(Config(jobs_dir=str(tmp_path / "jobs")), job, s, images, "topic")
     assert scene_media[0].src == "media/wiki2.jpg"
     assert 1 not in scene_media and stock == [["flood street"]]  # image 2 already used -> stock
     assert 2 not in scene_media  # out-of-range image, data scene: plain background

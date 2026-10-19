@@ -101,6 +101,8 @@ class Word(BaseModel):
 class Media(BaseModel):
     src: str
     kind: Literal["video", "image"]
+    # A close-up on part of the picture (a second shot from the same painting).
+    detail: bool | None = None
 
 
 class RenderScene(BaseModel):
@@ -122,6 +124,8 @@ class RenderScene(BaseModel):
     rightTitle: str | None = None
     author: str | None = None
     media: Media | None = None
+    # More shots after `media`: the scene is cut into equal parts, one shot each (faster cuts in Shorts).
+    shots: list[Media] | None = None
     mood: Mood | None = None
 
 

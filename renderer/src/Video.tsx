@@ -108,7 +108,7 @@ export const Video: React.FC<RenderProps> = (props) => {
         const len = Math.max(1, Math.round(scene.end * fps) - from + overlap);
         return (
           <Sequence key={scene.id} from={from} durationInFrames={len} name={`${scene.type}:${scene.id}`}>
-            <SceneFrame first={i === 0} last={i === n - 1}>
+            <SceneFrame first={i === 0} last={i === n - 1} hook={i === 0 && props.format === "short"}>
               <SceneView scene={scene} theme={props.theme} format={props.format} />
             </SceneFrame>
           </Sequence>

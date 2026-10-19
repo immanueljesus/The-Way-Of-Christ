@@ -133,3 +133,61 @@ def test_scene_visuals_skip_and_remember_what_was_shown(monkeypatch, tmp_path):
     assert scene_media[0].kind == "image" and scene_media[1].kind == "video"
     assert "111" in seen_used[0]  # footage from a recent video isn't picked again
     assert MediaHistory(cfg).recent(60) >= {"111", "222", "art:File:A.jpg"}
+
+
+def test_shorts_cut_every_few_seconds_long_videos_hold_the_shot():
+    short = Config(format="short")
+    assert pipeline.shot_count(short, 2.5) == 1
+    assert pipeline.shot_count(short, 7) == 2
+    assert pipeline.shot_count(short, 20) == short.max_shots
+    assert pipeline.shot_count(Config(format="long"), 20) == 1
+    assert pipeline.shot_count(Config(format="short", shot_seconds=0), 20) == 1
+
+
+def test_scene_shots_follow_a_painting_with_a_close_up_then_footage(monkeypatch, tmp_path):
+    cfg = Config(format="short", jobs_dir=str(tmp_path / "jobs"))
+    fetched = []
+
+    def broll(cfg, q, public, name, used):
+        fetched.append(name)
+        used.add(f"id-{name}")
+        return media.Media(src=f"media/{name}.mp4", kind="video")
+
+    monkeypatch.setattr(media, "fetch_broll", broll)
+    s = Script.model_validate({
+        "title": "t", "description": "d", "tags": [], "thumbnail_text": "x", "thumbnail_kicker": "y",
+        "thumbnail_query": "z", "sources": [],
+        "scenes": [
+            {"narration": "a", "type": "broll", "image": 1, "broll_query": "boat storm"},
+            {"narration": "b", "type": "broll", "broll_query": "sunrise"},
+            {"narration": "c", "type": "quote", "text": "q", "broll_query": "candle"},
+        ],
+    })
+    scene_media = {
+        0: media.Media(src="media/wiki1.jpg", kind="image"),
+        1: media.Media(src="media/s2.mp4", kind="video"),
+        2: media.Media(src="media/s3.mp4", kind="video"),
+    }
+    spans = [(0.0, 10.0), (10.5, 13.0), (13.5, 20.0)]  # scene 1: ~10.5 s, scene 2: 3 s
+    job = Job(tmp_path / "job")
+    job.public.mkdir(parents=True)
+    shots = pipeline.scene_shots(cfg, job, s, scene_media, spans, set())
+    assert shots[0][0].src == "media/wiki1.jpg" and shots[0][0].detail  # close-up of the painting
+    assert shots[0][1].kind == "video" and fetched == ["s1c"]
+    assert 1 not in shots and 2 not in shots  # short scene keeps one shot; text scenes stay still
+    assert "id-s1c" in MediaHistory(cfg).recent(60)
+
+
+def test_render_props_carry_the_extra_shots():
+    from fyt.timeline import build_props
+
+    s = Script.model_validate({
+        "title": "t", "description": "d", "tags": [], "thumbnail_text": "x", "thumbnail_kicker": "y",
+        "thumbnail_query": "z", "sources": [],
+        "scenes": [{"narration": "a", "type": "broll"}, {"narration": "b", "type": "broll"}],
+    })
+    m = media.Media(src="media/a.jpg", kind="image")
+    extra = [media.Media(src="media/a.jpg", kind="image", detail=True)]
+    props = build_props(Config(format="short"), s, [(0, 5), (5, 9)], [[], []], {0: m}, None, None, shots={0: extra, 1: extra})
+    assert props.scenes[0].shots == extra
+    assert props.scenes[1].shots is None  # no picture, no shots

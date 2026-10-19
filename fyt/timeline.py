@@ -17,6 +17,7 @@ def build_props(
     media: dict[int, Media],
     voice: str | None,
     music: str | None,
+    shots: dict[int, list[Media]] | None = None,
 ) -> RenderProps:
     if len(spans) != len(script.scenes):
         raise ValueError("one audio span per scene is required")
@@ -52,6 +53,7 @@ def build_props(
                 rightTitle=scene.right_title,
                 author=scene.author,
                 media=media.get(i),
+                shots=(shots or {}).get(i) or None if media.get(i) else None,
                 mood=scene.mood,
             )
         )

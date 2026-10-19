@@ -374,6 +374,10 @@ class Config(BaseModel):
     # article has fewer than art_images pictures of its own (or there is no article).
     commons_art: bool = True
     art_images: int = 6
+    # Shorts cut to a new shot about every this-many seconds (up to max_shots per scene): a painting,
+    # then a close-up of it or footage for the same moment. 0 keeps one shot per scene.
+    shot_seconds: float = 3.5
+    max_shots: int = 3
     captions: bool = True
     visualizer: bool = True
     theme: Theme = Field(default_factory=Theme)

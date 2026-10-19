@@ -4,13 +4,14 @@ import {
   Easing,
   Img,
   OffthreadVideo,
+  Sequence,
   interpolate,
   spring,
   staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import type { Format, Mood, Scene, Theme } from "../types";
+import type { Format, Media, Mood, Scene, Theme } from "../types";
 import { unit } from "../theme";
 
 type SceneProps = { scene: Scene; theme: Theme; format: Format };
@@ -27,19 +28,26 @@ const useEnter = (delayFrames = 0) => {
 export const CROSSFADE = 24;
 
 // A slow dissolve in (the scene before stays underneath), a slow push in, and a fade to dark
-// at the very end of the video.
-export const SceneFrame: React.FC<{ children: React.ReactNode; first?: boolean; last?: boolean }> = ({
+// at the very end of the video. `hook` (a Short's opening): no fade from black, the picture is
+// there from the first frame and punches in, so the first second already grabs.
+export const SceneFrame: React.FC<{ children: React.ReactNode; first?: boolean; last?: boolean; hook?: boolean }> = ({
   children,
   first = false,
   last = false,
+  hook = false,
 }) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
-  const fadeIn = first ? interpolate(frame, [0, 30], [0, 1], { extrapolateRight: "clamp" }) : interpolate(frame, [0, CROSSFADE], [0, 1], { extrapolateRight: "clamp" });
+  const fadeIn = hook
+    ? 1
+    : first
+      ? interpolate(frame, [0, 30], [0, 1], { extrapolateRight: "clamp" })
+      : interpolate(frame, [0, CROSSFADE], [0, 1], { extrapolateRight: "clamp" });
   const fadeOut = last
     ? interpolate(frame, [durationInFrames - 30, durationInFrames], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })
     : 1;
-  const zoom = interpolate(frame, [0, durationInFrames], [1, 1.05]);
+  const punch = hook ? interpolate(frame, [0, 18], [0.14, 0], { easing: Easing.out(Easing.cubic), extrapolateRight: "clamp" }) : 0;
+  const zoom = interpolate(frame, [0, durationInFrames], [1, 1.05]) + punch;
   return (
     <AbsoluteFill style={{ opacity: Math.min(fadeIn, fadeOut), transform: `scale(${zoom})` }}>{children}</AbsoluteFill>
   );
@@ -492,27 +500,75 @@ const ComparisonColumn: React.FC<{
   );
 };
 
-// Stock footage / image with a slow Ken Burns move and a lower-third label.
-const BrollScene: React.FC<SceneProps> = ({ scene, theme, format }) => {
+// Frames a shot dissolves in over the one before it inside a scene: a quick cut, softer than a hard one.
+const CUT = 8;
+
+// One picture with a slow Ken Burns move along `axis` (dir flips the drift). A detail shot is a
+// close-up on the upper part of the picture, where the faces in a painting usually are.
+const Shot: React.FC<{ media: Media; filter: string; axis: "X" | "Y"; dir: number; fadeIn?: boolean }> = ({
+  media,
+  filter,
+  axis,
+  dir,
+  fadeIn = false,
+}) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
-  const zoom = interpolate(frame, [0, durationInFrames], [1.04, 1.14]);
-  const pan = interpolate(frame, [0, durationInFrames], [-1.5, 1.5]);
-  const media = scene.media;
-  const o = interpolate(frame, [20, 60], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const o = fadeIn ? interpolate(frame, [0, CUT], [0, 1], { extrapolateRight: "clamp" }) : 1;
+  const zoom = media.detail
+    ? interpolate(frame, [0, durationInFrames], [1.5, 1.62])
+    : interpolate(frame, [0, durationInFrames], [1.04, 1.14]);
+  const pan = interpolate(frame, [0, durationInFrames], [-1.5 * dir, 1.5 * dir]);
+  const style = { width: "100%", height: "100%", objectFit: "cover" as const };
+  return (
+    <AbsoluteFill
+      style={{
+        opacity: o,
+        transform: `scale(${zoom}) translate${axis}(${pan}%)`,
+        transformOrigin: media.detail ? "50% 32%" : "50% 50%",
+        filter,
+      }}
+    >
+      {media.kind === "video" ? <OffthreadVideo src={staticFile(media.src)} muted style={style} /> : <Img src={staticFile(media.src)} style={style} />}
+    </AbsoluteFill>
+  );
+};
+
+// The scene's picture: its one shot, or its shots cut in turn, each an equal part of the scene
+// (Shorts change picture every few seconds, see fyt/pipeline.scene_shots), drifting in turn one way and the other.
+const Shots: React.FC<{ scene: Scene; filter: string; axis: "X" | "Y"; dir: number }> = ({ scene, filter, axis, dir }) => {
+  const { fps, durationInFrames } = useVideoConfig();
+  const all = [scene.media, ...(scene.shots ?? [])].filter((m): m is Media => !!m);
+  if (all.length <= 1) return all.length ? <Shot media={all[0]} filter={filter} axis={axis} dir={dir} /> : null;
+  const part = Math.max(CUT + 1, Math.round(((scene.end - scene.start) * fps) / all.length));
+  return (
+    <AbsoluteFill>
+      {all.map((m, k) => {
+        const from = k * part;
+        const len = k === all.length - 1 ? durationInFrames - from : part + CUT;
+        return (
+          <Sequence key={k} from={from} durationInFrames={Math.max(1, len)} name={`shot ${k + 1}`}>
+            <Shot media={m} filter={filter} axis={axis} dir={k % 2 ? -dir : dir} fadeIn={k > 0} />
+          </Sequence>
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
+
+// Stock footage / image with a slow Ken Burns move and a lower-third label. The opening scene of a
+// Short shows its heading as the hook: big and upright from the first frame.
+const BrollScene: React.FC<SceneProps> = ({ scene, theme, format }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const hook = format === "short" && scene.start === 0;
+  const o = hook ? 1 : interpolate(frame, [20, 60], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const pop = hook ? spring({ frame, fps, config: { damping: 14, mass: 0.6 } }) : 1;
   const label = scene.heading;
   const grade = scene.mood ? GRADE[scene.mood] : NEUTRAL;
   return (
     <AbsoluteFill>
-      {media ? (
-        <AbsoluteFill style={{ transform: `scale(${zoom}) translateX(${pan}%)`, filter: grade.filter }}>
-          {media.kind === "video" ? (
-            <OffthreadVideo src={staticFile(media.src)} muted style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          ) : (
-            <Img src={staticFile(media.src)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          )}
-        </AbsoluteFill>
-      ) : null}
+      <Shots scene={scene} filter={grade.filter} axis="X" dir={1} />
       <AbsoluteFill style={{ background: grade.tint, opacity: grade.tintOpacity, mixBlendMode: "soft-light" }} />
       <LightRays strength={grade.light} color={theme.accent} />
       <AbsoluteFill
@@ -523,13 +579,14 @@ const BrollScene: React.FC<SceneProps> = ({ scene, theme, format }) => {
           <div
             style={{
               fontFamily: theme.font,
-              fontStyle: "italic",
-              fontWeight: 500,
-              fontSize: 64 * unit(format),
-              lineHeight: 1.3,
+              fontStyle: hook ? "normal" : "italic",
+              fontWeight: hook ? 800 : 500,
+              fontSize: (hook ? 84 : 64) * unit(format),
+              lineHeight: hook ? 1.15 : 1.3,
               textAlign: "center",
               color: theme.text,
               opacity: o,
+              transform: `scale(${1.25 - 0.25 * pop})`,
               textShadow: "0 4px 30px rgba(0,0,0,0.9)",
             }}
           >
@@ -554,22 +611,11 @@ const registry: Record<Scene["type"], React.FC<SceneProps>> = {
 };
 
 // A photo or clip behind a template scene: slow Ken Burns move, darkened so text stays readable.
-const Backdrop: React.FC<{ media: NonNullable<Scene["media"]>; theme: Theme; mood?: Mood | null }> = ({ media, theme, mood }) => {
-  const frame = useCurrentFrame();
-  const { durationInFrames } = useVideoConfig();
-  const zoom = interpolate(frame, [0, durationInFrames], [1.04, 1.14]);
-  const pan = interpolate(frame, [0, durationInFrames], [1.5, -1.5]);
-  const style = { width: "100%", height: "100%", objectFit: "cover" as const };
+const Backdrop: React.FC<{ scene: Scene; theme: Theme; mood?: Mood | null }> = ({ scene, theme, mood }) => {
   const grade = mood ? GRADE[mood] : NEUTRAL;
   return (
     <AbsoluteFill>
-      <AbsoluteFill style={{ transform: `scale(${zoom}) translateY(${pan}%)`, filter: grade.filter }}>
-        {media.kind === "video" ? (
-          <OffthreadVideo src={staticFile(media.src)} muted style={style} />
-        ) : (
-          <Img src={staticFile(media.src)} style={style} />
-        )}
-      </AbsoluteFill>
+      <Shots scene={scene} filter={grade.filter} axis="Y" dir={-1} />
       <AbsoluteFill style={{ background: grade.tint, opacity: grade.tintOpacity, mixBlendMode: "soft-light" }} />
       <LightRays strength={grade.light * 0.8} color={theme.accent} />
       {/* Darker than a picture alone so the words on top stay readable, but the image still shows. */}
@@ -591,7 +637,7 @@ export const SceneView: React.FC<SceneProps> = (props) => {
   if (media && type !== "broll") {
     return (
       <AbsoluteFill>
-        <Backdrop media={media} theme={props.theme} mood={props.scene.mood} />
+        <Backdrop scene={props.scene} theme={props.theme} mood={props.scene.mood} />
         <Component {...props} scene={scene} />
       </AbsoluteFill>
     );

@@ -626,6 +626,8 @@ Every scene:
 
 Rules:
 - The first sentence is the hook: open inside the feeling or inside the story. No greeting.
+- In a Short, the first scene is a broll scene whose heading is the hook on screen: 2-6 words, a question
+  or the tension (e.g. "Forgotten for two years?"). It shows big from the very first frame.
 - Scripture: quote only the exact verse text given in the notes, and name the reference. If a verse isn't
   in the notes, paraphrase it clearly as a paraphrase and give the reference. Never invent or merge
   verses, and never put words in Jesus' mouth.
@@ -664,8 +666,8 @@ image that best shows what the narration is talking about at that moment, or lea
 Use each image at most once, and only where it truly shows that moment or person. Mix paintings with
 footage: give about a third to a half of the scenes an image and the rest moving footage, alternating
 where you can. For scenes without an image, set `broll_query` to a concrete, cinematic stock-footage
-search for what is being said. The title scene should show the story's key moment whenever an image of
-it exists.
+search for what is being said. The title scene (in a Short, the first scene) should show the story's key moment
+whenever an image of it exists.
 """
 
 

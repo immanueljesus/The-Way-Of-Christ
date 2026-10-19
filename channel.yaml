@@ -148,6 +148,7 @@ stock_footage: true             # uses PEXELS_API_KEY if set, otherwise artwork 
 media_repeat_days: 60           # a clip, photo or painting shown in the last 60 days isn't used again
 commons_art: true               # mix in classical Bible paintings from Wikimedia Commons (free, credited)
 art_images: 6                   # paintings offered to the scriptwriter per video
+shot_seconds: 3.5               # Shorts cut to a new shot about this often (painting, close-up, footage)
 captions: true
 visualizer: false               # no audio bars: this channel is calm
 

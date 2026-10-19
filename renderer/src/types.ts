@@ -6,6 +6,7 @@ export type Format = "long" | "short";
 export type Media = {
   src: string; // path relative to the job's public dir
   kind: "video" | "image";
+  detail?: boolean | null; // a close-up on part of the picture (a second shot from the same painting)
 };
 
 export type DataPoint = { label: string; value: number };
@@ -44,6 +45,7 @@ export type Scene = {
   rightTitle?: string | null;
   author?: string | null;
   media?: Media | null;
+  shots?: Media[] | null; // more shots after `media`: the scene is cut into equal parts, one shot each
   mood?: Mood | null;
 };
 

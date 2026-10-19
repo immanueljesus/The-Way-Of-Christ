@@ -275,7 +275,9 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
 
     log(job, "fetching visuals")
     scene_media, credits, used = scene_visuals(cfg, job, script, images, topic)
+    shots = scene_shots(cfg, job, script, scene_media, spans, used)
     scene_media = conform_clips(cfg, job, scene_media, spans)
+    shots = conform_shots(cfg, job, shots, spans)
     if credits:
         script = script.model_copy(
             update={"description": script.description.rstrip() + "\n\nImages from Wikimedia Commons:\n" + "\n".join(credits)}
@@ -301,7 +303,7 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
     thumb_names = THUMBNAILS[: max(1, cfg.thumbnails.variants)] if cfg.format == "long" else THUMBNAILS[:1]
     job.file("youtube.txt").write_text(youtube.upload_sheet(cfg, script, locs, thumb_names), encoding="utf-8")
 
-    props = build_props(cfg, script, spans, [c.words for c in clips], scene_media, voice_src, music)
+    props = build_props(cfg, script, spans, [c.words for c in clips], scene_media, voice_src, music, shots=shots)
     job.file("props.json").write_text(props.model_dump_json(indent=2), encoding="utf-8")
     job.file("captions.srt").write_text(to_srt(props.captions), encoding="utf-8")
 
@@ -489,6 +491,85 @@ def scene_visuals(
 CROSSFADE_SECONDS = 0.8  # renderer/src/scenes CROSSFADE: a scene runs on under the next one
 
 
+def scene_seconds(cfg: Config, spans: list[tuple[float, float]], i: int, tail: float | None = None) -> float:
+    """How long scene i is on screen (it stays up until the next one starts)."""
+    start = 0.0 if i == 0 else spans[i][0]
+    end = spans[i + 1][0] if i + 1 < len(spans) else spans[-1][1] + (tail or cfg.tail_seconds) + 4
+    return end - start
+
+
+def shot_count(cfg: Config, seconds: float) -> int:
+    """Shots for a scene this long: a cut about every shot_seconds in Shorts, one shot otherwise."""
+    if cfg.format != "short" or cfg.is_sleep or cfg.shot_seconds <= 0:
+        return 1
+    return max(1, min(cfg.max_shots, round(seconds / cfg.shot_seconds)))
+
+
+def scene_shots(
+    cfg: Config, job: Job, script: Script, scene_media: dict[int, Media], spans: list[tuple[float, float]], used: set[str]
+) -> dict[int, list[Media]]:
+    """More shots for the longer picture scenes of a Short, so the picture changes every few seconds
+    instead of holding one clip for a whole line. After a painting comes a close-up of it, then
+    footage; after footage, other footage for the same moment. Skips what recent videos showed (`used`)."""
+    out: dict[int, list[Media]] = {}
+    before = set(used)
+    for i, m in sorted(scene_media.items()):
+        s = script.scenes[i]
+        if s.type != "broll" or i >= len(spans):
+            continue
+        want = shot_count(cfg, scene_seconds(cfg, spans, i)) - 1
+        extra: list[Media] = []
+        if want and m.kind == "image":
+            extra.append(m.model_copy(update={"detail": True}))
+        queries = [q for q in [s.broll_query, *media.mood_queries(s.mood, i + 1)] if q]
+        while len(extra) < want and queries:
+            try:
+                shot = media.fetch_broll(cfg, queries, job.public, f"s{i + 1}{'bcdefg'[len(extra)]}", used)
+            except Exception as e:  # one shot is still a fine scene
+                log(job, f"warning: no extra shot for scene {i + 1}: {e}")
+                shot = None
+            if shot is None:
+                break
+            extra.append(shot)
+        if extra:
+            out[i] = extra
+    MediaHistory(cfg).add({k for k in used - before if not k.startswith("local:")})
+    if out:
+        log(job, f"cuts: {sum(len(v) for v in out.values())} extra shots across {len(out)} scenes")
+    return out
+
+
+def conform_shots(
+    cfg: Config, job: Job, shots: dict[int, list[Media]], spans: list[tuple[float, float]]
+) -> dict[int, list[Media]]:
+    """Conform the extra shots' clips like the scenes' own (see conform_clips), each to its share of the scene."""
+    from fyt.render import dims
+
+    width, height = dims(cfg.format)
+    out: dict[int, list[Media]] = {}
+    for i, extra in shots.items():
+        part = scene_seconds(cfg, spans, i) / (len(extra) + 1) + CROSSFADE_SECONDS + 0.5
+        done = [_conform(job, m, part, width, height, f"scene {i + 1}") if m.kind == "video" else m for m in extra]
+        out[i] = [m for m in done if m]
+    return out
+
+
+def _conform(job: Job, m: Media, seconds: float, width: int, height: int, label: str) -> Media | None:
+    src = job.public / m.src
+    dst = src.with_name(src.stem + "-cfr.mp4")
+    try:
+        media.conform_clip(src, dst, seconds, width, height)
+        src.unlink(missing_ok=True)
+        return Media(src=str(Path(m.src).with_name(dst.name)).replace("\\", "/"), kind="video")
+    except Exception as e:
+        log(job, f"warning: clip for {label} can't be used as video ({e}); using a still from it")
+        try:
+            media.still_from_clip(src, src.with_suffix(".jpg"))
+            return Media(src=str(Path(m.src).with_suffix(".jpg")).replace("\\", "/"), kind="image")
+        except Exception:
+            return None
+
+
 def conform_clips(
     cfg: Config, job: Job, scene_media: dict[int, Media], spans: list[tuple[float, float]], tail: float | None = None
 ) -> dict[int, Media]:
@@ -501,23 +582,12 @@ def conform_clips(
     for i, m in scene_media.items():
         if m.kind != "video" or i >= len(spans):
             continue
-        start = 0.0 if i == 0 else spans[i][0]
-        end = spans[i + 1][0] if i + 1 < len(spans) else spans[-1][1] + (tail or cfg.tail_seconds) + 4
-        seconds = end - start + CROSSFADE_SECONDS + 0.5
-        src = job.public / m.src
-        dst = src.with_name(src.stem + "-cfr.mp4")
-        try:
-            media.conform_clip(src, dst, seconds, width, height)
-            out[i] = Media(src=str(Path(m.src).with_name(dst.name)).replace("\\", "/"), kind="video")
-            src.unlink(missing_ok=True)
-        except Exception as e:
-            log(job, f"warning: clip for scene {i + 1} can't be used as video ({e}); using a still from it")
-            still = src.with_suffix(".jpg")
-            try:
-                media.still_from_clip(src, still)
-                out[i] = Media(src=str(Path(m.src).with_suffix(".jpg")).replace("\\", "/"), kind="image")
-            except Exception:
-                out.pop(i, None)
+        seconds = scene_seconds(cfg, spans, i, tail) + CROSSFADE_SECONDS + 0.5
+        done = _conform(job, m, seconds, width, height, f"scene {i + 1}")
+        if done:
+            out[i] = done
+        else:
+            out.pop(i, None)
     return out
 
 

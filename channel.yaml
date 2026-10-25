@@ -7,18 +7,18 @@
 channel:
   name: "The Way of Christ"
   niche: >-
-    Stories, wisdom, prayer and inspiration rooted in Jesus Christ and the Bible, created to give people
-    faith, courage, hope and perspective for everyday life
-  # Creative principle: don't just tell them about faith, make them feel faith.
+    cinematic Bible storytelling: Scripture first, compelling stories, beautiful production, meaningful
+    Christian teaching
+  # Story-first: the Bible's own stories, told like films, anchored to the passage; then what they teach.
   promise: "Come here tired, lost, afraid or alone, and leave uplifted, strengthened and closer to God."
   tagline: "You are not alone."  # closing card line under the channel name
   audience: >-
     people of all ages going through hard seasons (fear, waiting, failure, loneliness, grief, temptation)
     who want hope, strength and Scripture they can hold on to; believers and the curious alike
   tone: >-
-    cinematic and deeply emotional: a warm, deep, deliberate voice speaking to one person who is hurting,
-    moving from struggle to hope to strength; an experience of faith, never a lecture, documentary or sermon;
-    honest, tender, never hype, guilt or fear-driven
+    cinematic Bible storytelling: Scripture first, compelling stories, beautiful production, meaningful
+    Christian teaching; a warm, deep, deliberate narrator who tells the story as it happened, builds its
+    tension and lets the passage speak; reverent and honest, never hype, guilt or generic motivation
   language: en
   description_footer: |-
     If you needed to hear this today, subscribe to The Way of Christ. You are not alone.
@@ -36,22 +36,20 @@ llm:
   temperature: 0.7
   fallback_models: [openai/gpt-oss-20b, llama-3.3-70b-versatile]
 
-# Videos come from the curated list of 140+ ideas in content/ideas.yaml, in this content mix.
+# Videos come from the curated ideas in content/ideas.yaml and the evergreen Bible stories in
+# content/backlog.yaml, kept in balance across four content pillars (each idea names its pillar).
 source: catalog
 catalog:
   path: content/ideas.yaml
-  mix:                  # percent of videos per pillar (the content universe)
-    bible_story: 15       # Bible stories, with lesser-known people as much as famous ones
-    jesus: 12             # life, teachings, miracles, parables
-    motivation: 12        # courage, discipline, perseverance
-    prayer: 10            # situational and devotional prayers
-    relationships: 9      # love, forgiveness, betrayal, family
-    purpose: 9            # calling, direction, work, identity
-    peace: 8              # rest, reflection, surrender
-    spiritual_battles: 7  # temptation, doubt, fear
-    wisdom: 7             # practical life lessons (Proverbs, Ecclesiastes, Jesus' teaching)
-    history: 6            # Bible & history curiosities
-    everyday_life: 5      # career, money, social media, aging, leadership...
+  backlog: content/backlog.yaml   # the evergreen long videos (Video A every week; see schedule.plan)
+  pillars:              # percent of videos per content pillar
+    stories: 40           # Bible stories told like films: Joseph, Moses, David, Esther, Daniel, Peter, Paul...
+    teachings: 25         # teachings of Jesus (parables, hard sayings) in their original context
+    struggles: 20         # human struggles inside Scripture: fear, betrayal, guilt, doubt, forgiveness,
+                          # courage, repentance, always through a specific event, never generic motivation
+    questions: 15         # overlooked moments and biblical questions: surprising details, misunderstood
+                          # passages, context
+  mix: {}               # (categories; not used while `pillars` is set)
   use_wikipedia: true   # Bible-story ideas pull background and classical paintings from Wikipedia
   ideate_when_empty: true # a pillar running low gets new ideas written in the same shape (free, Groq)
 
@@ -68,6 +66,7 @@ liturgy:
   short_times: ["12:00", "17:00"]      # New York time: lunchtime, and 10 pm in the UK
   season_bias: true
   sunday_gospel: true                  # a Short on each Sunday's Mass Gospel (Roman Lectionary), out on Friday
+                                       # (the Friday long video follows that Gospel too when no feast is near)
   sunday_gospel_offset: -2
 
 # Exact Bible text for every reference, from bible-api.com (public-domain translations).
@@ -181,39 +180,38 @@ youtube:
 #   15:00  long video      = 8 pm UK / 9 pm Central Europe / 12 noon US Pacific
 #   19:00  evening Short   = 7 pm US East / 4 pm US Pacific (US evening prime time)
 # A month on the free GitHub Actions allowance (2,000 minutes a month for a private repo):
-#   ~60 Shorts (two a day) and ~9 long videos (Tuesday and Friday). Roughly 1,300 runner minutes,
-#   plus ~4 Sunday sleep videos at ~140 minutes each: about 1,850. December's extra Christmas long videos
-#   can pass 2,000; a public repo has unlimited free minutes.
+#   ~30 evening Shorts, ~4 Sunday Gospel Shorts, ~9 long story videos (Tuesday and Friday) and ~4 Sunday
+#   sleep videos: roughly 1,500 runner minutes. A public repo has unlimited free minutes.
 schedule:
   timezone: America/New_York
-  short_slots: ["19:00"]        # an evening Short every day: Shorts cut from the long videos first, then the mix
+  short_slots: ["19:00"]        # an evening Short every day, cut from the week's long stories first (2-3 each)
   long_weekday: null            # long videos come from the weekly plan below
   buffer_days: 2
   long_lead_days: 3
   max_uploads_per_day: 4        # YouTube API quota
   max_run_minutes: 200
-  plan:                         # a different pillar every morning, two long videos a week
-    - {weekday: 0, time: "08:00", kind: short, category: jesus, label: "Mon: Jesus"}
-    - {weekday: 1, time: "08:00", kind: short, category: motivation, label: "Tue: motivation"}
-    - {weekday: 1, time: "15:00", kind: long, category: bible_story, minutes: 6, label: "Tue: Bible story (6 min)"}
-    - {weekday: 2, time: "08:00", kind: short, category: prayer, label: "Wed: prayer"}
-    - {weekday: 3, time: "08:00", kind: short, category: bible_story, label: "Thu: Bible story"}
-    - {weekday: 4, time: "08:00", kind: short, category: wisdom, label: "Fri: Biblical wisdom"}
-    - {weekday: 4, time: "15:00", kind: long, minutes: 10, label: "Fri: long video, any pillar (10 min)"}
-    - {weekday: 5, time: "08:00", kind: short, category: history, label: "Sat: Bible & history"}
-    - {weekday: 6, time: "08:00", kind: short, category: peace, label: "Sun: peace"}
+  # The story-first slate: two long videos a week (fyt/slate.py). Their length and look come from each
+  # video's visual style (cinematic 5-9 min, illustrated 3-6, documentary 6-10).
+  plan:
+    # Video A: an evergreen Bible story from content/backlog.yaml. The calendar never takes this slot.
+    - {weekday: 1, time: "15:00", kind: long, slate: evergreen, label: "Tue: evergreen Bible story (A)"}
+    # Video B: timely. The week's feast or season video (content/calendar.yaml), else the coming Sunday's
+    # Mass Gospel; if neither can be made, another evergreen story.
+    - {weekday: 4, time: "15:00", kind: long, slate: timely, label: "Fri: this Sunday's Gospel or feast (B)"}
     # Weekly sleep video ("Fall asleep in God's Word"), Sunday 8 pm New York. 30 minutes renders on the
     # free runner (sleep videos use a low frame rate, see `sleep` below); 45-60 needs max_run_minutes
     # raised to ~260 (the job allows 300) or the video made locally: python -m fyt --format long --minutes 60 make idea:<id>
     - {weekday: 6, time: "20:00", kind: long, category: peace, minutes: 30, label: "Sun: Fall asleep in God's Word (30 min)"}
-    # Evening Shorts (short_slots) and Friday's long video follow the content mix, so relationships,
-    # purpose, spiritual battles and everyday life come round too.
+    # Evening Shorts (short_slots) are cut from the long stories first (each one complete: a mini-story or
+    # one teaching, linking to the full video), then come from the four pillars. Calendar Shorts (the
+    # Sunday Gospel Short on Friday, feast campaigns) get their own slots (liturgy.short_times).
 
 growth:
   polish: true
   loop_shorts: false            # end every Short on strength and the closing card, not a replay hook
   rank_topics: false            # topics come from the curated catalog
-  cuts_per_long: 6              # each master video becomes up to 6 Shorts that link back to it
+  cuts_per_long: 3              # each long story becomes 2-3 Shorts from different moments, linking back to it
+
   series:                       # a playlist each; catalog ideas name their own series
     - Hard Seasons
     - Lessons From...

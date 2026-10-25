@@ -13,6 +13,11 @@ The lessons feed three choices:
 - title: title styles that held viewers are tried first, ones that lost them last (never removed);
 - script: plain notes on delivery (the hook, pacing) go into the script prompt.
 
+Story-first: each video also records its content pillar, visual style and slate (evergreen / timely),
+and the lessons compare those on click-through rate, how many viewers are still there at 30 seconds,
+average view duration, the share of views from subscribers (the API's nearest stand-in for returning
+viewers) and the share from Browse features and Suggested videos (`fyt insights` shows the table).
+
 Bible first, emotion second: lessons shape delivery and the order ideas come in. They never change what
 a passage says, which passages are used, or how the faithfulness review judges a script.
 """
@@ -33,6 +38,10 @@ GUARD = (
 )
 WINNER_LIFT = 1.2  # kept as a winner (bonus.min_lift picks which get follow-ups)
 HOOK_POINT = 0.1  # the retention curve is read at 10% of the video: how well the opening holds
+HOLD_SECONDS = 30  # and at 30 seconds: the first-30-seconds retention of a long video
+# insightTrafficSourceType values: SUBSCRIBER is "Browse features" in YouTube Studio, RELATED_VIDEO "Suggested videos".
+BROWSE, SUGGESTED = "SUBSCRIBER", "RELATED_VIDEO"
+COMPARED = ("ctr", "hold30", "avg_seconds", "subscribed", "browse", "suggested")
 
 
 # --- Reading YouTube Analytics ------------------------------------------------------
@@ -70,17 +79,60 @@ def fetch(cfg: Config, now: datetime) -> list[dict]:
             "avg_seconds": float(r.get("averageViewDuration", 0)),
             "engaged": int(r["engagedViews"]) if "engagedViews" in r else None,
             "hook": None,
+            **{k: None for k in COMPARED if k != "avg_seconds"},
         }
         for r in rows
     ]
-    kinds = Uploads(cfg).kinds()
+    try:  # thumbnail click-through rate (YouTube reports a percentage; kept as a share), one request for every video
+        imp = yt.reports().query(
+            **{**query, "sort": "-videoThumbnailImpressions"},
+            metrics="videoThumbnailImpressions,videoThumbnailImpressionsClickRate",
+        ).execute()
+        names = [h["name"] for h in imp.get("columnHeaders", [])]
+        ctr = {d["video"]: float(d["videoThumbnailImpressionsClickRate"]) / 100 for d in (dict(zip(names, r)) for r in imp.get("rows", []) or [])
+               if "videoThumbnailImpressionsClickRate" in d}
+        for r in out:
+            r["ctr"] = ctr.get(r["id"])
+    except Exception as e:
+        print(f"note: no thumbnail click-through rate ({str(e)[:120]})")
+    uploads = Uploads(cfg)
+    kinds, described = uploads.kinds(), uploads.described()
     longs = [r for r in out if kinds.get(r["id"]) == "long" and r["views"] >= cfg.insights.min_views]
     for r in longs[: cfg.insights.retention_videos]:
         try:
-            r["hook"] = hook_hold(yt, r["id"], start.isoformat(), end.isoformat())
+            curve = retention_curve(yt, r["id"], start.isoformat(), end.isoformat())
+            r["hook"] = at_point(curve, HOOK_POINT)
+            seconds = described.get(r["id"], {}).get("duration") or 60 * (described.get(r["id"], {}).get("minutes") or 0)
+            r["hold30"] = at_point(curve, HOLD_SECONDS / seconds) if seconds else None
         except Exception as e:  # one curve missing doesn't matter
             print(f"note: no retention curve for {r['id']}: {str(e)[:120]}")
+    for r in [r for r in out if r["views"] >= cfg.insights.min_views][: cfg.insights.retention_videos]:
+        try:
+            r.update(audience(yt, r["id"], start.isoformat(), end.isoformat()))
+        except Exception as e:
+            print(f"note: no traffic sources for {r['id']}: {str(e)[:120]}")
     return out
+
+
+def _shares(resp: dict) -> dict[str, float]:
+    rows = [(str(r[0]), float(r[1])) for r in resp.get("rows", []) or []]
+    total = sum(v for _, v in rows) or 1.0
+    shares: dict[str, float] = {}
+    for k, v in rows:
+        shares[k] = shares.get(k, 0.0) + v / total
+    return shares
+
+
+def audience(yt, video_id: str, start: str, end: str) -> dict:
+    """Where a video's views came from: shares from Browse features, Suggested videos and subscribers."""
+    base = dict(ids="channel==MINE", startDate=start, endDate=end, metrics="views", filters=f"video=={video_id}")
+    traffic = _shares(yt.reports().query(dimensions="insightTrafficSourceType", **base).execute())
+    status = _shares(yt.reports().query(dimensions="subscribedStatus", **base).execute())
+    return {
+        "browse": round(traffic.get(BROWSE, 0.0), 3),
+        "suggested": round(traffic.get(SUGGESTED, 0.0), 3),
+        "subscribed": round(status.get("SUBSCRIBED", 0.0), 3),
+    }
 
 
 # Where the translated titles (localize.languages) are spoken, to see which language groups find the channel.
@@ -115,16 +167,22 @@ def language_reach(rows: list[dict]) -> dict[str, float]:
     return {lang: round(sum(r["share"] for r in rows if r["country"] in cs), 4) for lang, cs in LANGUAGE_COUNTRIES.items()}
 
 
-def hook_hold(yt, video_id: str, start: str, end: str) -> float | None:
-    """Share of viewers still watching at 10% of the video (audienceWatchRatio)."""
+def retention_curve(yt, video_id: str, start: str, end: str) -> list[tuple[float, float]]:
+    """(share of the video, share of viewers still watching) points (audienceWatchRatio)."""
     resp = yt.reports().query(
         ids="channel==MINE", startDate=start, endDate=end, metrics="audienceWatchRatio",
         dimensions="elapsedVideoTimeRatio", filters=f"video=={video_id}",
     ).execute()
-    points = [(float(r[0]), float(r[1])) for r in resp.get("rows", []) or []]
-    if not points:
-        return None
-    return min(points, key=lambda p: abs(p[0] - HOOK_POINT))[1]
+    return [(float(r[0]), float(r[1])) for r in resp.get("rows", []) or []]
+
+
+def at_point(curve: list[tuple[float, float]], ratio: float) -> float | None:
+    return min(curve, key=lambda p: abs(p[0] - ratio))[1] if curve else None
+
+
+def hook_hold(yt, video_id: str, start: str, end: str) -> float | None:
+    """Share of viewers still watching at 10% of the video (audienceWatchRatio)."""
+    return at_point(retention_curve(yt, video_id, start, end), HOOK_POINT)
 
 
 # --- Turning numbers into lessons (pure: no network) ---------------------------------
@@ -177,6 +235,22 @@ def lessons(cfg: Config, rows: list[dict], meta: dict[str, dict], now: datetime)
                 groups.setdefault(key, []).append(lift)
         return {k: {"lift": round(mean(v), 3), "videos": len(v)} for k, v in sorted(groups.items())}
 
+    def compare(field: str) -> dict[str, dict]:
+        """Per pillar / style / slate: how many videos, their mean lift, and the mean of each COMPARED metric."""
+        groups: dict[str, list[dict]] = {}
+        for r in rows:
+            key = meta[r["id"]].get(field)
+            if key:
+                groups.setdefault(key, []).append(r)
+        out: dict[str, dict] = {}
+        for k, g in sorted(groups.items()):
+            row = {"videos": len(g), "lift": round(mean(lifts[r["id"]] for r in g), 3)}
+            for name in COMPARED:
+                vals = [r[name] for r in g if r.get(name) is not None]
+                row[name] = round(mean(vals), 3) if vals else None
+            out[k] = row
+        return out
+
     def card(r: dict) -> dict:
         m = meta[r["id"]]
         return {
@@ -194,6 +268,10 @@ def lessons(cfg: Config, rows: list[dict], meta: dict[str, dict], now: datetime)
         "shapes": grouped("shape"),
         "title_styles": grouped("title_style"),
         "voices": grouped("voice"),
+        # Story-first: content pillars, visual styles and the evergreen / timely slate, side by side.
+        "pillars": compare("pillar"),
+        "styles": compare("style"),
+        "slates": compare("slate"),
         # Shorts that held viewers far better than usual: fyt/bonus.py makes follow-ups to them.
         "winners": [card(r) for r in ranked if meta[r["id"]]["format"] == "short" and lifts[r["id"]] >= WINNER_LIFT],
         "best": [card(r) for r in ranked[:3]],
@@ -305,6 +383,16 @@ def category_weights(cfg: Config) -> dict[str, float]:
     }
 
 
+def pillar_weights(cfg: Config) -> dict[str, float]:
+    """Content pillar -> multiplier on its share (catalog.pillars), like category_weights."""
+    ic = cfg.insights
+    return {
+        k: round(min(ic.max_weight, max(ic.min_weight, v["lift"])), 3)
+        for k, v in current(cfg).get("pillars", {}).items()
+        if v["videos"] >= ic.min_videos
+    }
+
+
 def title_preferences(cfg: Config) -> tuple[list[str], list[str]]:
     """(styles to try first, styles to try last), best and worst first."""
     styles = [(k, v) for k, v in current(cfg).get("title_styles", {}).items() if v["videos"] >= cfg.insights.min_videos]
@@ -351,7 +439,18 @@ def report(cfg: Config) -> str:
         if lz.get(key):
             out += ["", f"{title} (1.00 = the channel's usual):"]
             out += [f"  {k:<18} {v['lift']:.2f}  ({v['videos']} videos)" for k, v in sorted(lz[key].items(), key=lambda kv: -kv[1]["lift"])]
+    for title, key in (("Content pillars", "pillars"), ("Visual styles", "styles"), ("Slate", "slates")):
+        if lz.get(key):
+            out += ["", f"{title}: lift, CTR, still watching at 30 s, avg view (s), from subscribers, Browse, Suggested"]
+            pct = lambda v: "    -" if v is None else f"{v:5.1%}"  # noqa: E731
+            for k, v in sorted(lz[key].items(), key=lambda kv: -kv[1]["lift"]):
+                secs = "   -" if v.get("avg_seconds") is None else f"{v['avg_seconds']:4.0f}"
+                out.append(
+                    f"  {k:<12} {v['lift']:.2f}  {pct(v.get('ctr'))}  {pct(v.get('hold30'))}  {secs}  "
+                    f"{pct(v.get('subscribed'))}  {pct(v.get('browse'))}  {pct(v.get('suggested'))}  ({v['videos']} videos)"
+                )
     w = category_weights(cfg)
+
     if w:
         out += ["", "Content mix nudges: " + ", ".join(f"{k} x{v}" for k, v in sorted(w.items()))]
     prefer, avoid = title_preferences(cfg)

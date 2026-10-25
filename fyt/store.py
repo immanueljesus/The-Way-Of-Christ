@@ -60,6 +60,11 @@ class Topics:
             args.append(exclude_prefix + "%")
         return self.db.execute(sql + " order by id limit 1", args).fetchone()
 
+    def pending(self, prefix: str = "") -> list[tuple[int, str]]:
+        """Every pending topic starting with `prefix`, oldest first."""
+        sql = "select id, topic from topics where status='pending' and topic like ? order by id"
+        return self.db.execute(sql, [prefix + "%"]).fetchall()
+
     def find(self, topic: str) -> tuple[int, str] | None:
         return self.db.execute("select id, topic from topics where topic=?", (topic.strip(),)).fetchone()
 

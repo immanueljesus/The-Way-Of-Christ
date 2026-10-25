@@ -4,6 +4,10 @@ Each idea names its category, series, suitable formats, the Scripture it rests o
 for Bible stories, a Wikipedia article for background and classical artwork. The next
 idea is chosen to keep the content mix on target (config `catalog.mix`), or from the
 category a publish slot asks for (config `schedule.plan`).
+
+Every idea belongs to one of four content pillars (PILLARS); with `catalog.pillars` set, the picker
+keeps those in balance instead of the categories. content/backlog.yaml holds the evergreen Bible
+stories for the weekly evergreen long video (fyt/slate.py).
 """
 
 from __future__ import annotations
@@ -24,6 +28,14 @@ ARCS = ("journey", "story", "curiosity", "wisdom", "prayer", "peace", "joy")
 DEFAULT_ARC = {
     "bible_story": "story", "jesus": "story", "prayer": "prayer", "peace": "peace",
     "wisdom": "wisdom", "history": "curiosity", "everyday_life": "wisdom",
+}
+# The four content pillars: story-first, Scripture first.
+PILLARS = {
+    "stories": "Bible stories told like films (Joseph, Moses, David, Esther, Daniel, Peter, Paul, the prodigal son...)",
+    "teachings": "teachings of Jesus and Scripture (parables, hard sayings) in their original context",
+    "struggles": "human struggles inside Scripture (fear, betrayal, guilt, doubt, forgiveness, courage, repentance), "
+    "always through a specific event, never generic motivation",
+    "questions": "overlooked moments and biblical questions: surprising details, misunderstood passages, context",
 }
 
 
@@ -46,6 +58,14 @@ class Idea(BaseModel):
     music: str = ""  # calm | cinematic: overrides the music the category would get (calendar videos)
     # Calendar series: every title of the video starts with this, e.g. "Advent: Day 3 · " (also the thumbnail kicker)
     title_prefix: str = ""
+    # Story-first (content/backlog.yaml, fyt/slate.py)
+    style: str = ""  # cinematic | illustrated | documentary (long videos); empty: the pillar's default
+    passage: str = ""  # the passage as cited, e.g. "Genesis 37-50" (`scriptures` are the verses quoted)
+    question: str = ""  # the one dramatic question the video turns on
+    minutes: float | None = None  # the long video's length, inside its style's range
+    priority: int | None = None  # backlog seed order
+    score: dict[str, float] = Field(default_factory=dict)  # significance, story, appeal, seasonal, effort (1-5)
+    backlog: bool = False  # from content/backlog.yaml
 
     @property
     def topic(self) -> str:
@@ -56,15 +76,35 @@ class Idea(BaseModel):
         return self.arc if self.arc in ARCS else DEFAULT_ARC.get(self.category, "journey")
 
 
+def pillar_of(idea: Idea) -> str:
+    """The idea's content pillar: its own, or the one its category and shape fall in."""
+    if idea.pillar in PILLARS:
+        return idea.pillar
+    if idea.shape == "curiosity" or idea.content_type == "question" or idea.category == "history":
+        return "questions"
+    if idea.content_type == "parable":
+        return "teachings"
+    if idea.category == "bible_story" or (idea.category == "jesus" and idea.shape == "story"):
+        return "stories"
+    if idea.category in ("wisdom", "peace", "jesus") or idea.shape in ("wisdom", "peace"):
+        return "teachings"
+    return "struggles"
+
+
 def is_idea(topic: str) -> bool:
     return topic.startswith(PREFIX)
 
 
-def _read(path: Path) -> list[Idea]:
+def _read(path: Path, **extra) -> list[Idea]:
     if not path.exists():
         return []
     raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    return [Idea.model_validate(i) for i in raw.get("ideas", [])]
+    return [Idea.model_validate({**i, **extra}) for i in raw.get("ideas", [])]
+
+
+def _path(name: str) -> Path:
+    path = Path(name)
+    return path if path.is_absolute() else ROOT / path
 
 
 def _generated(cfg: Config) -> list[Idea]:
@@ -100,10 +140,9 @@ def _save_generated(cfg: Config, ideas: list[dict]) -> None:
 
 
 def load(cfg: Config) -> list[Idea]:
-    """The curated ideas, then the ones the model added when the list ran low (see `top_up`)."""
-    path = Path(cfg.catalog.path)
-    path = path if path.is_absolute() else ROOT / path
-    ideas = _read(path)
+    """The curated ideas, the evergreen backlog, then the ones the model added when the list ran low (see `top_up`)."""
+    path = _path(cfg.catalog.path)
+    ideas = _read(path) + _read(_path(cfg.catalog.backlog), backlog=True)
     seen = {i.id for i in ideas}
     ideas += [i for i in _generated(cfg) if i.id not in seen]
     ids = [i.id for i in ideas]
@@ -178,7 +217,8 @@ def pick(
         return score
 
     bucket = length_bucket(cfg.format, minutes or cfg.target_minutes)
-    fresh = [i for i in ideas if i.topic not in used and not i.id.startswith("bonus-")]  # bonus ideas wait for fyt/bonus.py
+    # Bonus ideas wait for fyt/bonus.py, backlog stories for the evergreen slot (fyt/slate.py).
+    fresh = [i for i in ideas if i.topic not in used and not i.id.startswith("bonus-") and not i.backlog]
     fits = [i for i in fresh if bucket in i.formats]
     if not fits and bucket != "short":  # any long-form idea can stretch or shrink a little
         fits = [i for i in fresh if set(i.formats) & {"medium", "long", "sleep"}]
@@ -189,15 +229,17 @@ def pick(
         if same:
             return min(same, key=lambda i: (repeats(i), off_season(i), same.index(i)))
         print(f"note: no unused {category} ideas for a {bucket} video; picking by the content mix")
-    made = Counter(i.category for i in ideas if i.topic in used)
+    # Story-first: the four content pillars are kept in balance; otherwise the categories of `mix`.
+    key = pillar_of if cfg.catalog.pillars else (lambda i: i.category)
+    made = Counter(key(i) for i in ideas if i.topic in used)
     total = sum(made.values()) or 1
     weights = weights or {}
-    mix = {k: v * weights.get(k, 1.0) for k, v in cfg.catalog.mix.items()}
+    mix = {k: v * weights.get(k, 1.0) for k, v in (cfg.catalog.pillars or cfg.catalog.mix).items()}
     weight = sum(mix.values()) or 1
 
     def deficit(i: Idea) -> float:
         bonus = 0.05 if i.category in lean else 0.0  # roughly a fifth more of the season's pillars
-        return mix.get(i.category, 0) / weight - made[i.category] / total + bonus
+        return mix.get(key(i), 0) / weight - made[key(i)] / total + bonus
 
     # The category furthest below its share; within it the freshest idea, then the one listed first.
     best = max(deficit(i) for i in fits)
@@ -219,7 +261,9 @@ def top_up(cfg: Config, used: set[str], category: str | None, recent: list[str],
     from fyt import llm, scripture
 
     left = counts(cfg, used)
-    cats = [category] if category else [c for c in cfg.catalog.mix if cfg.catalog.mix[c] > 0]
+    if not category and cfg.catalog.pillars:  # the pillars span categories; a slot's own category still tops up
+        return 0
+    cats =[category] if category else [c for c in cfg.catalog.mix if cfg.catalog.mix[c] > 0]
     low = [c for c in cats if left.get(c, 0) < LOW_WATER]
     if not low:
         return 0
@@ -256,9 +300,13 @@ def brief(idea: Idea, cfg: Config) -> str:
     """The idea as the opening of the research notes."""
     lines = [
         f"# {idea.title}",
-        f"Category: {idea.category}" + (f" | Pillar: {idea.pillar}" if idea.pillar else ""),
+        f"Category: {idea.category} | Pillar: {pillar_of(idea)} ({PILLARS[pillar_of(idea)]})",
         f"Story shape: {idea.shape}" + (f" | Feeling: {idea.emotion}" if idea.emotion else ""),
     ]
+    if idea.passage:
+        lines.append(f"Passage: {idea.passage}")
+    if idea.question:
+        lines.append(f"The dramatic question (the whole video turns on it): {idea.question}")
     if idea.character:
         lines.append(f"At the centre: {idea.character}")
     if idea.series:
@@ -276,10 +324,13 @@ def summary(cfg: Config) -> str:
     """Counts per category and format, for `fyt ideas`."""
     ideas = load(cfg)
     cats = Counter(i.category for i in ideas)
+    pillars = Counter(pillar_of(i) for i in ideas)
     fmts = Counter(f for i in ideas for f in i.formats)
     series = Counter(i.series for i in ideas if i.series)
     return (
         f"{len(ideas)} ideas\n"
+        + "by pillar:   " + ", ".join(f"{k} {pillars[k]}" for k in PILLARS) + "\n"
+        + f"backlog:     {sum(i.backlog for i in ideas)} evergreen stories\n"
         + "by category: " + ", ".join(f"{k} {v}" for k, v in cats.most_common()) + "\n"
         + "by format:   " + ", ".join(f"{k} {fmts[k]}" for k in FORMATS) + "\n"
         + "by series:   " + ", ".join(f"{k} {v}" for k, v in series.most_common())

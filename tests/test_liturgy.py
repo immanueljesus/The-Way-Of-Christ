@@ -58,12 +58,16 @@ def test_traditions_switch_events_on_and_off():
 
 def test_campaign_videos_get_slots_a_week_ahead():
     cfg = load_config()
+    cfg.schedule.long_lead_days = 7
     now = datetime(2027, 3, 20, 0, 0, tzinfo=timezone.utc)
     slots = schedule.upcoming_slots(cfg, now)
     by_topic = {s.topic: s for s in slots if s.topic}
-    gf = by_topic["idea:easter-good-friday-it-is-finished@2027"]
     tz = cfg.schedule.timezone
-    assert gf.kind == "long" and gf.minutes == 8 and gf.at == schedule._at(date(2027, 3, 26), cfg.liturgy.long_time, tz)
+    # Story-first: Good Friday's long video is the timely slot's first choice that Friday, not a slot of its own.
+    friday = next(s for s in slots if s.slate == "timely")
+    assert friday.at == schedule._at(date(2027, 3, 26), "15:00", tz)
+    assert friday.options[0] == "idea:easter-good-friday-it-is-finished@2027"
+    assert "idea:easter-good-friday-it-is-finished@2027" not in by_topic
     palm = by_topic["idea:easter-palm-sunday@2027"]
     assert palm.kind == "short" and palm.at == schedule._at(date(2027, 3, 21), cfg.liturgy.short_times[0], tz)
     assert [s for s in slots if not s.topic and s.at.date() == date(2027, 3, 20)]  # evergreen keeps running

@@ -164,6 +164,10 @@ class PlanSlot(BaseModel):
     category: str | None = None  # catalog category to draw from (see `catalog.mix`)
     minutes: float | None = None  # long videos: target length (overrides target_minutes)
     label: str = ""  # shown in `fyt buffer`
+    # Long videos of the story-first slate (fyt/slate.py): "evergreen" always comes from the backlog
+    # (content/backlog.yaml) and is never taken by the calendar; "timely" follows the coming Sunday's
+    # Gospel or a feast, and takes an evergreen story when nothing timely fits.
+    slate: Literal["evergreen", "timely"] | None = None
 
 
 class ScheduleConfig(BaseModel):
@@ -223,6 +227,11 @@ class CatalogConfig(BaseModel):
     mix: dict[str, float] = Field(
         default_factory=lambda: {"motivational": 40, "bible_story": 25, "prayer": 15, "jesus": 10, "facts": 10}
     )
+    # Share of videos per content pillar (catalog.PILLARS: stories, teachings, struggles, questions), in
+    # percent. When set, the picker balances these instead of `mix`.
+    pillars: dict[str, float] = Field(default_factory=dict)
+    # The evergreen backlog: Bible stories for the weekly evergreen long video (fyt/slate.py).
+    backlog: str = "content/backlog.yaml"
     # Use the idea's Wikipedia article (if it names one) for background notes and classical artwork.
     use_wikipedia: bool = True
     # When every idea is used, ask the model for new topics in the channel's niche.

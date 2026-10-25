@@ -29,6 +29,9 @@ research: true          # Claude web research before scripting (anthropic only)
 catalog:
   path: content/ideas.yaml
   mix: {motivational: 40, bible_story: 25, prayer: 15, jesus: 10, facts: 10}   # percent per category
+  # Story-first instead: percent per content pillar (each idea names one; see content/ideas.yaml).
+  # pillars: {stories: 40, teachings: 25, struggles: 20, questions: 15}
+  backlog: content/backlog.yaml   # evergreen Bible stories for plan slots with `slate: evergreen`
   use_wikipedia: true   # ideas naming a Wikipedia article get its background and paintings
   ideate_when_empty: true
 
@@ -104,6 +107,9 @@ schedule:               # what `fyt fill` keeps filled (times in UTC)
   max_uploads_per_day: 4
   max_run_minutes: 120
   plan: []              # fixed weekly slots, e.g. {weekday: 1, time: "16:00", kind: long, category: bible_story, minutes: 6}
+  # Story-first slate (fyt/slate.py): {weekday: 1, time: "15:00", kind: long, slate: evergreen} takes the next
+  # backlog story and is never taken by the calendar; slate: timely follows the week's feast or the coming
+  # Sunday's Gospel, else another evergreen story. Their length comes from the story's visual style.
 
 growth:
   polish: true          # second pass on title, hook and thumbnail text

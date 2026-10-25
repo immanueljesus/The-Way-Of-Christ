@@ -50,7 +50,7 @@ Titles:
   the title promises.
 - no fear-mongering, no "God is warning you", no "skip this and...", no ALL CAPS words except one short one
   at most, no emoji
-Thumbnail text: 2-4 words that add emotion to the title rather than repeat it (e.g. "NOT FORGOTTEN").
+{thumb_rule}
 Hook: rewrite the opening so the first sentence alone makes the right person stop scrolling: open inside the
 feeling ("It's late, and you're still carrying it."), or inside the story's moment of tension. Keep it spoken,
 short and deliberate. No "welcome back", no "in this video", no
@@ -58,9 +58,19 @@ short and deliberate. No "welcome back", no "in this video", no
 {loop_rule}{series_rule}"""
 
 
-def polish(cfg: Config, script: Script, title_style: str = "cinematic") -> Script:
+THUMB_RULE = 'Thumbnail text: 2-4 words that add emotion to the title rather than repeat it (e.g. "NOT FORGOTTEN").'
+# Story videos: every thumbnail shows its own story's central conflict, with as few words as possible.
+STORY_THUMB_RULE = (
+    "Thumbnail text: 1-3 words that name this story's central conflict or dramatic question, not a feeling any "
+    'video could have (e.g. "ONE STONE", "SOLD BY HIS BROTHERS", "PRAY OR DIE"). Minimal; the picture carries it.'
+)
+STORY_THUMB_WORDS = 4
+
+
+def polish(cfg: Config, script: Script, title_style: str = "cinematic", story: bool = False) -> Script:
     """Rewrite the title, thumbnail text and opening line for clicks and retention, in the given
-    title style; a title in the banned "When X, Remember Y" shape is never kept."""
+    title style; a title in the banned "When X, Remember Y" shape is never kept. `story`: a story video,
+    whose thumbnail names its central conflict in a few words."""
     short = cfg.format == "short"
     narration = " ".join(s.narration for s in script.scenes)
     series = cfg.growth.series
@@ -76,6 +86,7 @@ def polish(cfg: Config, script: Script, title_style: str = "cinematic") -> Scrip
         ),
         series_rule=f"Series: pick the one that fits best: {', '.join(series)}.\n" if series else "Leave series empty.\n",
         title_rule=llm.title_rule(title_style),
+        thumb_rule=STORY_THUMB_RULE if story else THUMB_RULE,
     )
     user = (
         f"Current title: {script.title}\nCurrent thumbnail text: {script.thumbnail_text}\n"
@@ -95,7 +106,7 @@ def polish(cfg: Config, script: Script, title_style: str = "cinematic") -> Scrip
     update = {"scenes": scenes}
     if title:
         update["title"] = title
-    if p.thumbnail_text.strip():
+    if p.thumbnail_text.strip() and (not story or len(p.thumbnail_text.split()) <= STORY_THUMB_WORDS):
         update["thumbnail_text"] = p.thumbnail_text.strip()
     main = update.get("thumbnail_text", script.thumbnail_text)
     alts = [t.strip() for t in p.thumbnail_alternatives if t.strip() and t.strip().lower() != main.lower()]
@@ -286,6 +297,28 @@ class CutChoice(BaseModel):
     chapters: list[int] = Field(description="Numbers of the chapters that work best as standalone Shorts, best first.")
 
 
+CUT_GUIDE = (
+    "Pick the chapters of this video that would each work as a standalone YouTube Short. Each must be complete "
+    "on its own: a mini-story with its own tension and turn, or one teaching with the Scripture it rests on, "
+    "understandable without the rest. Pick chapters from different moments of the story (not neighbours, not "
+    "the same beat twice), best first. Skip chapters that only set up or only reflect."
+)
+
+
+def spread(choice: list[int], count: int, n: int) -> list[int]:
+    """Up to n chapter numbers from the model's choice (1..count), best first, skipping a chapter next to
+    one already picked while others are left: cuts come from different moments of the story."""
+    valid = [c for c in dict.fromkeys(choice) if 1 <= c <= count]
+    picked: list[int] = []
+    for c in valid:
+        if len(picked) < n and all(abs(c - p) > 1 for p in picked):
+            picked.append(c)
+    for c in valid:  # not enough far-apart chapters: neighbours are still better than nothing
+        if len(picked) < n and c not in picked:
+            picked.append(c)
+    return picked
+
+
 def cut_scripts(cfg: Config, script: Script, video_id: str, n: int) -> list[Script]:
     """Standalone Short scripts from the strongest chapters of a long video, each pointing to the full video."""
     groups = _chapter_groups(script)
@@ -293,18 +326,12 @@ def cut_scripts(cfg: Config, script: Script, video_id: str, n: int) -> list[Scri
         return []
     menu = "\n".join(f"{i}. {title}: {' '.join(s.narration for s in scenes)[:400]}" for i, (title, scenes) in enumerate(groups, 1))
     try:
-        choice = llm.structured(
-            cfg,
-            "Pick the chapters of this video that would each work best as a standalone YouTube Short: "
-            "a self-contained story moment, truth or Scripture that encourages someone without the rest.",
-            menu,
-            CutChoice,
-            max_tokens=1000,
-        ).chapters
+        choice = llm.structured(cfg, CUT_GUIDE, menu, CutChoice, max_tokens=1000).chapters
     except Exception as e:
         print(f"::warning::could not choose chapters to cut ({e}); using the middle ones")
         choice = list(range(2, len(groups) + 1))
-    picked = [c for c in dict.fromkeys(choice) if 1 <= c <= len(groups)][:n]
+    picked = spread(choice, len(groups), n)
+
     link = f"https://youtu.be/{video_id}"
     out = []
     for c in picked:

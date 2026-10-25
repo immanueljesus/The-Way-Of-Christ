@@ -162,7 +162,7 @@ def idea_data(cfg: Config, entry_id: str) -> dict | None:
         "category": "jesus",
         "content_type": "gospel",
         "series": cfg.liturgy.sunday_gospel_series,
-        "pillar": "Sunday Gospel",
+        "pillar": "teachings",
         "formats": ["short", "medium", "long"],
         "scriptures": list(refs),
         "angle": (

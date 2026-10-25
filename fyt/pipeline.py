@@ -9,7 +9,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-from fyt import catalog, growth, insights, llm, localize, media, qa, render, scripture, tts, wiki, youtube
+from fyt import catalog, growth, insights, llm, localize, media, qa, render, scripture, slate, tts, wiki, youtube
 from fyt.config import SLEEP_MINUTES, Config
 from fyt.models import Media, QuoteCardProps, RenderProps, Script, ThumbnailProps
 from fyt.store import Job, MediaHistory, Topics, Uploads, list_jobs
@@ -24,7 +24,9 @@ def make_video(
     cfg: Config, topic: str, script: Script | None = None, voice: str | None = None, polish: bool | None = None
 ) -> Job:
     """Topic -> rendered video + thumbnail + captions, ready for review/upload.
-    `polish` (default: when the script is written here) sharpens title, hook and thumbnail text."""
+    `polish` (default: when the script is written here) sharpens title, hook and thumbnail text.
+    A long story video takes its visual style's length and look (fyt/slate.py)."""
+    cfg = slate.style_config(cfg, topic_idea(cfg, topic))
     job = Job.create(cfg, topic)
     try:
         _make(cfg, job, topic, script, voice, script is None if polish is None else polish)
@@ -32,6 +34,16 @@ def make_video(
         job.update(status="failed", error=f"{type(e).__name__}: {e}")
         raise
     return job
+
+
+def topic_idea(cfg: Config, topic: str) -> "catalog.Idea | None":
+    """The catalog idea behind a topic, or None (a cut, a Wikipedia topic, free text, an unknown id)."""
+    if not catalog.is_idea(topic):
+        return None
+    try:
+        return catalog.get(cfg, topic)
+    except KeyError:
+        return None
 
 
 def repair_script(script: Script) -> Script:
@@ -76,29 +88,34 @@ def remember_title_style(cfg: Config, style: str) -> None:
     uploads.set_note("title-styles", json.dumps((recent + [style])[-12:]))
 
 
-def keep_faithful(cfg, job, script, study, verses, subject, notes, menu, from_wikipedia, prayer, shape, style, about="") -> Script:
+def keep_faithful(
+    cfg, job, script, study, verses, subject, notes, menu, from_wikipedia, prayer, shape, style, about="", visual=""
+) -> Script:
     """Check the script against the Bible study; rewrite once with the reviewer's notes if it bends
-    the passage. A script that is still unfaithful fails QA, so it is never uploaded."""
+    the passage or presents invented detail (dialogue, events) as Scripture. A script that is still
+    unfaithful fails QA, so it is never uploaded."""
     for attempt in range(2):
         try:
             verdict = llm.check_faithfulness(cfg, script, study, verses, about)
         except Exception as e:  # the reviewer being down shouldn't stop the channel
             log(job, f"warning: faithfulness check skipped: {e}")
             return script
-        if verdict.faithful or not verdict.problems:
+        problems = llm.faithfulness_problems(verdict)
+        if not problems:
             log(job, "faithful to the passage")
             return script
-        log(job, "not faithful yet: " + "; ".join(verdict.problems)[:400])
+        log(job, "not faithful yet: " + "; ".join(problems)[:400])
         if attempt == 1:
-            job.update(faithfulness=verdict.problems)
-            raise RuntimeError("script bends the passage: " + "; ".join(verdict.problems)[:400])
+            job.update(faithfulness=problems)
+            raise RuntimeError("script bends the passage: " + "; ".join(problems)[:400])
         feedback = (
             "A reviewer checked your draft against the Bible study and found these problems. Rewrite the script "
-            "so it stays faithful to the passage's central truth:\n- " + "\n- ".join(verdict.problems)
+            "so it stays faithful to the passage's central truth, and mark anything imagined as imagined:\n- "
+            + "\n- ".join(problems)
         )
         script = repair_script(llm.write_script(
             cfg, subject, notes, from_wikipedia=from_wikipedia, images=menu, feedback=feedback, prayer=prayer,
-            shape=shape, title_style=style, lessons=insights.script_notes(cfg, cfg.format),
+            shape=shape, title_style=style, lessons=insights.script_notes(cfg, cfg.format), visual=visual,
         ))
     return script
 
@@ -173,11 +190,13 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
     idea = None
     passages: dict = {}
     style = pick_title_style(cfg, None, cut=topic.startswith(CUT))
+    visual = ""
     if script is None:
         subject, notes, article, images, idea, passages = research_notes(cfg, job, topic)
         prayer = bool(idea and idea.category == "prayer")
         shape = idea.shape if idea else "journey"
         style = pick_title_style(cfg, idea)
+        visual = slate.style_note(idea, cfg)  # the long video's visual style, for the script writer
         # Bible first: study the passage (context, meaning, central truth) before anything is written.
         study = ""
         if cfg.bible_first:
@@ -194,7 +213,7 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
         lessons = insights.script_notes(cfg, cfg.format)  # delivery lessons from the analytics loop
         script = llm.write_script(
             cfg, subject, notes, from_wikipedia=article is not None, images=menu, prayer=prayer, shape=shape,
-            title_style=style, lessons=lessons,
+            title_style=style, lessons=lessons, visual=visual,
         )
         limit = llm.short_words(cfg) * 1.25 if cfg.format == "short" else None
         if limit and narration_words(script) > limit:
@@ -205,18 +224,19 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
             )
             script = llm.write_script(
                 cfg, subject, notes, from_wikipedia=article is not None, images=menu, feedback=feedback, prayer=prayer,
-                shape=shape, title_style=style, lessons=lessons,
+                shape=shape, title_style=style, lessons=lessons, visual=visual,
             )
         script = repair_script(script)
         if cfg.bible_first and study:
             script = keep_faithful(cfg, job, script, study, scripture.notes(passages), subject, notes, menu,
-                                   article is not None, prayer, shape, style, about=idea.character if idea else "")
+                                   article is not None, prayer, shape, style, about=idea.character if idea else "",
+                                   visual=visual)
         if article:
             script = wiki_attribute(script, article)
     if polish and cfg.growth.polish:
         log(job, "sharpening title, hook and thumbnail text")
         try:
-            script = growth.polish(cfg, script, style)
+            script = growth.polish(cfg, script, style, story=bool(visual) or topic.startswith(CUT))
         except Exception as e:  # the unpolished script is still fine
             log(job, f"warning: polish failed: {e}")
     if idea and idea.series:
@@ -229,11 +249,16 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
     if idea and idea.title_prefix:  # a calendar series, e.g. "Advent: Day 3 · ..."
         script = with_title_prefix(script, idea.title_prefix)
     job.file("script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
-    # What this video is, so the analytics loop can learn which choices viewers stay with.
+    # What this video is, so the analytics loop can learn which choices viewers stay with
+    # (pillar and visual style too: a Short cut from a long video carries its parent's).
+    parent = cut_parent(cfg, topic) if topic.startswith(CUT) else {}
     job.update(
         status="scripted", title=script.title, title_style=style, minutes=cfg.target_minutes,
         category=idea.category if idea else None, shape=idea.shape if idea else ("story" if topic.startswith(CUT) else None),
         emotion=idea.emotion if idea else None,
+        pillar=catalog.pillar_of(idea) if idea else parent.get("pillar"),
+        style=(slate.style_of(idea) if visual else None) if idea else parent.get("style"),
+        cut_of=parent.get("video_id"),
     )
     remember_title_style(cfg, style)
 
@@ -288,7 +313,8 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
         script = script.model_copy(update={"description": script.description.rstrip() + "\n\n" + chapters})
         job.file("script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
     seconds = (spans[-1][1] if spans else 0) + max(cfg.tail_seconds, 4.0)
-    feel = {"calm": "prayer", "cinematic": "motivation"}.get(idea.music, idea.category) if idea else None
+    music_kind = (idea.music or (slate.style_music(idea) if visual else "")) if idea else ""
+    feel = {"calm": "prayer", "cinematic": "motivation"}.get(music_kind, idea.category) if idea else None
     if cfg.is_sleep:
         feel = "prayer"  # calm tracks under a sleep video
     music = media.pick_music(cfg, job.public, category=feel, seconds=seconds)
@@ -315,6 +341,10 @@ def _make(cfg: Config, job: Job, topic: str, script: Script | None, voice: str |
     log(job, "rendering thumbnail")
     # The subject's own photo makes a better thumbnail than a stock one.
     bg = next((m for i, m in sorted(scene_media.items()) if m.kind == "image" and "wiki" in m.src), None)
+    # A story video's thumbnail shows its central conflict: a picture from the tension of the story.
+    if visual:
+        conflict = [i for i, s in enumerate(script.scenes) if s.mood in ("struggle", "uncertainty")]
+        bg = next((scene_media[i] for i in conflict if i in scene_media and scene_media[i].kind == "image"), bg)
     # Otherwise a still from the video's turning point onward (realization, hope): light, not darkness.
     if bg is None:
         late = [i for i, s in enumerate(script.scenes) if s.mood in ("realization", "hope", "strength")]
@@ -620,6 +650,7 @@ def upload_job(cfg: Config, job: Job, force: bool = False, publish_at: datetime 
         video_id, topic=m.get("topic"), title=script.title, format=cfg.format, category=m.get("category"),
         shape=m.get("shape"), emotion=m.get("emotion"), title_style=m.get("title_style"), minutes=m.get("minutes"),
         voice=m.get("voice"), series=script.series,
+        **{k: m[k] for k in ("pillar", "style", "slate", "duration", "cut_of") if m.get(k) is not None},
     )
     if script.series and youtube.can_manage():
         try:
@@ -627,15 +658,26 @@ def upload_job(cfg: Config, job: Job, force: bool = False, publish_at: datetime 
         except Exception as e:  # the video is up; the playlist is a nice-to-have
             print(f"warning: not added to the {script.series!r} playlist: {e}")
     if cfg.format == "long" and (job.meta.get("minutes") or 0) < SLEEP_MINUTES:  # sleep videos aren't cut up
-        queue_cuts(cfg, script, video_id)
+        queue_cuts(cfg, script, video_id, publish_at, pillar=m.get("pillar"), style=m.get("style"))
     return video_id
 
 
 CUT = "cut:"
 
 
-def queue_cuts(cfg: Config, script: Script, video_id: str) -> None:
-    """Queue Shorts cut from a long video; they fill the next regular Short slots."""
+def cut_parent(cfg: Config, topic: str) -> dict:
+    """What a cut's long video is: video_id, publish_at (when it goes live), pillar, style. {} if unknown."""
+    name = topic.removeprefix(CUT)
+    path = cfg.jobs_path / "cuts" / f"{name.rsplit('-', 1)[0]}.parent"
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
+def queue_cuts(
+    cfg: Config, script: Script, video_id: str, publish_at: datetime | None = None,
+    pillar: str | None = None, style: str | None = None,
+) -> None:
+    """Queue Shorts cut from a long video; they fill the next regular Short slots, never before the
+    long video they link to is live."""
     try:
         cuts = growth.cut_scripts(cfg, script, video_id, cfg.growth.cuts_per_long)
     except Exception as e:
@@ -643,6 +685,9 @@ def queue_cuts(cfg: Config, script: Script, video_id: str) -> None:
         return
     folder = cfg.jobs_path / "cuts"
     folder.mkdir(parents=True, exist_ok=True)
+    parent = {"video_id": video_id, "publish_at": publish_at.isoformat() if publish_at else None,
+              "pillar": pillar, "style": style}
+    (folder / f"{video_id}.parent").write_text(json.dumps(parent), encoding="utf-8")
     names = []
     for i, cut in enumerate(cuts, 1):
         name = f"{video_id}-{i}"
@@ -651,6 +696,28 @@ def queue_cuts(cfg: Config, script: Script, video_id: str) -> None:
     if names:
         Topics(cfg).add(names)
         print(f"queued {len(names)} Shorts cut from https://youtu.be/{video_id}")
+
+
+def evergreen_topic(cfg: Config, topics: Topics) -> tuple[int, str] | None:
+    """The next Bible story from the evergreen backlog (fyt/slate.py), queued and returned."""
+    from fyt import liturgy
+
+    season = liturgy.season(cfg, datetime.now().date()) if cfg.liturgy.season_bias else {}
+    idea = slate.pick_evergreen(cfg, set(topics.titles()), season)
+    if idea is None:
+        return None
+    topics.add([idea.topic])
+    return topics.find(idea.topic)
+
+
+def next_cut(cfg: Config, topics: Topics, at: datetime | None = None) -> tuple[int, str] | None:
+    """The oldest queued Short cut from a long video whose long video is live by `at` (the Short's
+    publish time), so the link in it always works."""
+    for topic_id, topic in topics.pending(prefix=CUT):
+        live = cut_parent(cfg, topic).get("publish_at")
+        if at is None or not live or datetime.fromisoformat(live) <= at:
+            return topic_id, topic
+    return None
 
 
 def catalog_topic(cfg: Config, topics: Topics, category: str | None = None) -> tuple[int, str] | None:
@@ -664,9 +731,8 @@ def catalog_topic(cfg: Config, topics: Topics, category: str | None = None) -> t
     from fyt import liturgy
 
     season = liturgy.season(cfg, datetime.now().date()) if cfg.liturgy.season_bias else {}
-    idea = catalog.pick(
-        cfg, used, category=category, recent=topics.recent(8), season=season, weights=insights.category_weights(cfg)
-    )
+    weights = insights.pillar_weights(cfg) if cfg.catalog.pillars else insights.category_weights(cfg)
+    idea = catalog.pick(cfg, used, category=category, recent=topics.recent(8), season=season, weights=weights)
     if idea is None:
         return None
     topics.add([idea.topic])
@@ -674,12 +740,18 @@ def catalog_topic(cfg: Config, topics: Topics, category: str | None = None) -> t
 
 
 def next_topic(
-    cfg: Config, topics: Topics, ideate_when_empty: int = 10, category: str | None = None
+    cfg: Config, topics: Topics, ideate_when_empty: int = 10, category: str | None = None,
+    slate_kind: str | None = None, at: datetime | None = None,
 ) -> tuple[int, str] | None:
-    """The next topic to make, refilling the queue when it runs dry. A slot that asks for a
-    category (the weekly plan) gets an idea from that category first."""
+    """The next topic to make, refilling the queue when it runs dry. An evergreen slot takes the next
+    backlog story; a Short slot takes a Short cut from a long video first (one whose long video is
+    live by `at`); a slot that asks for a category (the weekly plan) gets an idea from that category."""
     nxt = None
-    if cfg.source == "catalog" and category:
+    if slate_kind and cfg.format == "long":
+        nxt = evergreen_topic(cfg, topics)
+    if nxt is None and cfg.format == "short" and cfg.catalog.pillars:  # story-first: Shorts are cuts first
+        nxt = next_cut(cfg, topics, at)
+    if nxt is None and cfg.source == "catalog" and category:
         nxt = catalog_topic(cfg, topics, category)
     if nxt is not None:
         return nxt
@@ -688,7 +760,7 @@ def next_topic(
     elif cfg.format == "long":  # Shorts cut from long videos only fill Short slots
         nxt = topics.next_pending(exclude_prefix=CUT)
     else:
-        nxt = topics.next_pending(prefix=CUT) or topics.next_pending(exclude_prefix=CUT)
+        nxt = next_cut(cfg, topics, at) or topics.next_pending(exclude_prefix=CUT)
     if nxt is None and cfg.source == "catalog":
         nxt = catalog_topic(cfg, topics)
     if nxt is None and ideate_when_empty:
@@ -705,13 +777,12 @@ def next_topic(
     return nxt
 
 
-def make_planned(cfg: Config, topics: Topics, topic: str, category: str | None = None) -> Job | None:
-    """Make a specific video (a Christian-calendar campaign video) for its slot. If it fails,
-    the slot still gets a video: the next evergreen idea."""
+def _make_once(cfg: Config, topics: Topics, topic: str) -> Job | None:
+    """Make one specific video, unless it was made before. None if it was, or if it failed."""
     found = topics.find(topic)
     if found and topics.status(found[0]) == "done":
-        print(f"{topic} was already made; using the next idea for this slot")
-        return make_next(cfg, topics, category=category)
+        print(f"{topic} was already made")
+        return None
     topics.add([topic])
     topic_id, _ = topics.find(topic)
     topics.set(topic_id, "in_progress")
@@ -719,17 +790,43 @@ def make_planned(cfg: Config, topics: Topics, topic: str, category: str | None =
         job = make_topic(cfg, topic)
     except Exception as e:
         topics.set(topic_id, "failed")
-        print(f"::warning::calendar video failed: {topic}: {e}; using the next idea for this slot")
-        return make_next(cfg, topics, category=category)
+        print(f"::warning::calendar video failed: {topic}: {e}")
+        return None
     topics.set(topic_id, "done", job.id)
     return job
 
 
-def make_next(cfg: Config, topics: Topics, attempts: int = 3, category: str | None = None) -> Job | None:
-    """Make a video from the next topic that works, trying up to `attempts` topics."""
+def make_planned(cfg: Config, topics: Topics, topic: str, category: str | None = None) -> Job | None:
+    """Make a specific video (a Christian-calendar campaign video) for its slot. If it fails,
+    the slot still gets a video: the next evergreen idea."""
+    job = _make_once(cfg, topics, topic)
+    if job is None:
+        print("using the next idea for this slot")
+        return make_next(cfg, topics, category=category)
+    return job
+
+
+def make_timely(cfg: Config, topics: Topics, options: tuple[str, ...] | list[str]) -> Job | None:
+    """The timely long video (fyt/slate.py): the first of the week's calendar videos that can be made,
+    else the next evergreen story, so the slot is never empty."""
+    for topic in options:
+        job = _make_once(cfg, topics, topic)
+        if job is not None:
+            return job
+    print("nothing timely to make for this slot; using the next evergreen story")
+    return make_next(cfg, topics, slate=slate.EVERGREEN)
+
+
+def make_next(
+    cfg: Config, topics: Topics, attempts: int = 3, category: str | None = None, slate: str | None = None,
+    at: datetime | None = None,
+) -> Job | None:
+    """Make a video from the next topic that works, trying up to `attempts` topics. `slate`: an
+    evergreen long slot (the backlog first); `at`: the slot's publish time (for Shorts cut from long videos)."""
     for _ in range(attempts):
         try:
-            nxt = next_topic(cfg, topics, category=category)
+            nxt = next_topic(cfg, topics, category=category, slate_kind=slate, at=at)
+
         except Exception as e:  # Wikipedia or the LLM is down
             print(f"::warning::could not pick a topic: {e}")
             return None

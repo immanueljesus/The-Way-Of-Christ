@@ -349,14 +349,22 @@ blessing spoken over the viewer and "Amen" (strength). Moods: struggle -> faith 
 # The other story shapes (an idea's `arc`). Every video makes the viewer feel something, but by
 # different roads, so the channel never settles into "you are struggling -> here is a verse".
 # The `mood` tags still drive pace, music and colour: they describe the energy of each moment.
-STORY_STRUCTURE = """The shape: step inside a Bible story (set each scene's `mood` as noted).
-1. The scene (uncertainty): open in the middle of the moment, present tense, the place and the stakes,
-   as if the viewer is standing there. Don't name the lesson yet. A title that withholds the name works:
-   "He was forgotten for years" before you reveal Joseph.
-2. The tension (struggle): what the person faced, felt, feared. Let it breathe.
-3. The turn (faith -> realization): what they did or what God did, and the Scripture at the heart of it.
-4. The thread to today (hope): one bridge to the viewer's life, "maybe you know what that feels like".
-5. The invitation (strength): what this story asks of us, and one line to carry."""
+# Story-first: every story is told like a film, around ONE dramatic question, in six beats.
+STORY_STRUCTURE = """The shape: a Bible story told like a film. The whole video turns on ONE dramatic question (the
+notes give it; otherwise take it from the Bible study), e.g. "Will Daniel stop praying to save his life?".
+Six beats, in this order (set each scene's `mood` as noted):
+1. Hook (uncertainty or struggle), the first 5-15 seconds: open on the conflict, the danger, the dilemma or a
+   surprising question, in the middle of the moment. No general introduction, no greeting, no "today we".
+   By the end of the hook the viewer knows the dramatic question.
+2. Setup (uncertainty): the people, the place and what is at stake, as the passage gives them.
+3. Escalation (struggle): the tension builds through what actually happens in the passage, event by event,
+   in Scripture's order. Don't resolve it early.
+4. Turning point (realization): the moment everything turns, carried by the key Scripture, quoted exactly.
+   Give it room (pause_after 2-3 seconds).
+5. Resolution (hope): what happened, as the passage tells it, and what it reveals: the answer to the
+   dramatic question.
+6. Reflection (faith -> strength): the passage's teaching, faithfully, and what it asks of the viewer. No
+   motivational message the passage doesn't give, and nothing unrelated to it."""
 
 CURIOSITY_STRUCTURE = """The shape: a question that pulls the viewer in, answered in a way that moves them.
 1. The question (uncertainty): open on the intriguing detail or question ("Nobody knows what Jesus wrote in
@@ -386,8 +394,9 @@ JOY_STRUCTURE = """The shape: gratitude and joy. Not every video is about pain.
 The energy is warm and bright, building to the end."""
 
 SHORT_SHAPES = {
-    "story": "Shorts version: drop into the moment in the first line (uncertainty), the tension (struggle), "
-    "the turn with the verse (realization), one line connecting it to the viewer (hope/strength).",
+    "story": "Shorts version, the same six beats compressed: the hook is the first line (the conflict or the "
+    "dramatic question), the setup in one sentence (uncertainty), one escalating beat (struggle), the turning "
+    "point with the verse (realization), and the resolution and what it reveals in a line or two (hope/strength).",
     "curiosity": "Shorts version: the question in the first line (uncertainty), one vivid detail (faith), the "
     "surprising answer with the verse (realization), why it matters (strength).",
     "wisdom": "Shorts version: the modern moment (struggle), the ancient line (realization), one thing to do "
@@ -428,6 +437,9 @@ on that central truth.
   gets you what you want. Say what Scripture does say: you can bring your fear to God; God's presence
   doesn't depend on your circumstances; faith doesn't mean knowing how the story ends.
 - If the idea names a person (a saint, a Bible character), the video is about that person.
+- Imagined is fine only when it is marked. Light, weather, sounds and setting may be imagined as scene-setting.
+  Dialogue, thoughts, names, numbers or events the passage doesn't give must be marked as imagined in the
+  narration ("perhaps", "we can imagine", "the text doesn't say, but..."), never presented as Scripture.
 - Not every video is motivational. Let it be beautiful, thought-provoking, educational, mysterious,
   challenging, peaceful or joyful as the passage calls for, always pointing to Christ."""
 
@@ -511,6 +523,9 @@ class Study(BaseModel):
     truth: str = Field(description="The central truth in one sentence, faithful to the text.")
     not_saying: list[str] = Field(description="2-4 misreadings, merges or overpromises this video must avoid.")
     connection: str = Field(description="A modern human experience that connects naturally with the truth.")
+    dramatic_question: str = Field(
+        default="", description="The one dramatic question a film of this passage turns on, answered by the passage itself."
+    )
 
 
 def _careful(cfg: Config) -> Config:
@@ -543,12 +558,28 @@ def study_markdown(study: Study) -> str:
         f"Passage: {study.passage}\nContext: {study.context}\nWhat it says: {study.meaning}\n"
         f"Central truth: {study.truth}\nThe video must NOT: " + "; ".join(study.not_saying) + "\n"
         f"Modern connection: {study.connection}"
+        + (f"\nDramatic question: {study.dramatic_question}" if study.dramatic_question else "")
     )
 
 
 class Faithfulness(BaseModel):
     faithful: bool = Field(description="True only if the script is faithful to the passage and the study.")
     problems: list[str] = Field(default_factory=list, description="Each place it bends, merges, invents or overpromises.")
+    unmarked_inventions: list[str] = Field(
+        default_factory=list,
+        description="Each piece of dialogue, thought, name, number or event that is not in the passage and is told "
+        "as if it were, without being marked as imagined.",
+    )
+
+
+def faithfulness_problems(verdict: Faithfulness) -> list[str]:
+    """Everything the review found; empty means the script may go ahead. Unmarked invented detail
+    always counts, even when the reviewer calls the script faithful otherwise."""
+    problems = [] if verdict.faithful else list(verdict.problems)
+    if not verdict.faithful and not problems and not verdict.unmarked_inventions:
+        return []  # marked unfaithful without saying why: nothing to fix (as before)
+    problems += [f"invented detail told as Scripture (mark it as imagined or cut it): {x}" for x in verdict.unmarked_inventions]
+    return problems
 
 
 def check_faithfulness(cfg: Config, script: Script, study: str, verses: str, about: str = "") -> Faithfulness:
@@ -560,8 +591,10 @@ def check_faithfulness(cfg: Config, script: Script, study: str, verses: str, abo
         "passage means, merges different passages or teachings into one point, invents events, presents "
         "application as the passage's meaning, promises outcomes Scripture doesn't promise (fixes, breakthroughs, "
         "rewards for enough faith), or drifts away from the person the video is about. Check every point in "
-        "the study's 'must NOT' list. Imagined sensory scene-setting (light, sounds, feelings) is fine. Be "
-        "specific and brief."
+        "the study's 'must NOT' list. Imagined sensory scene-setting (light, sounds, feelings) is fine. Dialogue, "
+        "thoughts, names, numbers or events that are not in the passage are fine only when the narration marks "
+        "them as imagined ('perhaps', 'we can imagine'); list every one that isn't marked in unmarked_inventions. "
+        "Be specific and brief."
     )
     if about:
         system += f" This video must be about {about}; it is unfaithful if {about} is missing or incidental."
@@ -631,8 +664,10 @@ Rules:
 - Scripture: quote only the exact verse text given in the notes, and name the reference. If a verse isn't
   in the notes, paraphrase it clearly as a paraphrase and give the reference. Never invent or merge
   verses, and never put words in Jesus' mouth.
-- Stay faithful to the Bible story: feelings, sounds and light may be imagined as scene-setting, never new
-  events. Mainstream Christian teaching; no politics, prosperity promises, guilt, fear tactics or medical advice.
+- Stay faithful to the Bible story and anchored to the cited passages: feelings, sounds and light may be
+  imagined as scene-setting, never new events; reconstructed detail and imagined dialogue are marked as such
+  in the narration. Mainstream Christian teaching; no politics, prosperity promises, guilt, fear tactics or
+  medical advice.
 - End on strength: the line they carry, then (only in long videos) one gentle invitation to subscribe
   or pray along.
 - Title max 70 characters. {title_rule} Never "Biblical Motivation for..." or "Bible Verse About...".
@@ -682,8 +717,10 @@ def write_script(
     shape: str = "journey",
     title_style: str = "cinematic",
     lessons: str = "",
+    visual: str = "",
 ) -> Script:
-    """`lessons`: what the channel's analytics say about delivery (fyt/insights.py), added to the guide."""
+    """`lessons`: what the channel's analytics say about delivery (fyt/insights.py), added to the guide.
+    `visual`: the long video's visual style (fyt/slate.py style_note)."""
     ch = cfg.channel
     if cfg.format == "short":
         format_line = "YouTube Short, vertical 9:16, 45-55 seconds, 5-8 scenes"
@@ -706,8 +743,11 @@ def write_script(
         bible_first=BIBLE_FIRST,
         title_rule=title_rule(title_style),
     )
+    if visual:
+        guide += f"\n{visual}\n"
     if lessons:
         guide += f"\nWhat this channel's viewers have shown so far (from its analytics):\n{lessons}\n"
+
     tail = f"\n\nAvailable images:\n{images}" if images else ""
     tail += f"\n\n{feedback}" if feedback else ""
 

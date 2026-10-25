@@ -19,7 +19,7 @@ from datetime import date, datetime, timedelta, timezone
 from datetime import time as dtime
 from zoneinfo import ZoneInfo
 
-from fyt import pipeline, youtube
+from fyt import pipeline, slate, youtube
 from fyt.config import SLEEP_MINUTES, Config, sleep_config
 from fyt.store import Job, Topics, Uploads
 
@@ -44,6 +44,8 @@ class Slot:
     minutes: float | None = None  # from the weekly plan: the long video's length
     label: str = ""
     topic: str | None = None  # a specific video for this slot (a Christian-calendar campaign video)
+    slate: str | None = None  # story-first long videos: "evergreen" (the backlog) or "timely" (fyt/slate.py)
+    options: tuple[str, ...] = ()  # a timely slot's calendar videos, best first (slate.timely_options)
 
     @property
     def key(self) -> str:
@@ -78,7 +80,8 @@ def upcoming_slots(cfg: Config, now: datetime) -> list[Slot]:
             at = _at(day, p.time, tz)
             end = short_end if p.kind == "short" else long_end
             if p.weekday == day.weekday() and start <= at <= end:
-                slots.append(Slot(at, p.kind, p.category, p.minutes, p.label))
+                options = tuple(slate.timely_options(cfg, day)) if p.slate == slate.TIMELY else ()
+                slots.append(Slot(at, p.kind, p.category, p.minutes, p.label, slate=p.slate, options=options))
         day += timedelta(days=1)
     unique = {s.key: s for s in slots}  # plan entries come later, so one wins a clash with a daily slot
     for s in calendar_slots(cfg, now, unique):
@@ -93,17 +96,23 @@ def calendar_slots(cfg: Config, now: datetime, regular: dict[str, Slot]) -> list
     its own at liturgy.long_time; campaign Shorts get their own slots at liturgy.short_times, on top
     of the day's regular Shorts. So the evergreen engine keeps running while a campaign is on. A video with
     its own `time` gets that time; if a regular slot is at that time (e.g. a daily Advent Short at the
-    morning Short's 08:00), the campaign video takes that slot instead of adding one."""
+    morning Short's 08:00), the campaign video takes that slot instead of adding one.
+
+    Story-first (a plan entry with `slate`): campaign long videos get no slot of their own and never take
+    the evergreen slot; they are the timely slot's options instead (slate.timely_options)."""
     from fyt import liturgy
 
     lt = cfg.liturgy
     if not lt.enabled:
         return []
+    story_first = any(p.slate for p in cfg.schedule.plan)
     start = now + timedelta(minutes=LEAD_MINUTES)
     end = now + timedelta(days=lt.lead_days)
     out: list[Slot] = []
     used_times: dict[tuple, int] = {}
     for e in liturgy.entries(cfg, start.date(), end.date()):
+        if story_first and e.kind == "long":
+            continue
         if e.time:  # the video names its own time; on a regular slot's time it takes that slot over
             at = _at(e.on, e.time, cfg.schedule.timezone)
         elif e.kind == "long":
@@ -280,10 +289,16 @@ def fill(cfg: Config, now: datetime | None = None, rng: random.Random | None = N
         if elapsed + make_minutes(slot, cfg) > cfg.schedule.max_run_minutes:
             print(f"not enough time left in this run for a {slot.kind} video; the next run continues")
             continue  # a Short may still fit after a skipped long video
-        if slot.topic:
+        if slot.options:
+            job = pipeline.make_timely(slot_config(cfg, slot), topics, slot.options)
+        elif slot.topic:
             job = pipeline.make_planned(slot_config(cfg, slot), topics, slot.topic, category=slot.category)
+        elif slot.slate:
+            job = pipeline.make_next(slot_config(cfg, slot), topics, slate=slate.EVERGREEN)
         else:
-            job = pipeline.make_next(slot_config(cfg, slot), topics, category=slot.category)
+            job = pipeline.make_next(slot_config(cfg, slot), topics, category=slot.category, at=slot.at)
+        if job is not None and slot.slate:
+            job.update(slate=slot.slate)  # recorded at upload, so evergreen and timely can be compared
         if job is None or job.meta.get("status") != "approved":
             failures += 1
             if failures >= 3:
@@ -389,7 +404,11 @@ def report(cfg: Config, now: datetime | None = None) -> tuple[str, list[Slot]]:
     rows = ["| Goes live (UTC) | Kind | Plan | Video |", "|---|---|---|---|"]
     for s in upcoming_slots(cfg, now):
         video = f"https://youtu.be/{filled[s.key][0]}" if s.key in filled else "**empty**"
-        rows.append(f"| {s.at:%a %d %b %H:%M} | {s.kind} | {s.label or s.category or ''} | {video} |")
+        plan = s.label or s.category or ""
+        if s.options:
+            plan += " (" + ", then ".join(o.removeprefix("idea:") for o in s.options[:2]) + ", else evergreen)"
+        rows.append(f"| {s.at:%a %d %b %H:%M} | {s.kind} | {plan} | {video} |")
+
     pending = pending_jobs(cfg)
     if pending:
         rows.append(f"\n{len(pending)} made video(s) waiting to be uploaded.")

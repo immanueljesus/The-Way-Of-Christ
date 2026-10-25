@@ -61,10 +61,15 @@ def test_christmas_story_long_videos_and_the_christmas_eve_prayer():
         assert "idea:" + key in longs
     prayer = catalog.get(cfg, longs["idea:christmas-eve-prayer"].topic)
     assert prayer.category == "prayer" and prayer.shape == "prayer" and prayer.music == "calm"
-    # Christmas Eve has two long videos; they get different times, so neither replaces the other.
-    now = datetime(2026, 12, 20, 12, 0, tzinfo=timezone.utc)
-    eve = [s for s in schedule.upcoming_slots(cfg, now) if s.topic and "christmas-eve" in s.topic]
-    assert len(eve) == 2 and len({s.at for s in eve}) == 2
+    # Story-first: Christmas Eve's long videos are choices for the timely slot the Friday before; the
+    # evergreen slot that week is still a Bible story from the backlog.
+    cfg.schedule.long_lead_days = 7
+    slots = schedule.upcoming_slots(cfg, datetime(2026, 12, 14, 12, 0, tzinfo=timezone.utc))
+    friday = next(s for s in slots if s.slate == "timely")
+    assert [o for o in friday.options if "christmas-eve" in o] == [
+        "idea:christmas-eve-night-everything-changed@2026", "idea:christmas-eve-prayer@2026"]
+    tuesday = next(s for s in slots if s.slate == "evergreen")
+    assert not tuesday.options and not tuesday.topic
 
 
 def test_no_december_day_has_more_campaign_shorts_than_slots():

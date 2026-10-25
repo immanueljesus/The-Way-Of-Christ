@@ -168,7 +168,7 @@ def idea_data(cfg: Config, entry_id: str) -> dict | None:
                 fields = {k: v for k, v in e.items() if k not in ("offset", "kind", "minutes", "time")}
                 fields.setdefault("category", event.get("category", "jesus"))
                 fields["series"] = fields.get("series") or event.get("series")
-                fields["pillar"] = event.get("name", key)
+                fields["pillar"] = event.get("pillar", "")  # a content pillar (catalog.PILLARS), else from its shape
                 fields["formats"] = ["short", "medium", "long", "sleep"]
                 return fields
     return None

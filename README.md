@@ -1,7 +1,23 @@
 # Faceless Christian YouTube pipeline
 
-Automated videos for a faceless Christian encouragement channel:
-**Biblical wisdom and Christian encouragement for the battles of everyday life.**
+Automated videos for a faceless Christian channel: **cinematic Bible storytelling. Scripture first,
+compelling stories, beautiful production, meaningful Christian teaching.**
+
+Story-first: every idea belongs to one of four content pillars, kept in balance (`catalog.pillars`):
+
+| Pillar | What it is |
+|---|---|
+| `stories` | Bible stories told like films: Joseph, Moses, David, Esther, Daniel, Peter, Paul, the prodigal son... |
+| `teachings` | teachings of Jesus (parables, hard sayings) in their original context |
+| `struggles` | human struggles inside Scripture (fear, betrayal, guilt, doubt, forgiveness, courage, repentance), always through a specific event, never generic motivation |
+| `questions` | overlooked moments and biblical questions: surprising details, misunderstood passages, context |
+
+Every story script follows six beats around **one dramatic question**: Hook (the first 5-15 seconds: a
+conflict, danger, dilemma or surprising question, no general intro), Setup (people, place, stakes),
+Escalation (the tension, through the actual events of the passage), Turning point, Resolution (what
+happened and what the passage reveals) and Reflection (its teaching, faithfully). Scripts stay anchored
+to the cited passages: imagined dialogue and reconstructed detail must be marked as such, and the
+faithfulness check rejects any that isn't.
 
 **topic → Scripture research → script → narration → storyboard → visuals → music → subtitles →
 render → thumbnail → quote cards → QA → upload → Shorts cut from each long video**.
@@ -9,12 +25,13 @@ render → thumbnail → quote cards → QA → upload → Shorts cut from each 
 - **Start here:** [SETUP.md](SETUP.md) (what to fill in, and the new-account steps)
 - **The channel plan:** [docs/CHANNEL_ARCHITECTURE.md](docs/CHANNEL_ARCHITECTURE.md) (name options,
   pillars, formats, series, weekly schedule, script templates, thumbnail and visual style)
-- **The idea bank:** [content/ideas.yaml](content/ideas.yaml) (144 ideas, `python -m fyt ideas`)
+- **The idea bank:** [content/ideas.yaml](content/ideas.yaml) (256 ideas) and the evergreen Bible stories in
+  [content/backlog.yaml](content/backlog.yaml) (30), `python -m fyt ideas`
 
 ```
 content/ideas.yaml ─► exact Bible text (bible-api.com) + Wikipedia background + paintings
      ▲                         │
-     │        script: Pain → Recognition → Scripture → Story → Meaning → Application → Hope → Prayer
+     │        script: Hook → Setup → Escalation → Turning point → Resolution → Reflection (stories)
      │                (Shorts: Hook → Story → Meaning → Scripture → Application), storyboard per scene
      │                         │  Scripture check: every on-screen verse matches the real text
      │        calm narration with word timings (Kokoro / Edge / ElevenLabs)
@@ -102,20 +119,38 @@ you trust the output.
 ## The weekly plan with GitHub Actions
 
 `.github/workflows/daily-short.yml` (**Daily videos**) keeps the weekly plan from
-`schedule.plan` in `channel.yaml` filled on the channel:
+`schedule.plan` in `channel.yaml` filled on the channel (New York time):
 
-| Day (UTC) | Video |
+| When | Video |
 |---|---|
-| Mon 12:00 | motivational Short |
-| Tue 16:00 | 6 minute Bible story |
-| Wed 12:00 | short prayer |
-| Thu 12:00 | Jesus / Bible Short |
-| Fri 16:00 | 10 minute inspirational video |
-| Sat 12:00 | Bible fact Short |
-| Sun 14:00 | 12 minute prayer and reflection |
-| daily 01:00 | evening Short: cuts from the long videos first, then the content mix |
+| Tue 15:00 | **Video A, evergreen:** the next Bible story from `content/backlog.yaml`. The calendar never takes this slot. |
+| Fri 15:00 | **Video B, timely:** the week's feast or season video (`content/calendar.yaml`), else a long video on the coming Sunday's Mass Gospel; if nothing timely can be made, another evergreen story |
+| Fri 12:00 | the Sunday Gospel Short |
+| Sun 20:00 | 30 minute "Fall asleep in God's Word" |
+| daily 19:00 | evening Short: cut from the week's long stories first, then the four pillars |
 
-Each slot takes the next unused idea of its category from `content/ideas.yaml`. The idea's
+**The evergreen backlog** (`content/backlog.yaml`) starts with eight stories in a fixed order (David and
+Goliath, Joseph, Daniel in the lions' den, the prodigal son, Jesus calming the storm, the good Samaritan,
+Peter's denial and restoration, loving your enemies), then about twenty more. After those eight the
+picker keeps the pillars in balance and, within a pillar, takes the highest **idea score**: biblical
+significance + story potential + audience appeal + seasonal relevance (higher in a season that shares
+the story's feelings) - production effort, each 1-5 in the idea's `score`. `python -m fyt buffer` shows
+what each timely slot will choose from.
+
+**Visual styles** (`style` on an idea; `fyt/slate.py`), within what the free pipeline renders. Each sets
+the length, the look and the music, and is recorded on the video so the analytics can compare them:
+
+| Style | Look | Length |
+|---|---|---|
+| `cinematic` | footage for most scenes, paintings at the key moments, letterbox, slow camera moves, cinematic music | 5-9 min |
+| `illustrated` | classical paintings carry the story (two thirds of the scenes or more), maps and manuscripts, restrained motion, calm music | 3-6 min |
+| `documentary` | the places, artifacts and customs of the passage, paintings as reconstructed scenes, a narrator walking you through | 6-10 min |
+
+Ideas without a style get their pillar's (stories and struggles: cinematic, teachings: illustrated,
+questions: documentary).
+
+The rest of the ideas live in `content/ideas.yaml`; Shorts and slots that name a category take the next
+unused idea from there. The idea's
 Scripture is fetched word for word, a Bible story's Wikipedia article adds background and
 classical paintings (credited in the description), topped up with public-domain Bible paintings
 from Wikimedia Commons when the idea has no article (`commons_art`). Paintings are mixed with
@@ -168,8 +203,15 @@ Each run's summary shows the coming slots and their videos. `python -m fyt buffe
 - *Series:* each video is filed under its series ("When You Feel...", "Lessons From...", "One Minute
   With Jesus", "Before You Sleep", "Start Your Day With God", "Did You Know?", "Prayers"), named in
   its description and added to a playlist of that name.
-- *Cuts:* each long video's strongest chapters become up to 6 Shorts that link to the full video. They
-  take the next evening Short slots.
+- *Cuts:* each long story becomes 2-3 Shorts (`growth.cuts_per_long`), each a complete mini-story or one
+  teaching from a different moment of the video, linking to the full video. They take the evening Short
+  slots, never before the full video is live.
+- *Thumbnails:* a story video's thumbnail shows its own central conflict, a painting or still from the
+  story's tension (never reused: shown pictures are remembered), with 1-3 words of text.
+- *Pillars and styles in the stats:* `python -m fyt insights` compares the pillars, the visual styles and
+  the evergreen / timely slots on click-through rate, viewers still watching at 30 seconds, average view
+  duration, the share of views from subscribers (the API's closest measure of returning viewers) and the
+  share from Browse features and Suggested videos.
 - *Repurposing:* every video also gets 3 quote cards, a prayer, a community post, a pinned comment and
   6 more Short ideas (`extras.md`).
 
@@ -211,7 +253,8 @@ docs/                CHANNEL_ARCHITECTURE.md: the channel plan
 fyt/                 Python pipeline
   cli.py             commands (python -m fyt --help)
   pipeline.py        orchestration: research_notes, make_video, upload_job, run_queue
-  catalog.py         the idea bank: picking by content mix, plan category and length
+  catalog.py         the idea bank: picking by content pillar, plan category and length
+  slate.py           story-first: the evergreen / timely long videos, visual styles, the idea score
   scripture.py       exact Bible text (bible-api.com) and the on-screen quote check
   llm.py             prompts: topic ideas, research, the emotional-arc script
   growth.py          packaging (title, hook, thumbnail), cuts, quote cards / prayer / community post

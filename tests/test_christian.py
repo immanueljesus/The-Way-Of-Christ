@@ -83,8 +83,10 @@ def test_the_shipped_catalog_is_valid():
     cfg = load_config()
     ideas = catalog.load(cfg)
     assert len(ideas) >= 100
-    assert {i.category for i in ideas} <= set(cfg.catalog.mix)
+    assert {i.category for i in ideas} <= set(catalog.DEFAULT_ARC) | {"motivation", "relationships", "purpose", "spiritual_battles"}
+    assert set(cfg.catalog.pillars) == set(catalog.PILLARS)
     for i in ideas:
+        assert i.pillar in catalog.PILLARS, i.id  # every idea names its content pillar
         assert set(i.formats) <= set(catalog.FORMATS), i.id
         assert i.scriptures, i.id
         for ref in i.scriptures:
@@ -156,12 +158,13 @@ def test_plan_slots_carry_category_and_length():
 def test_shipped_channel_config_loads_with_the_weekly_plan():
     cfg = load_config()
     assert cfg.source == "catalog"
-    assert {p.weekday for p in cfg.schedule.plan if p.kind == "short"} == set(range(7))  # a Short every morning
+    assert cfg.schedule.short_slots == ["19:00"]  # one evening Short a day, cut from the long stories first
+    assert not [p for p in cfg.schedule.plan if p.kind == "short"]
     longs = [p for p in cfg.schedule.plan if p.kind == "long"]
-    assert len(longs) == 3  # Tuesday's Bible story, Friday's long video and Sunday night's sleep video
+    # Tuesday's evergreen story (A), Friday's timely video (B) and Sunday night's sleep video
+    assert [(p.weekday, p.time, p.slate) for p in longs] == [(1, "15:00", "evergreen"), (4, "15:00", "timely"), (6, "20:00", None)]
     assert [p.minutes for p in longs if (p.minutes or 0) >= 18] == [30]
-    assert {p.category for p in cfg.schedule.plan if p.category} <= set(cfg.catalog.mix)
-    assert len({p.category for p in cfg.schedule.plan if p.kind == "short"}) == 7  # a different pillar each morning
+    assert 2 <= cfg.growth.cuts_per_long <= 3
 
 
 # --- Packaging ---

@@ -1,0 +1,519 @@
+# The evergreen backlog: Bible stories told like films, for the weekly evergreen long video (Video A,
+# Tuesday; see `slate` on the plan in channel.yaml). The calendar never picks these slots: Video A always
+# comes from here, and Video B (Friday) comes from here too when nothing timely fits.
+#
+# Order: ideas with `priority` go first, lowest number first. After them, the picker keeps the four
+# pillars in balance (catalog.pillars) and, within a pillar, takes the highest idea score.
+#
+# Fields: as in content/ideas.yaml, plus
+#   passage   the passage as cited (may span chapters; `scriptures` lists the verses quoted word for word)
+#   style     cinematic | illustrated | documentary (fyt/slate.py STYLES: look, music and length)
+#   question  the one dramatic question the video turns on
+#   minutes   optional length, inside the style's range
+#   priority  optional: the seed order
+#   score     1-5 each: significance (biblical), story (story potential), appeal (audience), seasonal
+#             (relevance through the year; the current season adds to it), effort (production; counts against)
+
+ideas:
+  # ------------------------------------------------------------------------------- the seed, in order
+  - id: story-david-and-goliath
+    title: "David and Goliath: The Battle That Changed Everything"
+    priority: 1
+    pillar: stories
+    style: cinematic
+    category: bible_story
+    emotion: courage
+    character: "David"
+    arc: story
+    formats: [medium, long]
+    passage: "1 Samuel 17"
+    scriptures: [1 Samuel 17:4-11, 1 Samuel 17:32-37, 1 Samuel 17:45-47, 1 Samuel 17:48-50]
+    wiki: Goliath
+    question: "How can a shepherd boy face the giant no soldier of Israel dares to fight?"
+    truth: "David faces Goliath trusting that the battle is the LORD's, so that all the earth may know there is a God in Israel (1 Samuel 17:46-47)."
+    angle: "Forty days of a giant's taunts, an army frozen in fear, and a young shepherd who arrives with bread for his brothers. The story is not that the small can beat the big, but whose battle it is."
+    score: {significance: 5, story: 5, appeal: 5, seasonal: 3, effort: 3}
+
+  - id: story-joseph-betrayal-to-throne
+    title: "Joseph: From Betrayal to the Throne of Egypt"
+    priority: 2
+    pillar: stories
+    style: cinematic
+    minutes: 9
+    category: bible_story
+    emotion: forgiveness
+    character: "Joseph"
+    arc: story
+    formats: [medium, long]
+    passage: "Genesis 37-50"
+    scriptures: [Genesis 37:3-4, Genesis 37:26-28, Genesis 39:20-23, Genesis 41:39-41, Genesis 45:4-8, Genesis 50:19-20]
+    wiki: Joseph (Genesis)
+    question: "When the brothers who sold him stand before him, will Joseph take his revenge?"
+    truth: "What Joseph's brothers meant for evil, God meant for good, to save many lives (Genesis 50:20)."
+    angle: "A favourite son, a pit, a slave market, a false accusation, a forgotten prisoner, and then the second most powerful man in Egypt, face to face with the brothers who sold him."
+    score: {significance: 5, story: 5, appeal: 5, seasonal: 3, effort: 4}
+
+  - id: story-daniel-lions-den
+    title: "Daniel in the Lions' Den: The Night His Faith Was Tested"
+    priority: 3
+    pillar: stories
+    style: cinematic
+    category: bible_story
+    emotion: courage
+    character: "Daniel"
+    arc: story
+    formats: [medium, long]
+    passage: "Daniel 6"
+    scriptures: [Daniel 6:4-5, Daniel 6:10, Daniel 6:16-17, Daniel 6:19-23]
+    wiki: Daniel in the lions' den
+    question: "Will Daniel stop praying to save his life?"
+    truth: "Daniel kept praying to God as he always had, though it was now punishable by death, and God shut the lions' mouths (Daniel 6:10, 6:22)."
+    angle: "A law written to trap one faithful man, an open window towards Jerusalem, a king who cannot undo his own decree, and a sealed stone over a pit of lions."
+    score: {significance: 5, story: 5, appeal: 5, seasonal: 3, effort: 3}
+
+  - id: story-prodigal-son-father
+    title: "The Prodigal Son: The Father's Unexpected Response"
+    priority: 4
+    pillar: teachings
+    style: illustrated
+    category: jesus
+    content_type: parable
+    emotion: love
+    arc: story
+    formats: [medium, long]
+    passage: "Luke 15:11-32"
+    scriptures: [Luke 15:11-20, Luke 15:20-24, Luke 15:25-32]
+    wiki: Parable of the Prodigal Son
+    question: "What will the father do when the son who wasted everything comes home?"
+    truth: "The father runs to the son who comes home and welcomes him with joy, and pleads with the older son to come in too (Luke 15:20, 15:28-32)."
+    angle: "Jesus told it to Pharisees grumbling that he ate with sinners (Luke 15:1-2). Two sons, both far from the father, and a father who does what no one listening expected."
+    score: {significance: 5, story: 5, appeal: 5, seasonal: 3, effort: 2}
+
+  - id: story-jesus-calms-the-storm
+    title: "Jesus Calms the Storm: Why Were the Disciples Afraid?"
+    priority: 5
+    pillar: struggles
+    style: cinematic
+    category: jesus
+    content_type: miracle
+    emotion: fear
+    character: "the disciples"
+    arc: story
+    formats: [medium, long]
+    passage: "Mark 4:35-41"
+    scriptures: [Mark 4:35-41]
+    wiki: Calming the storm
+    question: "Why were the disciples more afraid after the storm was gone?"
+    truth: "Jesus calmed the storm and asked why they were afraid and had no faith; the disciples were then filled with awe and asked who he is (Mark 4:40-41)."
+    angle: "Seasoned fishermen sure they are about to drown, Jesus asleep on a cushion, a word to the wind, and a silence more frightening than the storm."
+    score: {significance: 4, story: 5, appeal: 5, seasonal: 3, effort: 3}
+
+  - id: story-good-samaritan-neighbour
+    title: "The Good Samaritan: Who Is Your Neighbour?"
+    priority: 6
+    pillar: teachings
+    style: illustrated
+    category: jesus
+    content_type: parable
+    emotion: love
+    arc: story
+    formats: [medium, long]
+    passage: "Luke 10:25-37"
+    scriptures: [Luke 10:25-29, Luke 10:30-35, Luke 10:36-37]
+    wiki: Parable of the Good Samaritan
+    question: "Who will stop for the man left half dead on the Jericho road?"
+    truth: "Asked 'who is my neighbour?', Jesus answers with a story and turns the question round: be a neighbour to the one in need, as the Samaritan was (Luke 10:36-37)."
+    angle: "A lawyer's question meant to test Jesus, a dangerous road, a priest and a Levite who pass by, and the last person his listeners would have cast as the hero."
+    score: {significance: 5, story: 4, appeal: 5, seasonal: 3, effort: 2}
+
+  - id: story-peter-denied-then-restored
+    title: "Peter Denied Jesus. Then Jesus Met Him Again."
+    priority: 7
+    pillar: struggles
+    style: cinematic
+    category: jesus
+    emotion: forgiveness
+    character: "Peter"
+    arc: story
+    formats: [medium, long]
+    passage: "Luke 22:54-62; John 21:15-19"
+    scriptures: [Luke 22:54-62, John 21:15-19]
+    wiki: Denial of Peter
+    question: "Is there a way back for Peter after he denied Jesus three times?"
+    truth: "Peter denied Jesus three times and wept bitterly; after the resurrection Jesus asked him three times 'do you love me?' and gave him his calling again (Luke 22:61-62, John 21:15-17)."
+    angle: "A charcoal fire in a courtyard, a rooster, a look across the room. Then another charcoal fire on a beach, and three questions."
+    score: {significance: 5, story: 5, appeal: 5, seasonal: 4, effort: 3}
+
+  - id: story-love-your-enemies
+    title: "What Jesus Actually Taught About Loving Your Enemies"
+    priority: 8
+    pillar: teachings
+    style: documentary
+    category: jesus
+    content_type: teaching
+    emotion: love
+    arc: story
+    formats: [medium, long]
+    passage: "Matthew 5:38-48"
+    scriptures: [Matthew 5:38-42, Matthew 5:43-48]
+    wiki: Sermon on the Mount
+    question: "What did 'turn the other cheek' and 'love your enemies' ask of the people listening on that hillside?"
+    truth: "Jesus calls his followers to love their enemies and pray for those who persecute them, so that they may be children of their Father in heaven, who is good to all (Matthew 5:44-45)."
+    angle: "The Sermon on the Mount in its own world: an occupied land, Roman soldiers, 'an eye for an eye'. What these sayings asked of them, and what they do not say. Label scholarly readings as such."
+    score: {significance: 5, story: 3, appeal: 4, seasonal: 3, effort: 3}
+
+  # ------------------------------------------------------------------------------- stories
+  - id: story-red-sea-crossing
+    title: "The Red Sea: Trapped Between an Army and the Water"
+    pillar: stories
+    style: cinematic
+    category: bible_story
+    emotion: fear
+    character: "Moses"
+    arc: story
+    formats: [medium, long]
+    passage: "Exodus 14"
+    scriptures: [Exodus 14:10-14, Exodus 14:21-22, Exodus 14:26-31]
+    wiki: Crossing the Red Sea
+    question: "Where can Israel go with Pharaoh's chariots behind them and the sea in front?"
+    angle: "Freed slaves at the edge of the water, the dust of six hundred chariots on the horizon, and Moses saying 'stand still'."
+    score: {significance: 5, story: 5, appeal: 5, seasonal: 4, effort: 4}
+
+  - id: story-esther-risked-everything
+    title: "Esther: The Queen Who Risked Everything"
+    pillar: stories
+    style: cinematic
+    category: bible_story
+    emotion: courage
+    character: "Esther"
+    arc: story
+    formats: [medium, long]
+    passage: "Esther 4-7"
+    scriptures: [Esther 4:13-16, Esther 5:1-3, Esther 7:3-6]
+    wiki: Esther
+    question: "Will Esther go to the king uninvited, knowing it could cost her life?"
+    angle: "A decree to destroy her people, a palace where no one may approach the king unsummoned, and Mordecai's question: who knows whether you came to this position for such a time as this?"
+    score: {significance: 4, story: 5, appeal: 5, seasonal: 3, effort: 3}
+
+  - id: story-elijah-mount-carmel
+    title: "Elijah on Mount Carmel: Fire From Heaven"
+    pillar: stories
+    style: cinematic
+    category: bible_story
+    emotion: courage
+    character: "Elijah"
+    arc: story
+    formats: [medium, long]
+    passage: "1 Kings 18:16-39"
+    scriptures: [1 Kings 18:20-24, 1 Kings 18:36-39]
+    wiki: Elijah
+    question: "One prophet against four hundred and fifty: will God answer by fire?"
+    angle: "A drought-struck land, a people limping between two opinions, a day of shouting to Baal, and an altar soaked with water."
+    score: {significance: 4, story: 5, appeal: 4, seasonal: 3, effort: 4}
+
+  - id: story-jonah-ran-the-other-way
+    title: "Jonah: The Prophet Who Ran the Other Way"
+    pillar: stories
+    style: cinematic
+    category: bible_story
+    emotion: forgiveness
+    character: "Jonah"
+    arc: story
+    formats: [medium, long]
+    passage: "Jonah 1-4"
+    scriptures: [Jonah 1:1-4, Jonah 1:15-17, Jonah 3:4-5, Jonah 4:1-4]
+    wiki: Jonah
+    question: "Why would a prophet run from the God who sent him?"
+    angle: "A ship in a storm, a sleeping prophet, a great fish, a city that repents, and the surprising reason Jonah gives for running (Jonah 4:2)."
+    score: {significance: 4, story: 5, appeal: 5, seasonal: 3, effort: 3}
+
+  - id: story-saul-damascus-road
+    title: "Saul on the Damascus Road: The Enemy Who Became an Apostle"
+    pillar: stories
+    style: cinematic
+    category: bible_story
+    emotion: purpose
+    character: "Paul"
+    arc: story
+    formats: [medium, long]
+    passage: "Acts 9:1-22"
+    scriptures: [Acts 9:1-6, Acts 9:10-18, Acts 9:19-22]
+    wiki: Conversion of Paul the Apostle
+    question: "What happens when the man hunting Jesus' followers meets Jesus himself?"
+    angle: "Letters to arrest believers, a light on the road, a voice, three days of blindness, and Ananias, told to go to the man he fears most."
+    score: {significance: 5, story: 5, appeal: 4, seasonal: 3, effort: 3}
+
+  - id: story-abraham-isaac-moriah
+    title: "Abraham and Isaac: The Hardest Walk Up a Mountain"
+    pillar: stories
+    style: illustrated
+    category: bible_story
+    emotion: faith
+    character: "Abraham"
+    arc: story
+    formats: [medium, long]
+    passage: "Genesis 22:1-19"
+    scriptures: [Genesis 22:1-3, Genesis 22:6-8, Genesis 22:9-14]
+    wiki: Binding of Isaac
+    question: "What will Abraham do on the mountain God showed him?"
+    angle: "Three days of walking, wood on the son's back, a question ('where is the lamb?'), and the answer 'God will provide'. Tell it with restraint; let the text's silences stay silent."
+    score: {significance: 5, story: 4, appeal: 4, seasonal: 3, effort: 2}
+
+  - id: story-fiery-furnace
+    title: "The Fiery Furnace: 'Even If He Does Not'"
+    pillar: stories
+    style: cinematic
+    category: bible_story
+    emotion: courage
+    character: "Shadrach, Meshach and Abednego"
+    arc: story
+    formats: [medium, long]
+    passage: "Daniel 3"
+    scriptures: [Daniel 3:13-18, Daniel 3:19-25, Daniel 3:26-28]
+    wiki: Shadrach, Meshach, and Abednego
+    question: "Will three young men bow to the golden statue to escape the furnace?"
+    angle: "A golden statue, music as the signal to bow, three who stay standing, a furnace heated seven times hotter, and a fourth figure walking in the fire."
+    score: {significance: 4, story: 5, appeal: 5, seasonal: 3, effort: 4}
+
+  # ------------------------------------------------------------------------------- struggles
+  - id: story-moses-who-am-i
+    title: "Moses at the Burning Bush: 'Who Am I?'"
+    pillar: struggles
+    style: illustrated
+    category: bible_story
+    emotion: fear
+    character: "Moses"
+    arc: story
+    formats: [medium, long]
+    passage: "Exodus 3-4"
+    scriptures: [Exodus 3:1-6, Exodus 3:10-12, Exodus 4:10-12]
+    wiki: Burning bush
+    question: "Why does the man God calls keep saying he is the wrong man?"
+    angle: "Forty years a shepherd in Midian, a bush that burns and is not consumed, and every excuse Moses has. God's answer is not 'you are enough' but 'I will be with you'."
+    score: {significance: 5, story: 4, appeal: 4, seasonal: 3, effort: 2}
+
+  - id: story-ruth-where-you-go
+    title: "Ruth: 'Where You Go, I Will Go'"
+    pillar: struggles
+    style: illustrated
+    category: bible_story
+    emotion: grief
+    character: "Ruth"
+    arc: story
+    formats: [medium, long]
+    passage: "Ruth 1-4"
+    scriptures: [Ruth 1:3-5, Ruth 1:16-17, Ruth 2:10-12, Ruth 4:13-17]
+    wiki: Book of Ruth
+    question: "Will Ruth leave her own people to stay with a grieving widow with nothing left?"
+    angle: "Three widows on a road out of Moab, one who turns back and one who will not, a barley harvest, and a family line that leads to David."
+    score: {significance: 4, story: 4, appeal: 4, seasonal: 3, effort: 2}
+
+  - id: story-samson-strength-and-fall
+    title: "Samson: The Strongest Man and His Weakness"
+    pillar: struggles
+    style: cinematic
+    category: bible_story
+    emotion: temptation
+    character: "Samson"
+    arc: story
+    formats: [medium, long]
+    passage: "Judges 16"
+    scriptures: [Judges 16:4-6, Judges 16:15-17, Judges 16:19-21, Judges 16:28-30]
+    wiki: Samson
+    question: "Why does Samson tell Delilah the secret that will destroy him?"
+    angle: "Silver offered for his secret, three false answers, a fourth true one, shaved hair, blind eyes in a mill at Gaza, and one last prayer."
+    score: {significance: 4, story: 5, appeal: 5, seasonal: 3, effort: 3}
+
+  - id: story-zacchaeus-up-a-tree
+    title: "Zacchaeus: The Man Everyone Hated"
+    pillar: struggles
+    style: illustrated
+    category: jesus
+    emotion: forgiveness
+    character: "Zacchaeus"
+    arc: story
+    formats: [medium, long]
+    passage: "Luke 19:1-10"
+    scriptures: [Luke 19:1-10]
+    wiki: Zacchaeus
+    question: "Why would Jesus choose the house of Jericho's chief tax collector?"
+    angle: "A rich man too short to see over the crowd, a sycamore tree, a crowd that grumbles, and a man who gives back fourfold. The Son of Man came to seek and save the lost."
+    score: {significance: 4, story: 4, appeal: 4, seasonal: 3, effort: 2}
+
+  - id: story-jacob-wrestles-at-night
+    title: "Jacob Wrestles With God Through the Night"
+    pillar: struggles
+    style: cinematic
+    category: bible_story
+    emotion: fear
+    character: "Jacob"
+    arc: story
+    formats: [medium, long]
+    passage: "Genesis 32"
+    scriptures: [Genesis 32:6-11, Genesis 32:22-28, Genesis 32:29-31]
+    wiki: Jacob wrestling with the angel
+    question: "What does Jacob want so badly that he will not let go until dawn?"
+    angle: "Esau coming with four hundred men, a family sent across the river, Jacob alone in the dark, a wrestling match until daybreak, a new name and a limp."
+    score: {significance: 4, story: 5, appeal: 4, seasonal: 3, effort: 3}
+
+  - id: story-thomas-needed-to-see
+    title: "Thomas: The Disciple Who Needed to See"
+    pillar: struggles
+    style: illustrated
+    category: jesus
+    emotion: faith
+    character: "Thomas"
+    arc: story
+    formats: [medium, long]
+    passage: "John 20:24-29"
+    scriptures: [John 20:24-29]
+    wiki: Doubting Thomas
+    question: "What will Jesus say to the disciple who would not believe without seeing?"
+    angle: "A week of hearing everyone else say 'we have seen the Lord', a locked room, and Jesus coming back for one man's doubt. 'My Lord and my God.'"
+    score: {significance: 4, story: 4, appeal: 4, seasonal: 5, effort: 2}
+
+  - id: story-gethsemane-night
+    title: "Gethsemane: The Night Jesus Prayed in Anguish"
+    pillar: struggles
+    style: cinematic
+    category: jesus
+    emotion: grief
+    character: "Jesus"
+    arc: story
+    formats: [medium, long]
+    passage: "Matthew 26:36-46"
+    scriptures: [Matthew 26:36-39, Matthew 26:40-46]
+    wiki: Agony in the Garden
+    question: "What does Jesus ask of the Father in the garden, and of his sleeping friends?"
+    angle: "Olive trees at night, three friends who cannot stay awake, a prayer prayed three times: 'not as I will, but as you will'."
+    score: {significance: 5, story: 5, appeal: 4, seasonal: 5, effort: 3}
+
+  - id: story-david-and-nathan
+    title: "David and Nathan: 'You Are the Man'"
+    pillar: struggles
+    style: cinematic
+    category: bible_story
+    emotion: forgiveness
+    character: "David"
+    arc: story
+    formats: [medium, long]
+    passage: "2 Samuel 11-12; Psalm 51"
+    scriptures: [2 Samuel 11:2-4, 2 Samuel 12:1-7, 2 Samuel 12:13, Psalm 51:1-4]
+    wiki: Bathsheba
+    question: "Will the king face what he has done when the prophet tells him a story?"
+    angle: "A king who stayed home from war, a sin covered by a worse one, a prophet's story of a poor man's lamb, and four words. Then Psalm 51. Tell it soberly, without sensationalising."
+    score: {significance: 5, story: 5, appeal: 4, seasonal: 4, effort: 3}
+
+  # ------------------------------------------------------------------------------- teachings
+  - id: story-woman-at-the-well
+    title: "The Woman at the Well: The Conversation No One Expected"
+    pillar: teachings
+    style: illustrated
+    category: jesus
+    emotion: love
+    arc: story
+    formats: [medium, long]
+    passage: "John 4:1-42"
+    scriptures: [John 4:7-15, John 4:16-26, John 4:39-42]
+    wiki: Samaritan woman at the well
+    question: "Why does Jesus ask a Samaritan woman for a drink at noon?"
+    angle: "A well, the heat of the day, a Jew speaking to a Samaritan woman, living water, worship in spirit and truth, and a whole town that comes to see."
+    score: {significance: 5, story: 4, appeal: 4, seasonal: 4, effort: 2}
+
+  - id: story-unforgiving-servant
+    title: "The Unforgiving Servant: Why Seventy-Seven Times?"
+    pillar: teachings
+    style: illustrated
+    category: jesus
+    content_type: parable
+    emotion: forgiveness
+    arc: story
+    formats: [medium, long]
+    passage: "Matthew 18:21-35"
+    scriptures: [Matthew 18:21-22, Matthew 18:23-30, Matthew 18:31-35]
+    wiki: Parable of the Unforgiving Servant
+    question: "What will the forgiven servant do when someone owes him?"
+    angle: "Peter's question, an impossible debt forgiven, a small debt choked out of a fellow servant, and a master's question that lands on every listener."
+    score: {significance: 4, story: 4, appeal: 4, seasonal: 3, effort: 2}
+
+  - id: story-rich-young-man
+    title: "The Rich Young Man: The Question Jesus Answered With a Look"
+    pillar: teachings
+    style: documentary
+    category: jesus
+    emotion: purpose
+    arc: story
+    formats: [medium, long]
+    passage: "Mark 10:17-27"
+    scriptures: [Mark 10:17-22, Mark 10:23-27]
+    wiki: Jesus and the rich young man
+    question: "What is the one thing the man who kept every commandment still lacks?"
+    angle: "A man who runs and kneels, a question about eternal life, Jesus looking at him and loving him, and a hard saying about a camel and a needle, in the world it was spoken in."
+    score: {significance: 4, story: 3, appeal: 4, seasonal: 3, effort: 3}
+
+  - id: story-parable-of-the-sower
+    title: "The Parable of the Sower: Why Some Seed Never Grows"
+    pillar: teachings
+    style: illustrated
+    category: jesus
+    content_type: parable
+    emotion: wisdom
+    arc: story
+    formats: [medium, long]
+    passage: "Mark 4:1-20"
+    scriptures: [Mark 4:3-9, Mark 4:14-20]
+    wiki: Parable of the Sower
+    question: "Why does the same seed die on the path and bear a hundredfold in good soil?"
+    angle: "A boat as a pulpit, a crowd on the shore, a farmer scattering seed, and the explanation Jesus gives his disciples in private."
+    score: {significance: 4, story: 3, appeal: 3, seasonal: 3, effort: 2}
+
+  # ------------------------------------------------------------------------------- questions
+  - id: story-gideon-sends-army-home
+    title: "Gideon: Why God Sent Most of the Army Home"
+    pillar: questions
+    style: cinematic
+    category: bible_story
+    emotion: courage
+    character: "Gideon"
+    arc: story
+    formats: [medium, long]
+    passage: "Judges 6-7"
+    scriptures: [Judges 6:12-15, Judges 7:2-3, Judges 7:7, Judges 7:19-22]
+    wiki: Gideon
+    question: "Why would God shrink an army of thousands to three hundred before the battle?"
+    angle: "A man threshing wheat in hiding, called 'mighty warrior', an army cut down twice, and jars, torches and trumpets in the night."
+    score: {significance: 4, story: 5, appeal: 4, seasonal: 3, effort: 3}
+
+  - id: story-lazarus-why-wait
+    title: "Lazarus: Why Did Jesus Wait Two Days?"
+    pillar: questions
+    style: cinematic
+    category: jesus
+    content_type: miracle
+    emotion: grief
+    character: "Lazarus"
+    arc: story
+    formats: [medium, long]
+    passage: "John 11:1-44"
+    scriptures: [John 11:1-6, John 11:17-27, John 11:33-36, John 11:38-44]
+    wiki: Raising of Lazarus
+    question: "Jesus loved Lazarus, so why did he stay where he was for two more days?"
+    angle: "A message from two sisters, a delay no one understands, four days in the tomb, 'Lord, if you had been here', Jesus weeping, and a voice calling into the grave."
+    score: {significance: 5, story: 5, appeal: 5, seasonal: 4, effort: 3}
+
+  - id: story-temple-tables-overturned
+    title: "Jesus Overturns the Tables: What Made Him So Angry?"
+    pillar: questions
+    style: documentary
+    category: jesus
+    content_type: question
+    emotion: curiosity
+    character: "Jesus"
+    arc: story
+    formats: [medium, long]
+    passage: "Matthew 21:12-13"
+    scriptures: [Matthew 21:12-13, Isaiah 56:7, Jeremiah 7:11]
+    wiki: Cleansing of the Temple
+    question: "Why did Jesus drive the traders and money-changers out of the Temple?"
+    angle: "The Temple courts at Passover, sacrificial animals, money-changers, and the two prophets Jesus quotes. What the scene meant, in its own setting; label scholarly readings as such."
+    score: {significance: 4, story: 4, appeal: 5, seasonal: 4, effort: 3}

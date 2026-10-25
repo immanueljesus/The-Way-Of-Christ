@@ -18,7 +18,15 @@
 #   arc         the story shape: journey (struggle -> strength), story (step inside a Bible story),
 #               curiosity (a question -> a surprising answer), wisdom (life situation -> ancient
 #               wisdom -> practice), prayer, peace (stillness), joy (gratitude and celebration)
-#   pillar      a finer label (free text)
+#   pillar      the content pillar the picker balances (catalog.pillars in channel.yaml):
+#               stories    Bible stories told like films (Joseph, Moses, David, Esther, Daniel, Peter...)
+#               teachings  teachings of Jesus and Scripture: parables, hard sayings, in their original context
+#               struggles  human struggles inside Scripture (fear, betrayal, guilt, doubt, forgiveness,
+#                          courage, repentance), always through a specific event, never generic motivation
+#               questions  overlooked moments and biblical questions: surprising details, misunderstood
+#                          passages, the context that changes how a passage reads
+#   style       optional visual style for long videos: cinematic | illustrated | documentary (see
+#               content/backlog.yaml); without it the pillar's default style is used
 #   series      playlist the video is filed under (see growth.series)
 #   formats     short (20-60 s), medium (2-6 min), long (8-15 min), sleep (20-40 min)
 #   scriptures  the passages the video rests on. Their exact text is fetched before the script is
@@ -37,7 +45,7 @@ ideas:
     emotion: hope
     character: "Joseph"
     arc: journey
-    pillar: Hope
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Genesis 40:23, Genesis 41:1, Isaiah 49:15-16]
@@ -51,7 +59,7 @@ ideas:
     emotion: strength
     character: "Elijah"
     arc: journey
-    pillar: Motivation
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [1 Kings 19:4-8, 1 Kings 19:11-12]
@@ -64,7 +72,7 @@ ideas:
     category: peace
     emotion: hope
     arc: journey
-    pillar: Hope
+    pillar: teachings
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Hebrews 13:5, Deuteronomy 31:6]
@@ -76,7 +84,7 @@ ideas:
     category: spiritual_battles
     emotion: fear
     arc: journey
-    pillar: Faith
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Isaiah 41:10]
@@ -88,7 +96,7 @@ ideas:
     emotion: wisdom
     character: "Jehoshaphat"
     arc: wisdom
-    pillar: Wisdom
+    pillar: teachings
     series: Hard Seasons
     formats: [short, medium]
     scriptures: [2 Chronicles 20:12, 2 Chronicles 20:15]
@@ -100,7 +108,7 @@ ideas:
     emotion: forgiveness
     character: "Peter"
     arc: journey
-    pillar: Transformation
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Luke 22:61-62, John 21:15-17]
@@ -113,7 +121,7 @@ ideas:
     emotion: forgiveness
     character: "Joseph"
     arc: journey
-    pillar: Spiritual struggle
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Luke 22:47-48, Psalm 41:9]
@@ -124,7 +132,7 @@ ideas:
     category: purpose
     emotion: hope
     arc: journey
-    pillar: Faith
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Psalm 27:13-14]
@@ -136,7 +144,7 @@ ideas:
     emotion: love
     character: "The prodigal son"
     arc: journey
-    pillar: Transformation
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Luke 15:18-24]
@@ -148,7 +156,7 @@ ideas:
     category: purpose
     emotion: hope
     arc: journey
-    pillar: Faith
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Isaiah 55:6-9]
@@ -160,7 +168,7 @@ ideas:
     emotion: hope
     character: "David"
     arc: journey
-    pillar: Faith
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long, sleep]
     scriptures: [Psalm 13:1-6]
@@ -172,7 +180,7 @@ ideas:
     emotion: purpose
     character: "Abraham"
     arc: story
-    pillar: Faith
+    pillar: struggles
     series: Lessons From...
     formats: [medium, long]
     scriptures: [Genesis 12:4, Genesis 21:5, Psalm 37:7]
@@ -184,7 +192,7 @@ ideas:
     category: everyday_life
     emotion: hope
     arc: journey
-    pillar: Wisdom
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium]
     scriptures: [Proverbs 16:9, Proverbs 16:3]
@@ -195,7 +203,7 @@ ideas:
     category: purpose
     emotion: peace
     arc: wisdom
-    pillar: Faith
+    pillar: teachings
     formats: [short, medium, long]
     scriptures: [Ecclesiastes 3:1, 2 Peter 3:8-9, Galatians 4:4]
     angle: "Your timeline says you should be further along. Ecclesiastes says there is a season for everything, and yours is not late."
@@ -206,7 +214,7 @@ ideas:
     emotion: wisdom
     character: "Peter"
     arc: wisdom
-    pillar: Wisdom
+    pillar: teachings
     formats: [short, medium]
     scriptures: [John 21:21-22, Galatians 6:4-5, Psalm 139:14]
     angle: "Peter asked Jesus \"what about him?\" Jesus answered \"what is that to you? Follow me.\" Your path is yours."
@@ -217,7 +225,7 @@ ideas:
     emotion: purpose
     character: "David"
     arc: journey
-    pillar: Motivation
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [1 Samuel 16:11, Colossians 3:23-24, Matthew 6:4]
     wiki: David
@@ -228,7 +236,7 @@ ideas:
     category: relationships
     emotion: grief
     arc: journey
-    pillar: Hope
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium]
     scriptures: [Psalm 27:10]
@@ -240,7 +248,7 @@ ideas:
     emotion: forgiveness
     character: "Peter"
     arc: wisdom
-    pillar: Spiritual struggle
+    pillar: teachings
     formats: [short, medium, long]
     scriptures: [Matthew 18:21-22, Ephesians 4:32, Colossians 3:13]
     angle: "Forgiveness is not pretending it didn't hurt. It is releasing the debt to God, often again and again."
@@ -250,7 +258,7 @@ ideas:
     category: relationships
     emotion: grief
     arc: journey
-    pillar: Hope
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Psalm 147:3, Psalm 34:18]
@@ -261,7 +269,7 @@ ideas:
     category: relationships
     emotion: love
     arc: wisdom
-    pillar: Spiritual struggle
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Luke 6:27-28, Romans 12:17-21, Matthew 5:44]
     angle: "Jesus' hardest command, and the one that sets you free from the person who hurt you."
@@ -272,7 +280,7 @@ ideas:
     emotion: forgiveness
     character: "Paul"
     arc: journey
-    pillar: Transformation
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [1 Timothy 1:15-16]
@@ -284,7 +292,7 @@ ideas:
     category: peace
     emotion: fear
     arc: journey
-    pillar: Peace
+    pillar: teachings
     series: Hard Seasons
     formats: [short, medium]
     scriptures: [Matthew 6:31-34]
@@ -297,7 +305,7 @@ ideas:
     emotion: peace
     character: "Paul"
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Hard Seasons
     formats: [short, medium]
     scriptures: [Philippians 4:6-7]
@@ -308,7 +316,7 @@ ideas:
     category: purpose
     emotion: hope
     arc: journey
-    pillar: Hope
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium]
     scriptures: [Luke 15:4-7]
@@ -319,7 +327,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [1 Peter 5:6-7]
@@ -331,7 +339,7 @@ ideas:
     emotion: grief
     character: "Lazarus"
     arc: journey
-    pillar: Hope
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [John 11:33-36]
@@ -342,7 +350,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Matthew 11:28-30]
@@ -355,7 +363,7 @@ ideas:
     emotion: temptation
     character: "Jesus"
     arc: journey
-    pillar: Spiritual struggle
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [1 Corinthians 10:13]
     angle: "Temptation is not sin, and you are not alone in it. Jesus faced it hungry in the desert and answered with Scripture."
@@ -365,7 +373,7 @@ ideas:
     category: spiritual_battles
     emotion: wisdom
     arc: wisdom
-    pillar: Spiritual struggle
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Ephesians 4:26-27, James 1:19-20, Proverbs 15:1]
     angle: "\"Be angry and don't sin.\" Anger is a signal, not a master."
@@ -376,7 +384,7 @@ ideas:
     emotion: hope
     character: "Thomas"
     arc: journey
-    pillar: Faith
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Mark 9:23-24]
@@ -388,7 +396,7 @@ ideas:
     emotion: strength
     character: "Paul"
     arc: wisdom
-    pillar: Motivation
+    pillar: teachings
     formats: [short, medium, long]
     scriptures: [1 Corinthians 9:24-27, Hebrews 12:11, Proverbs 6:6-8]
     angle: "Paul trained like an athlete. Feelings come and go; faithfulness in small daily things builds a life."
@@ -398,7 +406,7 @@ ideas:
     category: motivation
     emotion: courage
     arc: journey
-    pillar: Transformation
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [Lamentations 3:22-23, Philippians 3:13-14, Isaiah 43:19]
     angle: "His mercies are new every morning, written by a man sitting in the ruins of Jerusalem."
@@ -409,7 +417,7 @@ ideas:
     emotion: courage
     character: "David"
     arc: story
-    pillar: Motivation
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [1 Samuel 17:45-47]
     wiki: Goliath
@@ -421,7 +429,7 @@ ideas:
     emotion: hope
     character: "Joseph"
     arc: journey
-    pillar: Hope
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [Genesis 50:20, Job 42:10, Romans 8:18]
     angle: "Joseph didn't understand the pit. Job didn't understand his suffering. But the story wasn't over."
@@ -431,7 +439,7 @@ ideas:
     category: everyday_life
     emotion: peace
     arc: wisdom
-    pillar: Wisdom
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Matthew 6:31-33]
     angle: "Worry about provision is ancient. Jesus pointed to the birds and the lilies, and to seeking God first. (No prosperity promises.)"
@@ -442,7 +450,7 @@ ideas:
     emotion: love
     character: "Jesus"
     arc: journey
-    pillar: Hope
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium]
     scriptures: [Psalm 118:22, 1 Peter 2:4]
@@ -454,7 +462,7 @@ ideas:
     emotion: forgiveness
     character: "Joseph"
     arc: story
-    pillar: Hope
+    pillar: struggles
     formats: [medium, long]
     scriptures: [Genesis 45:1-5]
     wiki: Joseph (Genesis)
@@ -467,7 +475,7 @@ ideas:
     emotion: hope
     character: "Paul"
     arc: journey
-    pillar: Faith
+    pillar: teachings
     formats: [short, medium]
     scriptures: [2 Corinthians 12:7-10]
     angle: "Paul prayed three times and heard \"my grace is sufficient.\" Faith for the waiting room. (Encouragement only; no medical claims.)"
@@ -478,7 +486,7 @@ ideas:
     emotion: purpose
     character: "Esther"
     arc: journey
-    pillar: Transformation
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [Ephesians 2:8-10]
     angle: "You were made on purpose, for a purpose. Esther's \"for such a time as this\" moment came in ordinary life."
@@ -488,7 +496,7 @@ ideas:
     category: purpose
     emotion: purpose
     arc: story
-    pillar: Transformation
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [1 Corinthians 1:27, Amos 7:14-15, Acts 4:13]
     angle: "Fishermen, a shepherd, a farmer of figs. The leaders noticed the apostles were ordinary men who had been with Jesus."
@@ -499,7 +507,7 @@ ideas:
     emotion: hope
     character: "Moses"
     arc: journey
-    pillar: Hope
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium]
     scriptures: [Exodus 7:7, Acts 7:30]
@@ -511,7 +519,7 @@ ideas:
     emotion: courage
     character: "Joshua"
     arc: journey
-    pillar: Motivation
+    pillar: struggles
     series: Start Your Day With God
     formats: [short, medium]
     scriptures: [Joshua 1:9, Psalm 118:24, Lamentations 3:22-23]
@@ -522,7 +530,7 @@ ideas:
     category: wisdom
     emotion: wisdom
     arc: wisdom
-    pillar: Wisdom
+    pillar: teachings
     series: Start Your Day With God
     formats: [short, medium]
     scriptures: [Proverbs 16:3, James 4:13-15, Proverbs 19:21]
@@ -533,7 +541,7 @@ ideas:
     category: spiritual_battles
     emotion: forgiveness
     arc: journey
-    pillar: Transformation
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [1 John 1:8-9]
@@ -545,7 +553,7 @@ ideas:
     emotion: strength
     character: "Paul"
     arc: journey
-    pillar: Motivation
+    pillar: struggles
     series: Start Your Day With God
     formats: [short, medium]
     scriptures: [Philippians 4:11-13, Isaiah 40:29]
@@ -556,7 +564,7 @@ ideas:
     category: purpose
     emotion: hope
     arc: journey
-    pillar: Faith
+    pillar: struggles
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Deuteronomy 8:2-4]
@@ -568,7 +576,7 @@ ideas:
     emotion: wisdom
     character: "Asaph"
     arc: wisdom
-    pillar: Wisdom
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Psalm 73:2-3, Psalm 73:16-17]
     angle: "Asaph nearly slipped watching others prosper, until he went into God's sanctuary and saw differently."
@@ -579,7 +587,7 @@ ideas:
     emotion: peace
     character: "David"
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Hard Seasons
     formats: [short, medium, long]
     scriptures: [Psalm 61:1-2]
@@ -592,7 +600,7 @@ ideas:
     emotion: hope
     character: "Joseph"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [medium, long, sleep]
     scriptures: [Genesis 37:23-28, Genesis 39:20-21, Genesis 41:39-41, Genesis 50:20]
@@ -605,7 +613,7 @@ ideas:
     emotion: purpose
     character: "David"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [1 Samuel 16:7, 1 Samuel 16:11-13]
@@ -618,7 +626,7 @@ ideas:
     emotion: strength
     character: "David"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [medium, long]
     scriptures: [1 Samuel 30:3-6, Psalm 62:1-2]
@@ -631,7 +639,7 @@ ideas:
     emotion: courage
     character: "David"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [medium, long]
     scriptures: [1 Samuel 17:32-37, 1 Samuel 17:45-47]
@@ -645,7 +653,7 @@ ideas:
     emotion: courage
     character: "Moses"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [Exodus 3:10-12, Exodus 4:10-12]
@@ -658,7 +666,7 @@ ideas:
     emotion: fear
     character: "Moses"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [short, medium, long]
     scriptures: [Exodus 14:13-14, Exodus 14:21-22]
@@ -671,7 +679,7 @@ ideas:
     emotion: purpose
     character: "Moses"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [long, sleep]
     scriptures: [Exodus 2:1-10, Exodus 3:10-12, Exodus 14:13-14, Deuteronomy 34:10]
@@ -684,7 +692,7 @@ ideas:
     emotion: forgiveness
     character: "Peter"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [medium, long, sleep]
     scriptures: [Matthew 4:18-20, Matthew 16:15-18, Luke 22:54-62, John 21:15-19]
@@ -697,7 +705,7 @@ ideas:
     emotion: fear
     character: "Peter"
     arc: story
-    pillar: Faith
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [Matthew 14:28-31]
@@ -710,7 +718,7 @@ ideas:
     emotion: joy
     character: "Paul"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [short, medium, long]
     scriptures: [Philippians 1:12-14, Philippians 4:4, Acts 16:25-26]
@@ -723,7 +731,7 @@ ideas:
     emotion: forgiveness
     character: "Paul"
     arc: story
-    pillar: Transformation
+    pillar: stories
     series: Lessons From...
     formats: [short, medium, long]
     scriptures: [Acts 9:3-6, Acts 9:17-18]
@@ -736,7 +744,7 @@ ideas:
     emotion: courage
     character: "Esther"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [short, medium, long]
     scriptures: [Esther 4:14-16]
@@ -749,7 +757,7 @@ ideas:
     emotion: love
     character: "Ruth"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [medium, long]
     scriptures: [Ruth 1:16-17, Ruth 4:13-17]
@@ -762,7 +770,7 @@ ideas:
     emotion: grief
     character: "Job"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [long, sleep]
     scriptures: [Job 1:20-22, Job 38:1-4, Job 42:5, Job 42:10]
@@ -775,7 +783,7 @@ ideas:
     emotion: courage
     character: "Daniel"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [Daniel 6:10, Daniel 6:21-22]
@@ -788,7 +796,7 @@ ideas:
     emotion: courage
     character: "Shadrach, Meshach and Abednego"
     arc: story
-    pillar: Faith
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [Daniel 3:16-18, Daniel 3:25]
@@ -801,7 +809,7 @@ ideas:
     emotion: strength
     character: "Elijah"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [short, medium, long]
     scriptures: [1 Kings 19:11-13, 1 Kings 19:15]
@@ -814,7 +822,7 @@ ideas:
     emotion: forgiveness
     character: "Jonah"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [Jonah 1:1-3, Jonah 2:1-2, Jonah 4:2]
@@ -827,7 +835,7 @@ ideas:
     emotion: strength
     character: "Nehemiah"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [medium, long]
     scriptures: [Nehemiah 2:17-18, Nehemiah 4:14, Nehemiah 6:15-16]
@@ -840,7 +848,7 @@ ideas:
     emotion: courage
     character: "Noah"
     arc: story
-    pillar: Faith
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [Genesis 6:22, Hebrews 11:7]
@@ -853,7 +861,7 @@ ideas:
     emotion: hope
     character: "Abraham"
     arc: story
-    pillar: Faith
+    pillar: stories
     series: Lessons From...
     formats: [medium, long]
     scriptures: [Genesis 22:7-8, Genesis 22:14]
@@ -866,7 +874,7 @@ ideas:
     emotion: strength
     character: "Jacob"
     arc: story
-    pillar: Transformation
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [Genesis 32:24-28]
@@ -879,7 +887,7 @@ ideas:
     emotion: courage
     character: "Gideon"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [Judges 6:12-16, Judges 7:2]
@@ -892,7 +900,7 @@ ideas:
     emotion: forgiveness
     character: "Samson"
     arc: story
-    pillar: Transformation
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [Judges 16:28-30]
@@ -905,7 +913,7 @@ ideas:
     emotion: hope
     character: "Hannah"
     arc: story
-    pillar: Prayer
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [1 Samuel 1:10-11, 1 Samuel 1:27]
@@ -918,7 +926,7 @@ ideas:
     emotion: courage
     character: "Joshua"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [Joshua 6:2-5, Joshua 6:20]
@@ -931,7 +939,7 @@ ideas:
     emotion: wisdom
     character: "Solomon"
     arc: story
-    pillar: Wisdom
+    pillar: teachings
     series: Lessons From...
     formats: [short, medium]
     scriptures: [1 Kings 3:5-9, James 1:5]
@@ -944,7 +952,7 @@ ideas:
     emotion: courage
     character: "Elisha"
     arc: story
-    pillar: Faith
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [2 Kings 6:15-17]
@@ -957,7 +965,7 @@ ideas:
     emotion: joy
     character: "Zacchaeus"
     arc: story
-    pillar: Transformation
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [Luke 19:5-10]
@@ -970,7 +978,7 @@ ideas:
     emotion: grief
     character: "Lazarus"
     arc: story
-    pillar: Jesus
+    pillar: stories
     series: Lessons From...
     formats: [short, medium, long]
     scriptures: [John 11:5-6, John 11:25-26, John 11:43-44]
@@ -983,7 +991,7 @@ ideas:
     emotion: love
     character: "The Samaritan woman"
     arc: story
-    pillar: Jesus
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [John 4:13-14, John 4:28-29]
@@ -996,7 +1004,7 @@ ideas:
     emotion: love
     character: "Jesus"
     arc: story
-    pillar: Jesus
+    pillar: stories
     series: Lessons From...
     formats: [long, sleep]
     scriptures: [Matthew 26:36-39, Luke 22:44, Luke 23:33-34, Luke 23:46]
@@ -1009,7 +1017,7 @@ ideas:
     emotion: joy
     character: "Mary Magdalene"
     arc: story
-    pillar: Jesus
+    pillar: stories
     series: Lessons From...
     formats: [short, medium, long]
     scriptures: [Matthew 28:5-6, John 20:15-16]
@@ -1022,7 +1030,7 @@ ideas:
     emotion: hope
     character: "Thomas"
     arc: story
-    pillar: Faith
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [John 20:24-29]
@@ -1035,7 +1043,7 @@ ideas:
     emotion: forgiveness
     character: "Joseph"
     arc: story
-    pillar: Spiritual struggle
+    pillar: struggles
     series: Lessons From...
     formats: [short, medium]
     scriptures: [Genesis 45:4-8, Genesis 50:19-21]
@@ -1047,7 +1055,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Bible stories
+    pillar: teachings
     series: Before You Sleep
     formats: [long, sleep]
     scriptures: [Genesis 1:1-3, Genesis 1:31, Psalm 19:1]
@@ -1060,7 +1068,7 @@ ideas:
     emotion: joy
     character: "Peter"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [short, medium]
     scriptures: [Acts 2:1-4, Acts 2:42-47]
@@ -1073,7 +1081,7 @@ ideas:
     emotion: peace
     character: "David"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Lessons From...
     formats: [long, sleep]
     scriptures: [1 Samuel 16:7, 1 Samuel 17:45, Psalm 23:1-4, 2 Samuel 7:16]
@@ -1089,7 +1097,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Fall Asleep in God's Word
     formats: [long, sleep]
     scriptures: [Psalm 23:1-6, John 10:11, John 10:14]
@@ -1101,7 +1109,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Fall Asleep in God's Word
     formats: [long, sleep]
     scriptures: [Psalm 91:1-6, Psalm 91:11, Psalm 91:14-16]
@@ -1112,7 +1120,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Fall Asleep in God's Word
     formats: [long, sleep]
     scriptures: [Psalm 121:1-8]
@@ -1124,7 +1132,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Fall Asleep in God's Word
     formats: [long, sleep]
     scriptures: [Psalm 139:1-12, Psalm 139:23-24]
@@ -1137,7 +1145,7 @@ ideas:
     emotion: peace
     character: "Jesus"
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Fall Asleep in God's Word
     formats: [long, sleep]
     scriptures: [John 14:1-3, John 14:18, John 14:27]
@@ -1150,7 +1158,7 @@ ideas:
     emotion: peace
     character: "Jesus"
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Fall Asleep in God's Word
     formats: [long, sleep]
     scriptures: [Matthew 5:3-10]
@@ -1162,7 +1170,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Fall Asleep in God's Word
     formats: [long, sleep]
     scriptures: [Romans 8:28, Romans 8:31-32, Romans 8:38-39]
@@ -1173,7 +1181,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Fall Asleep in God's Word
     formats: [long, sleep]
     scriptures: [Isaiah 40:11, Isaiah 40:28-31]
@@ -1184,7 +1192,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Fall Asleep in God's Word
     formats: [long, sleep]
     scriptures: [Psalm 4:8, Psalm 62:1-2, Psalm 63:6-8, Psalm 131:2]
@@ -1197,7 +1205,7 @@ ideas:
     emotion: peace
     character: "Jesus"
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Fall Asleep in God's Word
     formats: [long, sleep]
     scriptures: [Matthew 6:25-27, Matthew 6:33-34]
@@ -1209,7 +1217,7 @@ ideas:
     emotion: peace
     character: "Ruth"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Fall Asleep in God's Word
     formats: [long, sleep]
     scriptures: [Ruth 1:16-17, Ruth 2:12, Ruth 4:13-17]
@@ -1222,7 +1230,7 @@ ideas:
     emotion: peace
     character: "Jesus"
     arc: story
-    pillar: Jesus
+    pillar: stories
     series: Fall Asleep in God's Word
     formats: [long, sleep]
     scriptures: [Mark 4:37-41]
@@ -1234,7 +1242,7 @@ ideas:
     category: prayer
     emotion: strength
     arc: prayer
-    pillar: Prayer
+    pillar: struggles
     series: Start Your Day With God
     formats: [short, medium]
     scriptures: [Psalm 5:3, Psalm 143:8, Isaiah 40:31]
@@ -1245,7 +1253,7 @@ ideas:
     category: prayer
     emotion: peace
     arc: prayer
-    pillar: Peace
+    pillar: struggles
     series: Before You Sleep
     formats: [short, medium, long, sleep]
     scriptures: [Psalm 4:8, Psalm 121:3-4, Matthew 11:28]
@@ -1256,7 +1264,7 @@ ideas:
     category: prayer
     emotion: peace
     arc: prayer
-    pillar: Peace
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [Philippians 4:6-7, 1 Peter 5:7]
     angle: "Slow, simple words for a racing heart."
@@ -1266,7 +1274,7 @@ ideas:
     category: prayer
     emotion: hope
     arc: prayer
-    pillar: Hope
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Psalm 73:26, Genesis 50:20]
     angle: "The companion prayer for the Joseph master video."
@@ -1276,7 +1284,7 @@ ideas:
     category: prayer
     emotion: hope
     arc: prayer
-    pillar: Prayer
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [Jeremiah 17:14, Psalm 103:2-3]
     angle: "Asking God for healing and peace, with no promises he hasn't made."
@@ -1286,7 +1294,7 @@ ideas:
     category: prayer
     emotion: courage
     arc: prayer
-    pillar: Prayer
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [Psalm 91:1-2, Psalm 121:7-8]
     angle: "Under his wings: a prayer for you and the people you love."
@@ -1296,7 +1304,7 @@ ideas:
     category: prayer
     emotion: love
     arc: prayer
-    pillar: Prayer
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Joshua 24:15, Numbers 6:24-26]
     angle: "For the home, the hard conversations, and the people under your roof."
@@ -1306,7 +1314,7 @@ ideas:
     category: prayer
     emotion: purpose
     arc: prayer
-    pillar: Prayer
+    pillar: struggles
     series: Start Your Day With God
     formats: [short, medium]
     scriptures: [Colossians 3:23, Psalm 90:17]
@@ -1317,7 +1325,7 @@ ideas:
     category: prayer
     emotion: wisdom
     arc: prayer
-    pillar: Wisdom
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Psalm 32:8, Proverbs 3:5-6]
     angle: "For decisions you can't see through yet."
@@ -1327,7 +1335,7 @@ ideas:
     category: prayer
     emotion: gratitude
     arc: prayer
-    pillar: Prayer
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Psalm 100:4-5, 1 Thessalonians 5:16-18]
     angle: "Counting what is still good, even in a hard season."
@@ -1337,7 +1345,7 @@ ideas:
     category: prayer
     emotion: grief
     arc: prayer
-    pillar: Hope
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [Psalm 34:18, Psalm 147:3]
     angle: "When you don't have words, pray these."
@@ -1347,7 +1355,7 @@ ideas:
     category: prayer
     emotion: peace
     arc: prayer
-    pillar: Peace
+    pillar: struggles
     series: Before You Sleep
     formats: [short, medium, long, sleep]
     scriptures: [Psalm 3:5, Psalm 4:8, Psalm 63:6-7]
@@ -1358,7 +1366,7 @@ ideas:
     category: prayer
     emotion: strength
     arc: prayer
-    pillar: Motivation
+    pillar: struggles
     series: Start Your Day With God
     formats: [short, medium]
     scriptures: [Isaiah 41:10, 2 Corinthians 12:9]
@@ -1369,7 +1377,7 @@ ideas:
     category: prayer
     emotion: peace
     arc: prayer
-    pillar: Peace
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [John 14:27, Isaiah 26:3]
     angle: "Not as the world gives."
@@ -1379,7 +1387,7 @@ ideas:
     category: prayer
     emotion: peace
     arc: prayer
-    pillar: Faith
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Luke 22:42, Proverbs 16:3]
     angle: "\"Not my will, but yours.\" Praying Jesus' hardest prayer."
@@ -1390,7 +1398,7 @@ ideas:
     emotion: forgiveness
     character: "David"
     arc: prayer
-    pillar: Transformation
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Psalm 51:10-12, 1 John 1:9]
     angle: "David's prayer after his worst failure: create in me a clean heart."
@@ -1400,7 +1408,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Before You Sleep
     formats: [long, sleep]
     scriptures: [Psalm 23:1-6, Psalm 91:1-2, Psalm 4:8, Numbers 6:24-26, Matthew 11:28-30]
@@ -1412,7 +1420,7 @@ ideas:
     emotion: peace
     character: "Jesus"
     arc: prayer
-    pillar: Jesus
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [Matthew 6:9-13]
     angle: "What each line means, then praying it slowly together."
@@ -1422,7 +1430,7 @@ ideas:
     category: prayer
     emotion: love
     arc: prayer
-    pillar: Prayer
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Ephesians 3:16-19, Numbers 6:24-26]
     angle: "Paul's prayer for the Ephesians, prayed for the person on your heart."
@@ -1432,7 +1440,7 @@ ideas:
     category: prayer
     emotion: hope
     arc: prayer
-    pillar: Faith
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [Psalm 139:7-10, James 4:8]
     angle: "Draw near to God, and he will draw near to you."
@@ -1442,7 +1450,7 @@ ideas:
     category: prayer
     emotion: peace
     arc: prayer
-    pillar: Peace
+    pillar: struggles
     series: Before You Sleep
     formats: [short, medium, long, sleep]
     scriptures: [1 Peter 5:7, Psalm 55:22]
@@ -1453,7 +1461,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Before You Sleep
     formats: [short, medium, long, sleep]
     scriptures: [Psalm 139:11-12, John 1:5]
@@ -1466,7 +1474,7 @@ ideas:
     emotion: peace
     character: "Jesus"
     arc: peace
-    pillar: Jesus
+    pillar: teachings
     series: One Minute With Jesus
     formats: [short, medium]
     scriptures: [Matthew 11:28-30]
@@ -1478,7 +1486,7 @@ ideas:
     emotion: fear
     character: "Jesus"
     arc: journey
-    pillar: Jesus
+    pillar: teachings
     series: One Minute With Jesus
     formats: [short, medium, long]
     scriptures: [Matthew 10:29-31, Mark 5:36, John 14:27]
@@ -1490,7 +1498,7 @@ ideas:
     emotion: temptation
     character: "Jesus"
     arc: curiosity
-    pillar: Jesus
+    pillar: questions
     formats: [short, medium, long]
     scriptures: [Matthew 4:1-4, Luke 4:1-2]
     wiki: Temptation of Christ
@@ -1502,7 +1510,7 @@ ideas:
     emotion: grief
     character: "Jesus"
     arc: curiosity
-    pillar: Jesus
+    pillar: questions
     series: One Minute With Jesus
     formats: [short]
     scriptures: [John 11:35]
@@ -1514,7 +1522,7 @@ ideas:
     emotion: peace
     character: "Jesus"
     arc: peace
-    pillar: Jesus
+    pillar: teachings
     series: One Minute With Jesus
     formats: [short, medium]
     scriptures: [Matthew 6:26, Matthew 6:33-34]
@@ -1526,7 +1534,7 @@ ideas:
     emotion: love
     character: "Jesus"
     arc: story
-    pillar: Jesus
+    pillar: stories
     series: One Minute With Jesus
     formats: [short, medium]
     scriptures: [John 10:11, John 10:14]
@@ -1538,7 +1546,7 @@ ideas:
     emotion: courage
     character: "Jesus"
     arc: journey
-    pillar: Jesus
+    pillar: teachings
     series: One Minute With Jesus
     formats: [short, medium]
     scriptures: [John 16:33]
@@ -1550,7 +1558,7 @@ ideas:
     emotion: love
     character: "The prodigal son"
     arc: story
-    pillar: Jesus
+    pillar: stories
     series: Lessons From...
     formats: [short, medium, long]
     scriptures: [Luke 15:11-13, Luke 15:20-24]
@@ -1563,7 +1571,7 @@ ideas:
     emotion: love
     character: "The Good Samaritan"
     arc: story
-    pillar: Jesus
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Luke 10:29, Luke 10:33-37]
     wiki: Parable of the Good Samaritan
@@ -1575,7 +1583,7 @@ ideas:
     emotion: peace
     character: "Jesus"
     arc: story
-    pillar: Peace
+    pillar: stories
     formats: [short, medium]
     scriptures: [Mark 4:37-40]
     wiki: Calming the storm
@@ -1587,7 +1595,7 @@ ideas:
     emotion: hope
     character: "Jesus"
     arc: wisdom
-    pillar: Jesus
+    pillar: teachings
     formats: [medium, long]
     scriptures: [Matthew 5:3-10]
     wiki: Beatitudes
@@ -1599,7 +1607,7 @@ ideas:
     emotion: curiosity
     character: "Nicodemus"
     arc: story
-    pillar: Jesus
+    pillar: stories
     formats: [short, medium]
     scriptures: [John 3:1-3, John 3:16-17]
     wiki: Nicodemus
@@ -1611,7 +1619,7 @@ ideas:
     emotion: love
     character: "Jesus"
     arc: story
-    pillar: Jesus
+    pillar: stories
     series: One Minute With Jesus
     formats: [short]
     scriptures: [Luke 15:4-7]
@@ -1624,7 +1632,7 @@ ideas:
     emotion: strength
     character: "Jesus"
     arc: story
-    pillar: Jesus
+    pillar: stories
     formats: [short, medium, long]
     scriptures: [Matthew 26:38-39, Luke 22:44]
     wiki: Agony in the Garden
@@ -1636,7 +1644,7 @@ ideas:
     emotion: forgiveness
     character: "Jesus"
     arc: story
-    pillar: Jesus
+    pillar: stories
     series: One Minute With Jesus
     formats: [short]
     scriptures: [Luke 23:34]
@@ -1648,7 +1656,7 @@ ideas:
     emotion: peace
     character: "Jesus"
     arc: peace
-    pillar: Jesus
+    pillar: teachings
     series: One Minute With Jesus
     formats: [short, medium]
     scriptures: [John 14:1-6]
@@ -1660,7 +1668,7 @@ ideas:
     emotion: purpose
     character: "Jesus"
     arc: wisdom
-    pillar: Jesus
+    pillar: teachings
     series: One Minute With Jesus
     formats: [short, medium]
     scriptures: [John 15:4-5]
@@ -1672,7 +1680,7 @@ ideas:
     emotion: love
     character: "Jesus"
     arc: story
-    pillar: Jesus
+    pillar: stories
     formats: [short, medium]
     scriptures: [Mark 1:40-42]
     wiki: Cleansing the leper
@@ -1684,7 +1692,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Exodus 16:35, Matthew 4:1-2, Hosea 2:14]
@@ -1695,7 +1703,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Psalm 23:1-4, 1 Samuel 17:34-35]
@@ -1707,7 +1715,7 @@ ideas:
     category: jesus
     emotion: curiosity
     arc: story
-    pillar: Jesus
+    pillar: stories
     formats: [short]
     scriptures: [Matthew 17:19-20]
     angle: "The disciples failed and asked Jesus why. His answer about faith like a mustard seed, in its real setting."
@@ -1717,7 +1725,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Mark 6:3]
@@ -1729,7 +1737,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Mark 4:37, Matthew 14:24]
@@ -1741,7 +1749,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [John 5:2-3, John 5:8-9]
@@ -1753,7 +1761,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium, long]
     scriptures: [Isaiah 40:8]
@@ -1765,7 +1773,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Matthew 27:50-51, Hebrews 10:19-20]
@@ -1777,7 +1785,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short]
     scriptures: [Matthew 26:36]
@@ -1789,7 +1797,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Matthew 9:9-10, Luke 19:2]
@@ -1801,7 +1809,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short]
     scriptures: [Genesis 12:4, Genesis 21:5]
@@ -1812,7 +1820,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Ruth 4:17, Matthew 1:5-6]
@@ -1823,7 +1831,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [John 2:7-11]
@@ -1835,7 +1843,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [John 4:9]
@@ -1847,7 +1855,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Genesis 7:12, Exodus 24:18, Matthew 4:2]
@@ -1858,7 +1866,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Matthew 13:34-35, Mark 4:33-34]
@@ -1869,7 +1877,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Psalm 150:6, Ephesians 5:19]
@@ -1881,7 +1889,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Did you know
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [John 1:46]
@@ -1895,7 +1903,7 @@ ideas:
     emotion: courage
     character: "Deborah"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Untold Stories
     formats: [short, medium, long]
     scriptures: [Judges 4:4-5, Judges 4:14]
@@ -1908,7 +1916,7 @@ ideas:
     emotion: courage
     character: "Bartimaeus"
     arc: story
-    pillar: Jesus
+    pillar: stories
     series: Untold Stories
     formats: [short, medium]
     scriptures: [Mark 10:47-48, Mark 10:51-52]
@@ -1921,7 +1929,7 @@ ideas:
     emotion: forgiveness
     character: "Stephen"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Untold Stories
     formats: [short, medium]
     scriptures: [Acts 7:59-60, Acts 6:15]
@@ -1934,7 +1942,7 @@ ideas:
     emotion: love
     character: "Barnabas"
     arc: story
-    pillar: Relationships
+    pillar: struggles
     series: Untold Stories
     formats: [short, medium]
     scriptures: [Acts 9:26-27, Acts 4:36]
@@ -1947,7 +1955,7 @@ ideas:
     emotion: courage
     character: "Timothy"
     arc: wisdom
-    pillar: Purpose
+    pillar: teachings
     series: Untold Stories
     formats: [short, medium]
     scriptures: [1 Timothy 4:12, 2 Timothy 1:5-7]
@@ -1959,7 +1967,7 @@ ideas:
     emotion: joy
     character: "Lydia"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Untold Stories
     formats: [short, medium]
     scriptures: [Acts 16:14-15]
@@ -1972,7 +1980,7 @@ ideas:
     emotion: hope
     character: "The Roman centurion"
     arc: story
-    pillar: Jesus
+    pillar: stories
     series: Untold Stories
     formats: [short, medium]
     scriptures: [Matthew 8:8-10]
@@ -1984,7 +1992,7 @@ ideas:
     emotion: purpose
     character: "Jeremiah"
     arc: story
-    pillar: Purpose
+    pillar: struggles
     series: Untold Stories
     formats: [short, medium, long]
     scriptures: [Jeremiah 20:7-9]
@@ -1997,7 +2005,7 @@ ideas:
     emotion: love
     character: "Mary Magdalene"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Untold Stories
     formats: [short, medium]
     scriptures: [John 19:25, John 20:1, John 20:16]
@@ -2010,7 +2018,7 @@ ideas:
     emotion: strength
     character: "Caleb"
     arc: story
-    pillar: Motivation
+    pillar: struggles
     series: Untold Stories
     formats: [short, medium]
     scriptures: [Joshua 14:10-12]
@@ -2023,7 +2031,7 @@ ideas:
     emotion: grief
     character: "Naomi"
     arc: story
-    pillar: Relationships
+    pillar: struggles
     series: Untold Stories
     formats: [short, medium, long]
     scriptures: [Ruth 1:20-21, Ruth 4:14-15]
@@ -2035,7 +2043,7 @@ ideas:
     emotion: wisdom
     character: "Abigail"
     arc: story
-    pillar: Wisdom
+    pillar: teachings
     series: Untold Stories
     formats: [short, medium]
     scriptures: [1 Samuel 25:32-33, Proverbs 15:1]
@@ -2047,7 +2055,7 @@ ideas:
     emotion: hope
     character: "Rahab"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Untold Stories
     formats: [short, medium]
     scriptures: [Joshua 2:11, Hebrews 11:31, Matthew 1:5]
@@ -2060,7 +2068,7 @@ ideas:
     emotion: courage
     character: "Joseph of Arimathea"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Untold Stories
     formats: [short, medium]
     scriptures: [John 19:38, Mark 15:43]
@@ -2072,7 +2080,7 @@ ideas:
     emotion: strength
     character: "Simon of Cyrene"
     arc: story
-    pillar: Jesus
+    pillar: stories
     series: Untold Stories
     formats: [short, medium]
     scriptures: [Mark 15:21, Luke 23:26]
@@ -2085,7 +2093,7 @@ ideas:
     emotion: forgiveness
     character: "Onesimus"
     arc: story
-    pillar: Relationships
+    pillar: struggles
     series: Untold Stories
     formats: [short, medium]
     scriptures: [Philemon 1:15-16]
@@ -2097,7 +2105,7 @@ ideas:
     emotion: gratitude
     character: "The poor widow"
     arc: story
-    pillar: Jesus
+    pillar: stories
     series: Untold Stories
     formats: [short, medium]
     scriptures: [Mark 12:42-44]
@@ -2109,7 +2117,7 @@ ideas:
     emotion: love
     character: "Mephibosheth"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Untold Stories
     formats: [short, medium]
     scriptures: [2 Samuel 9:7, 2 Samuel 9:13]
@@ -2122,7 +2130,7 @@ ideas:
     emotion: strength
     character: "The widow of Zarephath"
     arc: story
-    pillar: Motivation
+    pillar: struggles
     series: Untold Stories
     formats: [short, medium]
     scriptures: [1 Kings 17:12-16]
@@ -2134,7 +2142,7 @@ ideas:
     emotion: gratitude
     character: "Elijah"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     series: Untold Stories
     formats: [short, medium]
     scriptures: [1 Kings 17:2-6]
@@ -2146,7 +2154,7 @@ ideas:
     emotion: joy
     character: "Habakkuk"
     arc: journey
-    pillar: Motivation
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Habakkuk 3:17-18, Habakkuk 1:2]
     angle: "The prophet began with 'how long?' and ended choosing joy with empty fields. Joy that doesn't wait for circumstances."
@@ -2157,7 +2165,7 @@ ideas:
     emotion: gratitude
     character: "The Samaritan leper"
     arc: story
-    pillar: Jesus
+    pillar: stories
     formats: [short, medium]
     scriptures: [Luke 17:15-17]
     angle: "Ten men walked away healed. One turned around, shouting, and fell at Jesus' feet. Gratitude completes the miracle."
@@ -2168,7 +2176,7 @@ ideas:
     emotion: hope
     character: "The thief on the cross"
     arc: story
-    pillar: Jesus
+    pillar: stories
     formats: [short, medium]
     scriptures: [Luke 23:42-43]
     angle: "A dying criminal with nothing to offer asked to be remembered. The answer came the same day."
@@ -2179,7 +2187,7 @@ ideas:
     emotion: joy
     character: "Jesus"
     arc: story
-    pillar: Jesus
+    pillar: stories
     formats: [short, medium]
     scriptures: [Mark 10:14-16]
     angle: "The disciples turned the children away. Jesus was indignant, took them in his arms and blessed them."
@@ -2191,7 +2199,7 @@ ideas:
     emotion: love
     character: "Jesus"
     arc: curiosity
-    pillar: Jesus
+    pillar: questions
     formats: [short, medium, long]
     scriptures: [John 13:4-5, John 13:14-15]
     angle: "Washing feet was a servant's job. The night before the cross, Jesus knelt with a towel. Humility that changes everything."
@@ -2202,7 +2210,7 @@ ideas:
     emotion: curiosity
     character: "Jesus"
     arc: curiosity
-    pillar: Jesus
+    pillar: questions
     formats: [short, medium]
     scriptures: [John 8:6-8, John 8:10-11]
     angle: "A crowd with stones, a woman caught, and Jesus bending down to write. Nobody knows what he wrote; everyone knows what happened next."
@@ -2213,7 +2221,7 @@ ideas:
     emotion: purpose
     character: "Jesus"
     arc: curiosity
-    pillar: Jesus
+    pillar: questions
     formats: [short, medium, long]
     scriptures: [Luke 6:12-13, Mark 3:13-15]
     angle: "A night of prayer, then fishermen, a tax collector and a zealot. He chose them first to be with him."
@@ -2224,7 +2232,7 @@ ideas:
     emotion: curiosity
     character: "Jesus"
     arc: curiosity
-    pillar: Bible & History
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Mark 5:41, Mark 15:34]
@@ -2237,7 +2245,7 @@ ideas:
     emotion: courage
     character: "The apostles"
     arc: curiosity
-    pillar: Bible & History
+    pillar: questions
     series: Did You Know?
     formats: [short, medium, long]
     scriptures: [Acts 1:8, Acts 4:13, Acts 12:2]
@@ -2248,7 +2256,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Bible & History
+    pillar: questions
     series: Did You Know?
     formats: [short, medium, long]
     scriptures: [1 Kings 8:27-30, John 2:19-21]
@@ -2261,7 +2269,7 @@ ideas:
     emotion: love
     character: "Jesus"
     arc: curiosity
-    pillar: Bible & History
+    pillar: questions
     series: Did You Know?
     formats: [medium, long]
     scriptures: [Philippians 2:8, 1 Corinthians 1:18, Hebrews 12:2]
@@ -2273,7 +2281,7 @@ ideas:
     emotion: curiosity
     character: "Peter"
     arc: curiosity
-    pillar: Bible & History
+    pillar: questions
     series: Did You Know?
     formats: [short, medium, long]
     scriptures: [Luke 5:4-6, Mark 1:16-18]
@@ -2285,7 +2293,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Bible & History
+    pillar: questions
     series: Did You Know?
     formats: [medium, long]
     scriptures: [Luke 19:41-42, Psalm 122:6]
@@ -2298,7 +2306,7 @@ ideas:
     emotion: joy
     character: "The shepherds"
     arc: curiosity
-    pillar: Bible & History
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Luke 2:8-11]
@@ -2309,7 +2317,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Bible & History
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Exodus 12:13, Luke 22:15]
@@ -2321,7 +2329,7 @@ ideas:
     category: history
     emotion: wisdom
     arc: curiosity
-    pillar: Bible & History
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Matthew 23:23, John 3:1-2]
@@ -2333,7 +2341,7 @@ ideas:
     category: history
     emotion: curiosity
     arc: curiosity
-    pillar: Bible & History
+    pillar: questions
     series: Did You Know?
     formats: [short, medium]
     scriptures: [Matthew 4:13-16]
@@ -2345,7 +2353,7 @@ ideas:
     category: spiritual_battles
     emotion: courage
     arc: curiosity
-    pillar: Spiritual Battles
+    pillar: questions
     formats: [short, medium, long]
     scriptures: [Ephesians 6:13-17]
     angle: "Paul, chained to Roman soldiers, looked at their armor and saw a picture of how to stand."
@@ -2356,7 +2364,7 @@ ideas:
     category: wisdom
     emotion: wisdom
     arc: wisdom
-    pillar: Wisdom
+    pillar: teachings
     series: Proverbs for Real Life
     formats: [short, medium, long]
     scriptures: [Proverbs 21:5, Proverbs 22:7, Proverbs 13:11]
@@ -2367,7 +2375,7 @@ ideas:
     category: wisdom
     emotion: wisdom
     arc: wisdom
-    pillar: Wisdom
+    pillar: teachings
     series: Proverbs for Real Life
     formats: [short, medium]
     scriptures: [Proverbs 15:1, Proverbs 18:21, Proverbs 25:11]
@@ -2378,7 +2386,7 @@ ideas:
     category: wisdom
     emotion: love
     arc: wisdom
-    pillar: Wisdom
+    pillar: teachings
     series: Proverbs for Real Life
     formats: [short, medium]
     scriptures: [Proverbs 13:20, Proverbs 27:17, Proverbs 17:17]
@@ -2390,7 +2398,7 @@ ideas:
     emotion: wisdom
     character: "Solomon"
     arc: story
-    pillar: Wisdom
+    pillar: teachings
     formats: [short, medium, long]
     scriptures: [Ecclesiastes 2:10-11, Ecclesiastes 12:13, 1 Kings 11:4]
     wiki: Ecclesiastes
@@ -2402,7 +2410,7 @@ ideas:
     emotion: wisdom
     character: "Nebuchadnezzar"
     arc: story
-    pillar: Wisdom
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Daniel 4:30-31, Daniel 4:37, Proverbs 16:18]
     angle: "The proudest king in the world, a sudden fall, and the humbled man who looked up to heaven."
@@ -2413,7 +2421,7 @@ ideas:
     emotion: wisdom
     character: "Jethro"
     arc: story
-    pillar: Wisdom
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Exodus 18:17-18]
     angle: "Moses judged every dispute from morning to evening, until his father-in-law said: you will wear yourself out."
@@ -2424,7 +2432,7 @@ ideas:
     category: everyday_life
     emotion: peace
     arc: wisdom
-    pillar: Faith in Everyday Life
+    pillar: teachings
     series: Faith in Everyday Life
     formats: [short, medium]
     scriptures: [Philippians 4:11-13]
@@ -2436,7 +2444,7 @@ ideas:
     emotion: strength
     character: "Joseph"
     arc: journey
-    pillar: Motivation
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [Galatians 6:9, Genesis 50:20]
     angle: "The middle is where every story looks hopeless. It's also where most people stop reading."
@@ -2447,7 +2455,7 @@ ideas:
     emotion: courage
     character: "David"
     arc: story
-    pillar: Motivation
+    pillar: struggles
     formats: [short, medium]
     scriptures: [1 Samuel 17:33, 1 Samuel 17:37]
     angle: "The king said he was only a boy. His brothers mocked him. David remembered what God had already done."
@@ -2458,7 +2466,7 @@ ideas:
     emotion: hope
     character: "Paul"
     arc: story
-    pillar: Purpose
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Acts 16:6-10]
     angle: "Paul tried to go one way and was stopped twice. The closed doors led him to Europe."
@@ -2468,7 +2476,7 @@ ideas:
     category: everyday_life
     emotion: wisdom
     arc: wisdom
-    pillar: Faith in Everyday Life
+    pillar: teachings
     series: Faith in Everyday Life
     formats: [short, medium]
     scriptures: [Mark 8:36, Proverbs 16:18, Micah 6:8]
@@ -2480,7 +2488,7 @@ ideas:
     emotion: purpose
     character: "Jesus"
     arc: wisdom
-    pillar: Faith in Everyday Life
+    pillar: teachings
     series: Faith in Everyday Life
     formats: [short, medium, long]
     scriptures: [Mark 10:42-45]
@@ -2491,7 +2499,7 @@ ideas:
     category: everyday_life
     emotion: hope
     arc: journey
-    pillar: Faith in Everyday Life
+    pillar: struggles
     series: Faith in Everyday Life
     formats: [short, medium]
     scriptures: [Isaiah 46:4, Psalm 92:14, 2 Corinthians 4:16]
@@ -2502,7 +2510,7 @@ ideas:
     category: everyday_life
     emotion: purpose
     arc: wisdom
-    pillar: Faith in Everyday Life
+    pillar: teachings
     series: Faith in Everyday Life
     formats: [short, medium]
     scriptures: [Colossians 3:23-24]
@@ -2513,7 +2521,7 @@ ideas:
     category: everyday_life
     emotion: hope
     arc: journey
-    pillar: Faith in Everyday Life
+    pillar: struggles
     series: Faith in Everyday Life
     formats: [short, medium]
     scriptures: [Psalm 25:16, Psalm 68:6, Ecclesiastes 4:9-10]
@@ -2524,7 +2532,7 @@ ideas:
     category: everyday_life
     emotion: purpose
     arc: wisdom
-    pillar: Faith in Everyday Life
+    pillar: teachings
     series: Faith in Everyday Life
     formats: [short, medium]
     scriptures: [Ecclesiastes 3:11, Micah 6:8]
@@ -2535,7 +2543,7 @@ ideas:
     category: everyday_life
     emotion: strength
     arc: journey
-    pillar: Faith in Everyday Life
+    pillar: struggles
     series: Faith in Everyday Life
     formats: [short, medium]
     scriptures: [Galatians 6:2, Galatians 6:5]
@@ -2547,7 +2555,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Before You Sleep
     formats: [short, medium, long]
     scriptures: [Psalm 46:10, Exodus 14:14]
@@ -2558,7 +2566,7 @@ ideas:
     category: peace
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     series: Before You Sleep
     formats: [long, sleep]
     scriptures: [Psalm 23:1-6, Psalm 46:10, Isaiah 26:3, Matthew 11:28-30, John 14:27]
@@ -2570,7 +2578,7 @@ ideas:
     emotion: joy
     character: "Nehemiah"
     arc: joy
-    pillar: Motivation
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Nehemiah 8:10]
     angle: "The people wept when they heard the law. Nehemiah said: go, celebrate, this day is holy."
@@ -2581,7 +2589,7 @@ ideas:
     emotion: gratitude
     character: "Samuel"
     arc: joy
-    pillar: Motivation
+    pillar: struggles
     formats: [short, medium]
     scriptures: [1 Samuel 7:12, Psalm 103:2]
     angle: "Samuel set up a stone and called it Ebenezer: thus far the Lord has helped us."
@@ -2591,7 +2599,7 @@ ideas:
     category: spiritual_battles
     emotion: courage
     arc: journey
-    pillar: Spiritual Battles
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Ephesians 6:13-14, 1 Corinthians 16:13]
     angle: "Having done everything, stand. Courage for the day you can't advance but must not retreat."
@@ -2601,7 +2609,7 @@ ideas:
     category: relationships
     emotion: love
     arc: wisdom
-    pillar: Relationships
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Matthew 5:43-45]
     angle: "The hardest sentence Jesus ever spoke, and why it sets you free."
@@ -2611,7 +2619,7 @@ ideas:
     category: relationships
     emotion: grief
     arc: journey
-    pillar: Relationships
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [John 11:25-26]
     angle: "Grief is love with nowhere to go. A gentle word for the empty chair."
@@ -2621,7 +2629,7 @@ ideas:
     category: spiritual_battles
     emotion: fear
     arc: curiosity
-    pillar: Spiritual Battles
+    pillar: questions
     formats: [short, medium]
     scriptures: [Isaiah 43:1, Luke 2:10, Matthew 28:10]
     angle: "'Do not be afraid' runs from Genesis to Revelation, to shepherds, prophets and fishermen. And to you."
@@ -2631,7 +2639,7 @@ ideas:
     category: motivation
     emotion: hope
     arc: journey
-    pillar: Motivation
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Isaiah 43:19, Psalm 32:8]
     angle: "I am doing a new thing: a way in the wilderness. Your road hasn't ended."
@@ -2641,7 +2649,7 @@ ideas:
     category: purpose
     emotion: purpose
     arc: journey
-    pillar: Purpose
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Ephesians 2:10, Psalm 139:13-16]
     angle: "Knit together, known before your first day, made for good works prepared in advance."
@@ -2652,7 +2660,7 @@ ideas:
     emotion: forgiveness
     character: "Jesus"
     arc: wisdom
-    pillar: Relationships
+    pillar: teachings
     formats: [short, medium, long]
     scriptures: [Matthew 18:21-22, Luke 23:34]
     angle: "Seventy times seven, and then he did it from the cross."
@@ -2663,7 +2671,7 @@ ideas:
     emotion: courage
     character: "Abraham"
     arc: story
-    pillar: Motivation
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Hebrews 11:8, 2 Corinthians 5:7]
     angle: "Abraham went out not knowing where he was going. Faith is the next step, not the whole map."
@@ -2673,7 +2681,7 @@ ideas:
     category: purpose
     emotion: purpose
     arc: journey
-    pillar: Purpose
+    pillar: struggles
     formats: [short, medium, long]
     scriptures: [Psalm 27:14, Romans 5:3-4]
     angle: "Suffering produces perseverance, perseverance character, character hope. Waiting is shaping you."
@@ -2684,7 +2692,7 @@ ideas:
     emotion: purpose
     character: "Moses"
     arc: story
-    pillar: Purpose
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Acts 7:29-30]
     angle: "A prince became a shepherd for forty years. The hidden years weren't wasted."
@@ -2695,7 +2703,7 @@ ideas:
     emotion: temptation
     character: "Paul"
     arc: curiosity
-    pillar: Spiritual Battles
+    pillar: questions
     formats: [short, medium]
     scriptures: [Romans 7:15, Romans 7:24-25]
     angle: "Even Paul wrote about it. The honest struggle, and who rescues us."
@@ -2705,7 +2713,7 @@ ideas:
     category: spiritual_battles
     emotion: peace
     arc: wisdom
-    pillar: Spiritual Battles
+    pillar: teachings
     formats: [short, medium]
     scriptures: [2 Corinthians 10:5, Philippians 4:8]
     angle: "Take every thought captive. Not every voice in your head is telling the truth."
@@ -2716,7 +2724,7 @@ ideas:
     category: prayer
     emotion: fear
     arc: prayer
-    pillar: Prayer
+    pillar: struggles
     series: Prayers
     formats: [short, medium]
     scriptures: [Psalm 56:3-4, Isaiah 41:10]
@@ -2727,7 +2735,7 @@ ideas:
     category: prayer
     emotion: hope
     arc: prayer
-    pillar: Prayer
+    pillar: struggles
     series: Prayers
     formats: [short, medium, long]
     scriptures: [Lamentations 3:22-23, Isaiah 43:18-19]
@@ -2738,7 +2746,7 @@ ideas:
     category: prayer
     emotion: love
     arc: prayer
-    pillar: Prayer
+    pillar: struggles
     series: Prayers
     formats: [short, medium]
     scriptures: [Isaiah 54:13, 3 John 1:4]
@@ -2749,7 +2757,7 @@ ideas:
     category: prayer
     emotion: courage
     arc: prayer
-    pillar: Prayer
+    pillar: struggles
     series: Prayers
     formats: [short, medium]
     scriptures: [Ephesians 4:15, James 1:19]
@@ -2762,7 +2770,7 @@ ideas:
     content_type: parable
     emotion: hope
     arc: curiosity
-    pillar: Jesus
+    pillar: questions
     formats: [short, medium]
     scriptures: [Matthew 13:31-32]
     truth: "Jesus compares the kingdom of heaven to the smallest seed that grows into a great plant: God's kingdom begins small and hidden and grows beyond all expectation. (A different teaching from mustard-seed faith in Matthew 17.)"
@@ -2774,7 +2782,7 @@ ideas:
     content_type: parable
     emotion: wisdom
     arc: story
-    pillar: Jesus
+    pillar: teachings
     formats: [short, medium, long]
     scriptures: [Matthew 13:3-8, Matthew 13:18-23]
     truth: "The same word of the kingdom falls on different hearts; Jesus explains what keeps it from taking root (not understanding, trouble, worries, wealth) and what bears fruit."
@@ -2786,7 +2794,7 @@ ideas:
     content_type: parable
     emotion: joy
     arc: story
-    pillar: Jesus
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Luke 15:8-10]
     truth: "God searches for the lost like a woman who sweeps the house for one coin, and heaven rejoices over one sinner who repents."
@@ -2798,7 +2806,7 @@ ideas:
     content_type: parable
     emotion: purpose
     arc: curiosity
-    pillar: Jesus
+    pillar: questions
     formats: [short, medium, long]
     scriptures: [Matthew 25:24-28]
     truth: "The servant who buried his master's money out of fear failed to use what he was entrusted with; faithfulness means using what God has given, not hiding it."
@@ -2810,7 +2818,7 @@ ideas:
     content_type: parable
     emotion: forgiveness
     arc: story
-    pillar: Relationships
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Matthew 18:23-27, Matthew 18:32-33]
     truth: "Having been forgiven an unpayable debt, the servant refused to forgive a small one; those who have received mercy are called to show it."
@@ -2822,7 +2830,7 @@ ideas:
     content_type: parable
     emotion: wisdom
     arc: story
-    pillar: Jesus
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Matthew 25:1-13]
     truth: "Jesus calls his followers to be ready for his return at an hour no one knows."
@@ -2834,7 +2842,7 @@ ideas:
     content_type: parable
     emotion: joy
     arc: story
-    pillar: Jesus
+    pillar: teachings
     formats: [short]
     scriptures: [Matthew 13:44-46]
     truth: "The kingdom of heaven is worth more than everything else; finding it, a person gives all with joy."
@@ -2846,7 +2854,7 @@ ideas:
     content_type: parable
     emotion: love
     arc: curiosity
-    pillar: Jesus
+    pillar: questions
     formats: [short, medium]
     scriptures: [Matthew 20:9-16]
     truth: "The landowner pays the latecomers the same as those who worked all day: God's grace is generous and not earned by hours."
@@ -2858,7 +2866,7 @@ ideas:
     content_type: parable
     emotion: wisdom
     arc: story
-    pillar: Wisdom
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Luke 12:16-21]
     truth: "A man stored up wealth for himself and died that night; Jesus warns against being rich in possessions but not rich toward God."
@@ -2871,7 +2879,7 @@ ideas:
     content_type: miracle
     emotion: gratitude
     arc: story
-    pillar: Jesus
+    pillar: stories
     formats: [short, medium]
     scriptures: [John 6:8-13]
     truth: "Jesus took a boy's small lunch, gave thanks and fed the crowd with more left over; what is given to him he multiplies."
@@ -2883,7 +2891,7 @@ ideas:
     content_type: miracle
     emotion: hope
     arc: story
-    pillar: Jesus
+    pillar: stories
     formats: [short, medium]
     scriptures: [Mark 5:35-36, Mark 5:41-42]
     truth: "Told his daughter had died, Jairus heard Jesus say 'Don't be afraid, only believe', and Jesus raised her."
@@ -2895,7 +2903,7 @@ ideas:
     content_type: miracle
     emotion: love
     arc: story
-    pillar: Jesus
+    pillar: stories
     formats: [short, medium]
     scriptures: [Luke 7:12-15]
     truth: "Jesus saw a widow burying her only son, had compassion on her, and gave her son back to her."
@@ -2907,7 +2915,7 @@ ideas:
     content_type: miracle
     emotion: joy
     arc: story
-    pillar: Bible stories
+    pillar: stories
     formats: [short, medium]
     scriptures: [Acts 12:5-10, Acts 12:16]
     truth: "While the church prayed for Peter, God freed him from prison, and the praying church could hardly believe it."
@@ -2920,7 +2928,7 @@ ideas:
     emotion: curiosity
     character: "Balaam"
     arc: story
-    pillar: Bible stories
+    pillar: stories
     formats: [short, medium]
     scriptures: [Numbers 22:28-31]
     truth: "A prophet set on his own course was stopped by God through his donkey, until his eyes were opened to see the angel in the road."
@@ -2933,7 +2941,7 @@ ideas:
     emotion: joy
     character: "Paul"
     arc: curiosity
-    pillar: Bible stories
+    pillar: questions
     formats: [short, medium]
     scriptures: [Acts 16:22-26]
     truth: "Beaten and chained in Philippi, Paul and Silas prayed and sang hymns at midnight, and God shook the prison."
@@ -2946,7 +2954,7 @@ ideas:
     emotion: curiosity
     character: "Lazarus"
     arc: curiosity
-    pillar: Jesus
+    pillar: questions
     formats: [short, medium]
     scriptures: [John 12:9-11]
     truth: "After Jesus raised Lazarus, many believed because of him, and the chief priests planned to kill Lazarus too."
@@ -2959,7 +2967,7 @@ ideas:
     emotion: forgiveness
     character: "Peter"
     arc: curiosity
-    pillar: Jesus
+    pillar: questions
     formats: [short, medium]
     scriptures: [Luke 22:31-34, Luke 22:61-62]
     truth: "Jesus foretold Peter's denial and prayed for him, that his faith would not fail and that, once he turned back, he would strengthen his brothers."
@@ -2972,7 +2980,7 @@ ideas:
     content_type: question
     emotion: purpose
     arc: wisdom
-    pillar: Jesus
+    pillar: questions
     formats: [short, medium, long]
     scriptures: [Luke 9:23-24]
     truth: "Following Jesus means denying yourself and following him daily, losing your life for his sake to find it; it is a call to discipleship, not to bear any hardship as 'my cross'."
@@ -2984,7 +2992,7 @@ ideas:
     content_type: question
     emotion: purpose
     arc: wisdom
-    pillar: Wisdom
+    pillar: questions
     formats: [short, medium]
     scriptures: [Romans 12:1-2]
     truth: "In view of God's mercies, believers offer their whole lives to God and are transformed, not conformed to this age, by the renewing of their minds."
@@ -2997,7 +3005,7 @@ ideas:
     emotion: curiosity
     character: "Nicodemus"
     arc: curiosity
-    pillar: Jesus
+    pillar: questions
     formats: [short, medium]
     scriptures: [John 3:3-8]
     truth: "Jesus told Nicodemus that no one can see God's kingdom without being born from above, of water and the Spirit: new life is God's work."
@@ -3009,7 +3017,7 @@ ideas:
     content_type: question
     emotion: wisdom
     arc: wisdom
-    pillar: Jesus
+    pillar: questions
     formats: [short, medium]
     scriptures: [Mark 10:42-45]
     truth: "In God's kingdom greatness is service: Jesus came not to be served but to serve and give his life as a ransom."
@@ -3022,7 +3030,7 @@ ideas:
     content_type: verse
     emotion: hope
     arc: peace
-    pillar: Jesus
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Matthew 28:18-20]
     truth: "Sending his disciples to make disciples of all nations, the risen Jesus promises his presence with them always, to the end of the age."
@@ -3035,7 +3043,7 @@ ideas:
     emotion: courage
     character: "Joshua"
     arc: story
-    pillar: Motivation
+    pillar: struggles
     formats: [short, medium]
     scriptures: [Joshua 1:7-9]
     truth: "God commands Joshua to be strong and courageous, keep his law, and not fear, because the Lord his God is with him wherever he goes."
@@ -3047,7 +3055,7 @@ ideas:
     content_type: verse
     emotion: wisdom
     arc: wisdom
-    pillar: Wisdom
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Micah 6:6-8]
     truth: "Asked what offering would please God, Micah answers that the Lord requires justice, faithful love and humble walking with God, not grand sacrifices."
@@ -3059,7 +3067,7 @@ ideas:
     content_type: verse
     emotion: peace
     arc: peace
-    pillar: Peace
+    pillar: teachings
     formats: [short, medium]
     scriptures: [Psalm 46:1-3, Psalm 46:10-11]
     truth: "In a psalm of mountains falling and nations raging, God says 'be still and know that I am God': stop striving and trust the God who is our refuge."

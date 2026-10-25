@@ -4,6 +4,14 @@ The plan for the channel this pipeline runs: what it promises, what it publishes
 is structured and how it looks and sounds. The pipeline reads the parts that can be automated from
 `channel.yaml` and `content/ideas.yaml`; the rest is guidance for you when reviewing videos.
 
+> **Current direction (story-first, October 2026):** cinematic Bible storytelling. Scripture first,
+> compelling stories, beautiful production, meaningful Christian teaching. Four content pillars
+> (Bible stories told like films, teachings of Jesus in context, human struggles inside Scripture,
+> overlooked moments and biblical questions), two long videos a week (an evergreen story from
+> `content/backlog.yaml` and a timely one on the coming Sunday's Gospel or feast), Shorts cut from them,
+> and three visual styles (cinematic, illustrated, documentary). See "The weekly plan" in the README.
+> Where the sections below describe the earlier inspirational mix, the README and `channel.yaml` win.
+
 ## 1. Promise and creative principle
 
 > **Stories, wisdom, prayer and inspiration rooted in Jesus Christ and the Bible, created to give

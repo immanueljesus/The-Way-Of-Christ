@@ -31,7 +31,7 @@ class FakeChannel:
         monkeypatch.setattr(pipeline, "make_next", self.make_next)
         monkeypatch.setattr(pipeline, "upload_job", self.upload_job)
 
-    def make_next(self, cfg, topics, category=None):
+    def make_next(self, cfg, topics, category=None, slate=None, at=None):
         if self.fail_make:
             self.fail_make -= 1
             return None

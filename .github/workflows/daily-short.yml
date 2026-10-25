@@ -155,8 +155,13 @@ jobs:
             jobs/cuts
           key: fyt-state-${{ github.run_id }}-${{ github.run_attempt }}
 
+      # Artifacts count against the account's Actions storage. When it is full, GitHub refuses new ones
+      # ("Artifact storage quota has been hit"), which used to fail the whole run after the videos were
+      # already scheduled. So keeping a copy never fails a run, and scheduled runs (whose videos are on
+      # YouTube already; unuploaded ones wait in jobs/pending) keep only the small files, for 3 days.
       - name: Keep the videos for a week
-        if: always() && steps.need.outputs.needed == 'yes'
+        if: always() && steps.need.outputs.needed == 'yes' && env.TASK != 'fill'
+        continue-on-error: true
         uses: actions/upload-artifact@v6
         with:
           name: videos-${{ github.run_id }}-${{ github.run_attempt }}
@@ -176,6 +181,22 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
 
+      - name: Keep the scripts for three days
+        if: always() && steps.need.outputs.needed == 'yes' && env.TASK == 'fill'
+        continue-on-error: true
+        uses: actions/upload-artifact@v6
+        with:
+          name: scripts-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            jobs/*/thumbnail.png
+            jobs/*/youtube.txt
+            jobs/*/script.json
+            jobs/*/research.md
+            jobs/*/extras.md
+            jobs/*/job.json
+          retention-days: 3
+          if-no-files-found: ignore
+
       - name: Alert when the schedule needs attention
         if: failure() && github.event_name == 'schedule'
         env:
@@ -183,7 +204,7 @@ jobs:
           RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           title="Upload schedule needs attention"
-          body="Run $RUN failed or left a publish slot in the next 24 hours without a video. The next run (every 6 hours) retries automatically; the run's summary shows the schedule and the log shows what failed."
+          body="Run $RUN failed or left a publish slot in the next 24 hours without a video. The next scheduled run (twice a day) retries automatically; the run's summary shows the schedule and the log shows what failed."
           n=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number --jq '.[0].number // empty')
           if [ -n "$n" ]; then
             gh issue comment "$n" --repo "$GITHUB_REPOSITORY" --body "$body"

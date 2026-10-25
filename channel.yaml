@@ -251,7 +251,7 @@ insights:
 # - trends: a Bible or faith Wikipedia article whose readers suddenly double, or a faith search YouTube
 #   has just started suggesting, that fits the channel (8/10+), becomes a bonus Short.
 # Only from what's left: the day's upload quota (4 a day in all) and the month's free GitHub Actions
-# minutes (2,000 for a private repo; the schedule uses ~1,850, so expect a handful of bonuses a month).
+# minutes (unlimited now the repo is public; the cap below only guards against runaway runs).
 bonus:
   winners: true
   min_lift: 1.25
@@ -263,7 +263,7 @@ bonus:
   longs_per_month: 1
   long_minutes: 8
   follow_up_days: 4
-  monthly_minutes: 2000         # raise (or remove the limit's effect) if the repo becomes public
+  monthly_minutes: 20000        # public repo: standard runners are free; this only stops runaway bonus runs
   watch_articles: [Jesus, Bible, Book of Psalms, Lord's Prayer, Sermon on the Mount, Book of Revelation,
     Ten Commandments, Noah's Ark, Book of Job, Book of Proverbs, Gospel of John, Parables of Jesus,
     Crucifixion of Jesus, Resurrection of Jesus, Nativity of Jesus, Holy Spirit, Prayer, Armor of God,

@@ -110,6 +110,7 @@ def test_a_rising_search_that_fits_becomes_a_bonus_short(cfg, monkeypatch):
 
 
 def test_minutes_budget_follows_the_measured_pace(cfg):
+    cfg.bonus.monthly_minutes = 2000  # a private repo's free allowance (the shipped repo is public)
     mid = datetime(2026, 10, 15, 12, tzinfo=timezone.utc)
     bonus.record_minutes(cfg, mid, 930)  # 62 a day so far: ~1,920 projected for October
     assert not bonus.minutes_allow(cfg, mid, 15)
